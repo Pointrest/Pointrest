@@ -1,7 +1,6 @@
 package com.pointrestapp.pointrest;
 
 import android.app.Activity;
-
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -21,11 +20,19 @@ import android.widget.TextView;
 public class MainActivity extends Activity implements
 		NavigationDrawerFragment.NavigationDrawerCallbacks {
 
+	private static final String TAG_MAP_SCREEN = "TAG_MAP_SCREEN";
+
+	private static final String TAG_TITLE_SCREEN = "TAG_TITLE_SCREEN";
+
 	/**
 	 * Fragment managing the behaviors, interactions and presentation of the
 	 * navigation drawer.
 	 */
 	private NavigationDrawerFragment mNavigationDrawerFragment;
+	
+	private FragmentTitleScreen mTitleScreenFragment;
+	
+	private TabFragment mMapFragment;
 
 	/**
 	 * Used to store the last screen title. For use in
@@ -43,18 +50,29 @@ public class MainActivity extends Activity implements
 		mTitle = getTitle();
 
 		// Set up the drawer.
-		mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
-				(DrawerLayout) findViewById(R.id.drawer_layout));
+		/*mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
+				(DrawerLayout) findViewById(R.id.drawer_layout));*/
+		if (savedInstanceState == null) {
+			mTitleScreenFragment = FragmentTitleScreen.getInstance();
+			mMapFragment = TabFragment.getInstance(-1);
+			getFragmentManager().beginTransaction()
+				.add(R.id.container, mMapFragment, TAG_MAP_SCREEN)
+				.add(R.id.container, mTitleScreenFragment, TAG_TITLE_SCREEN)
+				.commit();
+		} else {
+			mTitleScreenFragment = (FragmentTitleScreen) getFragmentManager().findFragmentByTag(TAG_TITLE_SCREEN);
+			mMapFragment = (TabFragment) getFragmentManager().findFragmentByTag(TAG_MAP_SCREEN);
+		}
 	}
 
 	@Override
 	public void onNavigationDrawerItemSelected(int position) {
 		// update the main content by replacing fragments
-		FragmentManager fragmentManager = getFragmentManager();
+		/* FragmentManager fragmentManager = getFragmentManager();
 		fragmentManager
 				.beginTransaction()
 				.replace(R.id.container,
-						PlaceholderFragment.newInstance(position + 1)).commit();
+						PlaceholderFragment.newInstance(position + 1)).commit(); */
 	}
 
 	public void onSectionAttached(int number) {
@@ -70,13 +88,13 @@ public class MainActivity extends Activity implements
 			break;
 		}
 	}
-
+/*
 	public void restoreActionBar() {
 		ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 		actionBar.setDisplayShowTitleEnabled(true);
 		actionBar.setTitle(mTitle);
-	}
+	} */
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -85,7 +103,7 @@ public class MainActivity extends Activity implements
 			// if the drawer is not showing. Otherwise, let the drawer
 			// decide what to show in the action bar.
 			getMenuInflater().inflate(R.menu.main, menu);
-			restoreActionBar();
+			//restoreActionBar();
 			return true;
 		}
 		return super.onCreateOptionsMenu(menu);
