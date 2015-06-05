@@ -2,7 +2,6 @@ package com.pointrestapp.pointrest.adapters;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 
@@ -11,7 +10,7 @@ import com.pointrestapp.pointrest.FragmentListFrame;
 public class TabAdapter extends FragmentPagerAdapter implements
 	ViewPager.OnPageChangeListener {
 
-    private final Context mContext;
+    private final Callback mListener;
     private final ViewPager mViewPager;	
     private static final int TOTAL_TABS = 3;
 	
@@ -36,7 +35,7 @@ public class TabAdapter extends FragmentPagerAdapter implements
 
 	public TabAdapter(Activity activity, ViewPager pager) {
 		super(activity.getFragmentManager());
-        mContext = activity;
+        mListener = (Callback)activity;
         mViewPager = pager;
         mViewPager.setAdapter(this);
         mViewPager.setOnPageChangeListener(this);
@@ -66,7 +65,10 @@ public class TabAdapter extends FragmentPagerAdapter implements
 
 	@Override
 	public void onPageSelected(int arg0){
-		System.out.println();
+		mListener.onTabSelected(arg0);
 	}
-
+	
+	public interface Callback {
+		void onTabSelected(int puntoType);
+	}
 }
