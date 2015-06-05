@@ -6,13 +6,14 @@
     android:orientation="vertical" >
 
     <fragment
-        android:id="@+id/fragment_mappp"
+        android:id="@+id/fragment_map"
         android:name="com.google.android.gms.maps.MapFragment"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_weight="@integer/frame_weight_above" />
 
     <FrameLayout
+        android:id="@+id/frame_map"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="@integer/frame_weight_below" />

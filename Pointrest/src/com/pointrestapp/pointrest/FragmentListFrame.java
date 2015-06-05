@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 
 import com.pointrestapp.pointrest.adapters.ElencoListCursorAdapter;
@@ -76,6 +77,14 @@ public class FragmentListFrame extends Fragment
 			
 		});
 		
+		FrameLayout vFrame = (FrameLayout)aView.findViewById(R.id.frame_map);
+		vFrame.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				//mListener.goToMapScreen();
+			}
+		});
 		//REMOVE
 		Button b = (Button)aView.findViewById(R.id.btn_temp);
 		b.setOnClickListener(new View.OnClickListener() {
@@ -128,5 +137,6 @@ public class FragmentListFrame extends Fragment
 	
 	public interface Callback {
 		void goToDetailScreen(int pointId);
+		void goToMapScreen();
 	}
 }

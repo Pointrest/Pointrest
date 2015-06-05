@@ -30,15 +30,9 @@ public class FragmentMap extends Fragment  implements
 		TabAdapter.Callback {
 
 	private GoogleMap mMap;
+	private MapFragment mMapFragment;
 	private List<Marker> mMarkers = new ArrayList<Marker>();
-	
-	LatLng sydney = new LatLng(-33.867, 151.206);
-	LatLng pordenone = new LatLng(0, 0);
-	LatLng blah = new LatLng(40, 40);
-	
-	
-	
-	
+
 	public static FragmentMap getInstance(int aPosition){
 		FragmentMap tf = new FragmentMap();
 		return tf;
@@ -59,19 +53,12 @@ public class FragmentMap extends Fragment  implements
 	}
 	
 	private void setUpGui(View vView) {
+		mMapFragment = (MapFragment)getChildFragmentManager()
+				.findFragmentById(R.id.fragment_map);
 		
+		mMapFragment.getMapAsync(this);
+	}
 
-	}
-	
-	@Override
-	public void onResume() {
-		MapFragment vMap = (MapFragment)getChildFragmentManager()
-				.findFragmentById(R.id.fragment_mappp);
-		
-		vMap.getMapAsync(this);
-		super.onResume();
-	}
-	
 	@Override
 	public void onMapReady(GoogleMap arg0) {
 		mMap = arg0;
@@ -89,7 +76,6 @@ public class FragmentMap extends Fragment  implements
 	@Override
 	public void onTabSelected(int puntoType) {
 		showMarkersForType(puntoType);
-		//mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
 	}
 
 	private void showMarkersForType(int puntoType) {
