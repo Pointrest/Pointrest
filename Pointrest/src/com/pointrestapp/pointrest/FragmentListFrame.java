@@ -71,7 +71,7 @@ public class FragmentListFrame extends Fragment
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				mListener.goToDetailScreen((int) id);
+				//mListener.goToDetailScreen((int) id);
 			}
 			
 		});
