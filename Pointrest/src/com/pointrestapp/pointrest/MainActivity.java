@@ -8,11 +8,16 @@ import android.view.MenuItem;
 import com.pointrestapp.pointrest.adapters.TabAdapter;
 public class MainActivity extends Activity implements
 		TabAdapter.Callback,
-		NavigationDrawerFragment.NavigationDrawerCallbacks {
+		NavigationDrawerFragment.NavigationDrawerCallbacks,
+		FragmentListFrame.Callback{
 
 	private static final String TAG_MAP_SCREEN = "TAG_MAP_SCREEN";
 
 	private static final String TAG_TITLE_SCREEN = "TAG_TITLE_SCREEN";
+
+	private static final String TAG_NOTIFICHE = "TAG_NOTIFICHE";
+
+	private static final String TAG_INFO_APP = "TAG_INFO_APP";
 
 	/**
 	 * Fragment managing the behaviors, interactions and presentation of the
@@ -114,6 +119,27 @@ public class MainActivity extends Activity implements
 	@Override
 	public void onTabSelected(int puntoType) {
 		mMapFragment.onTabSelected(puntoType);
+	}
+
+	@Override
+	public void goToDetailScreen(int pointId) {
+		
+	}
+	
+	
+	public void goToNotifiche() {
+		// TODO Auto-generated method stub
+		getFragmentManager().beginTransaction()
+		.remove(mMapFragment)
+		.remove(mTitleScreenFragment)
+		.addToBackStack(null)
+		.add(R.id.container, NotificheFragment.getInstance(), TAG_NOTIFICHE).commit();
+	}
+	
+	public void goToInfoApp() {
+		// TODO Auto-generated method stub
+		getFragmentManager().beginTransaction()
+		.replace(R.id.container, InfoAppFragment.getInstance(), TAG_INFO_APP).commit();
 	}
 
 }

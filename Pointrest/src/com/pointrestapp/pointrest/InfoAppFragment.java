@@ -28,11 +28,28 @@ public class InfoAppFragment extends Fragment {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				// TODO Auto-generated method stub
-				 startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse("http://www.google.com")));
+				 startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse("http://www.donothingfor2minutes.com/")));
 				 return true;
 			}
 		});
 		
+		email.setOnTouchListener(new View.OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+			            "mailto","abc@gmail.com", null));
+				emailIntent.putExtra(Intent.EXTRA_SUBJECT, "[info] pointrest");
+				startActivity(Intent.createChooser(emailIntent, "Send email..."));
+				return false;
+			}
+		});
+		
 		return v;
+	}
+
+	public static InfoAppFragment getInstance() {
+		// TODO Auto-generated method stub
+		return new InfoAppFragment();
 	}
 }

@@ -30,6 +30,8 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 	
 	long pos;
 	
+	private static final String DIALOG_NOTIFICHE = "DIALOG_NOTIFICHE";
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -47,6 +49,8 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				pos=id;
+				NotificheBloccateDialog  dialog = NotificheBloccateDialog.newInstance();
+				dialog.show(getFragmentManager(), DIALOG_NOTIFICHE);
 				//String item = ((TextView)view).getText().toString();
 				//Toast mToast = Toast.makeText(getActivity().getApplicationContext(), "tag -> " + view.getTag(), Toast.LENGTH_SHORT);
                 //mToast.show();
@@ -115,5 +119,9 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 	public void visualizzaPIOnTheMap(){
 		Toast mToast = Toast.makeText(getActivity().getApplicationContext(), "(f)visualizzaPiOnTheMap with id: " + pos +" |to implement|", Toast.LENGTH_SHORT);
         mToast.show();
+	}
+	public static NotificheFragment getInstance() {
+		// TODO Auto-generated method stub
+		return new NotificheFragment();
 	}
 }

@@ -40,14 +40,14 @@ public class NotificheBloccateCursorAdapter extends CursorAdapter {
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 		int vNameColumnIndex = cursor.getColumnIndex(NotificheBloccateHelper.NAME);
-		int vImgColumnIndex = cursor.getColumnIndex(NotificheBloccateHelper.IMAGE);
+		//int vImgColumnIndex = cursor.getColumnIndex(NotificheBloccateHelper.IMAGE);
 
 		ViewHolder vHolder = (ViewHolder)view.getTag();
 		
 		vHolder.nomePI.setText(cursor.getString(vNameColumnIndex));
-		byte[] decodedString = Base64.decode(cursor.getString(vImgColumnIndex), Base64.DEFAULT);
-		Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-		vHolder.img.setImageBitmap(decodedByte);
+		//byte[] decodedString = Base64.decode(cursor.getString(vImgColumnIndex), Base64.DEFAULT);
+		//Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+		//vHolder.img.setImageBitmap(decodedByte);
 		
 	}
 
