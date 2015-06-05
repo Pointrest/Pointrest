@@ -73,6 +73,9 @@ public class FragmentListFrame extends Fragment
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				//mListener.goToDetailScreen((int) id);
+				
+				//to remove, only test
+				((MainActivity) mListener).goToNotifiche();
 			}
 			
 		});
@@ -95,6 +98,7 @@ public class FragmentListFrame extends Fragment
 				int type = new Random().nextInt(3);
 				values.put(PuntiDbHelper.NOME, "punto" + type);
 				values.put(PuntiDbHelper.TYPE, type);
+				values.put(PuntiDbHelper.BLOCKED, Constants.NotificationBlocked.TRUE);
 				getActivity().getContentResolver().insert(PuntiContentProvider.PUNTI_URI, values);
 			}
 		});
