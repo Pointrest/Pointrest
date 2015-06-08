@@ -1,4 +1,4 @@
-package com.pointrestapp.pointrest;
+package com.pointrestapp.pointrest.fragments;
 
 import android.app.Fragment;
 import android.app.LoaderManager.LoaderCallbacks;
@@ -15,7 +15,13 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.pointrestapp.pointrest.Constants;
+import com.pointrestapp.pointrest.NotificheBloccateDialog;
+import com.pointrestapp.pointrest.R;
+import com.pointrestapp.pointrest.Constants.NotificationBlocked;
 import com.pointrestapp.pointrest.NotificheBloccateDialog.INotificheBloccateDialog;
+import com.pointrestapp.pointrest.R.id;
+import com.pointrestapp.pointrest.R.layout;
 import com.pointrestapp.pointrest.adapters.NotificheBloccateCursorAdapter;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
 import com.pointrestapp.pointrest.data.PuntiDbHelper;

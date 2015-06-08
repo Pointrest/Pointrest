@@ -1,4 +1,11 @@
-package com.pointrestapp.pointrest;
+package com.pointrestapp.pointrest.fragments;
+
+import com.pointrestapp.pointrest.R;
+import com.pointrestapp.pointrest.R.drawable;
+import com.pointrestapp.pointrest.R.id;
+import com.pointrestapp.pointrest.R.layout;
+import com.pointrestapp.pointrest.R.menu;
+import com.pointrestapp.pointrest.R.string;
 
 import android.app.Activity;
 import android.app.ActionBar;
