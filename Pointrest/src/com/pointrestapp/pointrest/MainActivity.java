@@ -6,6 +6,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.pointrestapp.pointrest.adapters.TabAdapter;
+import com.pointrestapp.pointrest.fragments.FragmentListFrame;
+import com.pointrestapp.pointrest.fragments.FragmentMap;
+import com.pointrestapp.pointrest.fragments.FragmentTitleScreen;
+import com.pointrestapp.pointrest.fragments.InfoAppFragment;
+import com.pointrestapp.pointrest.fragments.NavigationDrawerFragment;
+import com.pointrestapp.pointrest.fragments.NotificheFragment;
 public class MainActivity extends Activity implements
 		TabAdapter.Callback,
 		NavigationDrawerFragment.NavigationDrawerCallbacks,
@@ -49,7 +55,7 @@ public class MainActivity extends Activity implements
 				(DrawerLayout) findViewById(R.id.drawer_layout));*/
 		if (savedInstanceState == null) {
 			mTitleScreenFragment = FragmentTitleScreen.getInstance();
-			mMapFragment = FragmentMap.getInstance(-1);
+			mMapFragment = FragmentMap.getInstance(0);
 			getFragmentManager().beginTransaction()
 				.add(R.id.container, mMapFragment, TAG_MAP_SCREEN)
 				.add(R.id.container, mTitleScreenFragment, TAG_TITLE_SCREEN)
@@ -129,11 +135,13 @@ public class MainActivity extends Activity implements
 	
 	public void goToNotifiche() {
 		// TODO Auto-generated method stub
-		getFragmentManager().beginTransaction()
+		getFragmentManager()
+		.beginTransaction()
 		.remove(mMapFragment)
 		.remove(mTitleScreenFragment)
+		.add(R.id.container, NotificheFragment.getInstance(), TAG_NOTIFICHE)
 		.addToBackStack(null)
-		.add(R.id.container, NotificheFragment.getInstance(), TAG_NOTIFICHE).commit();
+		.commit();
 	}
 	
 	public void goToInfoApp() {
@@ -142,4 +150,20 @@ public class MainActivity extends Activity implements
 		.replace(R.id.container, InfoAppFragment.getInstance(), TAG_INFO_APP).commit();
 	}
 
+	@Override
+	public void goToMapScreen(float x, float y) {
+		// TODO Auto-generated method stub
+		mMapFragment.prepareForShow(x, 227);
+		getFragmentManager()
+		.beginTransaction()
+		.remove(mTitleScreenFragment)
+		.addToBackStack(null)
+		.commit();
+	}
+	
+	@Override
+	public void onBackPressed() {
+		mMapFragment.onBackPressed();
+		super.onBackPressed();
+	}
 }

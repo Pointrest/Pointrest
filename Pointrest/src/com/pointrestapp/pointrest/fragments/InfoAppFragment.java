@@ -1,4 +1,8 @@
-package com.pointrestapp.pointrest;
+package com.pointrestapp.pointrest.fragments;
+
+import com.pointrestapp.pointrest.R;
+import com.pointrestapp.pointrest.R.id;
+import com.pointrestapp.pointrest.R.layout;
 
 import android.app.Fragment;
 import android.content.Intent;

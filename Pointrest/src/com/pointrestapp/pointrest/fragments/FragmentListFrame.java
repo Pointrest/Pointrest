@@ -1,5 +1,6 @@
-package com.pointrestapp.pointrest;
+package com.pointrestapp.pointrest.fragments;
 
+import java.util.Calendar;
 import java.util.Random;
 
 import android.app.Activity;
@@ -11,13 +12,19 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 
+import com.pointrestapp.pointrest.Constants;
+import com.pointrestapp.pointrest.R;
+import com.pointrestapp.pointrest.Constants.NotificationBlocked;
+import com.pointrestapp.pointrest.R.id;
+import com.pointrestapp.pointrest.R.layout;
 import com.pointrestapp.pointrest.adapters.ElencoListCursorAdapter;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
 import com.pointrestapp.pointrest.data.PuntiDbHelper;
@@ -75,42 +82,70 @@ public class FragmentListFrame extends Fragment
 				//mListener.goToDetailScreen((int) id);
 				
 				//to remove, only test
-				((MainActivity) mListener).goToNotifiche();
+				//((MainActivity) mListener).goToNotifiche();
+				mListener.goToMapScreen(0, 0);
 			}
 			
 		});
 		
-		FrameLayout vFrame = (FrameLayout)aView.findViewById(R.id.frame_map);
-		vFrame.setOnClickListener(new View.OnClickListener() {
-			
+		FrameLayout vFrame = (FrameLayout)aView.findViewById(R.id.frame_transparent);
+/*
+		vFrame.setOnTouchListener(new OnTouchListener() {
+		    private static final int MAX_CLICK_DURATION = 200;
+		    private long startClickTime;
+		    
 			@Override
-			public void onClick(View v) {
-				//mListener.goToMapScreen();
+			public boolean onTouch(View v, MotionEvent event) {
+			    
+		        switch (event.getAction()) {
+	            case MotionEvent.ACTION_DOWN: {
+	                startClickTime = Calendar.getInstance().getTimeInMillis();
+	                break;
+	            }
+	            case MotionEvent.ACTION_UP: {
+	                long clickDuration = Calendar.getInstance().getTimeInMillis() - startClickTime;
+	                if(clickDuration < MAX_CLICK_DURATION) {
+	                	//mListener.goToMapScreen(event.getX() * event.getXPrecision(), event.getY() * event.getYPrecision());
+	                	//mListener.goToMapScreen(event.getRawX(), event.getRawY());
+	                	mListener.goToMapScreen(event.getX(), event.getY() - FragmentTitleScreen.h);
+	                }
+	            }
+	        }
+	        return true;
 			}
 		});
-		//REMOVE
-		Button b = (Button)aView.findViewById(R.id.btn_temp);
-		b.setOnClickListener(new View.OnClickListener() {
+		*/
+		vFrame.setOnLongClickListener(new View.OnLongClickListener() {
 			
 			@Override
-			public void onClick(View v) {
+			public boolean onLongClick(View v) {
 				ContentValues values = new ContentValues();
-				int type = new Random().nextInt(3);
+				Random r = new Random();
+				int type = r.nextInt(3);
 				values.put(PuntiDbHelper.NOME, "punto" + type);
 				values.put(PuntiDbHelper.TYPE, type);
 				values.put(PuntiDbHelper.BLOCKED, Constants.NotificationBlocked.TRUE);
+				double lat = r.nextDouble() + r.nextInt(50);
+				double lang = r.nextDouble() + r.nextInt(50);
+				values.put(PuntiDbHelper.LATUTUDE, lat);
+				values.put(PuntiDbHelper.LONGITUDE, lang);
 				getActivity().getContentResolver().insert(PuntiContentProvider.PUNTI_URI, values);
+				return true;
 			}
 		});
-		
 		
 		if (aBundle != null) {
 			int tabId = aBundle.getInt(Constants.TAB_TYPE);
 			mCurrentTab = tabId;
 		}
-		getLoaderManager().initLoader(mCurrentTab, null, this);	
-
+		
 	}
+	
+	@Override
+	public void onResume() {
+		getLoaderManager().initLoader(mCurrentTab, null, this);
+		super.onResume();
+	};
 	
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
@@ -141,6 +176,6 @@ public class FragmentListFrame extends Fragment
 	
 	public interface Callback {
 		void goToDetailScreen(int pointId);
-		void goToMapScreen();
+		void goToMapScreen(float clixkedX, float clickedY);
 	}
 }

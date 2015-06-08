@@ -32,9 +32,9 @@ public class PreferitiCursorAdapter extends CursorAdapter {
 		
 		vholder.nome_preferito = (TextView) view.findViewById(R.id.name_pi);
 		vholder.foto_preferito = (ImageView) view.findViewById(R.id.pi_image);
-		vholder.info_p = (Button) view.findViewById(R.id.info_pi);
-		vholder.delete_p = (Button) view.findViewById(R.id.delete_pi);
-		vholder.map_p = (Button) view.findViewById(R.id.on_map_pi);
+		//vholder.info_p = (Button) view.findViewById(R.id.info_pi);
+		//vholder.delete_p = (Button) view.findViewById(R.id.delete_pi);
+		//vholder.map_p = (Button) view.findViewById(R.id.on_map_pi);
 		
 		view.setTag(vholder);
 		return view;

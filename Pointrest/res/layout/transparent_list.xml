@@ -4,21 +4,17 @@
     android:orientation="vertical" >
 
     <FrameLayout
+        android:id="@+id/frame_transparent"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_weight="5" >
+        android:layout_weight="@integer/frame_weight_above" >
     </FrameLayout>
 
     <ListView
         android:id="@+id/listView_elenco"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2" >
+        android:layout_weight="@integer/frame_weight_below" >
     </ListView>
-    <Button
-        android:id="@+id/btn_temp"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"></Button>
 
 </LinearLayout>
