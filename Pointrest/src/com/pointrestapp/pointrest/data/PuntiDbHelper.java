@@ -8,6 +8,7 @@ public class PuntiDbHelper implements BaseColumns {
 	public static final String NOME = "nome";
 	public static final String TYPE = "type";
 	public static final String BLOCKED = "blocked";
+	public static final String FAVOURITE = "favourite";
 	public static final String LATUTUDE = "lat";
 	public static final String LONGITUDE = "long";
 	
@@ -18,6 +19,7 @@ public class PuntiDbHelper implements BaseColumns {
 			+ NOME +  " TEXT NOT NULL, "
 			+ LATUTUDE + " REAL NOT NULL, "
 			+ LONGITUDE + " REAL NOT NULL, "
-			+ BLOCKED +  " INTEGER NOT NULL "
+			+ BLOCKED +  " INTEGER NOT NULL, "
+			+ FAVOURITE + " INTEGER NOT NULL "
 			+ ");";
 }

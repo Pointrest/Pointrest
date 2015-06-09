@@ -16,7 +16,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <LinearLayout
-        android:id="@+id/linearLayout1"
+        android:id="@+id/layoutTipo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -46,14 +46,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/linearLayout1" />
+        android:layout_below="@+id/layoutTipo" />
 
     <LinearLayout
-        android:id="@+id/linearLayout2"
+        android:id="@+id/layoutCategoria"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/linearLayout1"
+        android:layout_below="@+id/layoutTipo"
         android:layout_marginTop="20dp"
         android:orientation="vertical" >
 
@@ -65,7 +65,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/categoria_pi"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Tutte" />
@@ -76,11 +76,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/linearLayout2"
+        android:layout_below="@+id/layoutCategoria"
         android:layout_marginTop="20dp" >
 
         <TextView
-            android:id="@+id/textView7"
+            android:id="@+id/metriBySeekBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
@@ -100,7 +100,7 @@
     </RelativeLayout>
 
     <SeekBar
-        android:id="@+id/seekBar1"
+        android:id="@+id/raggioInteresse"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -111,7 +111,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/seekBar1"
+        android:layout_below="@+id/raggioInteresse"
         android:layout_marginTop="20dp" >
 
         <Switch
@@ -123,7 +123,7 @@
     </RelativeLayout>
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/resetFilters"
         style="?android:attr/buttonStyleSmall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -131,6 +131,16 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
         android:text="Reset filtri" />
+
+    <Button
+        android:id="@+id/cercaByFilter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/resetFilters"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="Cerca" />
 
 </RelativeLayout>
 </ScrollView>
