@@ -5,23 +5,23 @@ import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.Toast;
 
 import com.pointrestapp.pointrest.Constants;
 import com.pointrestapp.pointrest.NotificheBloccateDialog;
-import com.pointrestapp.pointrest.R;
-import com.pointrestapp.pointrest.Constants.NotificationBlocked;
 import com.pointrestapp.pointrest.NotificheBloccateDialog.INotificheBloccateDialog;
-import com.pointrestapp.pointrest.R.id;
-import com.pointrestapp.pointrest.R.layout;
+import com.pointrestapp.pointrest.R;
 import com.pointrestapp.pointrest.adapters.NotificheBloccateCursorAdapter;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
 import com.pointrestapp.pointrest.data.PuntiDbHelper;
@@ -30,9 +30,11 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 	Switch promo, prossimita;
 	ListView lista;
 	
-	private static final String CHIAVE = "CHIAVE1";	
+	//private static final String CHIAVE = "CHIAVE1";	
 	private static final int NOTIFICHE_BLOCCATE_LOADER_ID = 0;
 	private NotificheBloccateCursorAdapter mCursorAdapter;
+	public static final String PREFS_NOTIFICATIONS = "prefs_notifications";
+	SharedPreferences settings = this.getActivity().getSharedPreferences(PREFS_NOTIFICATIONS, 0);
 	
 	long pos;
 	
@@ -49,6 +51,11 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 		
 		mCursorAdapter = new NotificheBloccateCursorAdapter(getActivity(), null);
 		lista.setAdapter(mCursorAdapter);
+		
+		// Restore preferences
+        promo.setChecked(settings.getBoolean("promoNotification", false));
+		prossimita.setChecked(settings.getBoolean("preferenceNotification", false));
+       
 		
 		lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
@@ -77,6 +84,23 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 			
 		});	
 		
+		promo.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				SharedPreferences.Editor editor = settings.edit();
+			    editor.putBoolean("silentMode", promo.isChecked());
+			    editor.commit();
+			}
+		});
+		
+		prossimita.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				SharedPreferences.Editor editor = settings.edit();
+				editor.putBoolean("silentMode", prossimita.isChecked());
+				editor.commit();
+			}
+		});
 		
 		getLoaderManager().initLoader(NOTIFICHE_BLOCCATE_LOADER_ID, null, this);	
 		return v;

@@ -1,9 +1,5 @@
 package com.pointrestapp.pointrest.fragments;
 
-import com.pointrestapp.pointrest.R;
-import com.pointrestapp.pointrest.R.id;
-import com.pointrestapp.pointrest.R.layout;
-
 import android.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
@@ -13,6 +9,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.pointrestapp.pointrest.R;
 
 public class InfoAppFragment extends Fragment {
 	TextView versione, autori, website, email;

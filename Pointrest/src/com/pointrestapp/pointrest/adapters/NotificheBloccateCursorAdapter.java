@@ -2,9 +2,6 @@ package com.pointrestapp.pointrest.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pointrestapp.pointrest.R;
-import com.pointrestapp.pointrest.data.NotificheBloccateHelper;
+import com.pointrestapp.pointrest.data.PuntiDbHelper;
 
 public class NotificheBloccateCursorAdapter extends CursorAdapter {
 	public NotificheBloccateCursorAdapter(Context context, Cursor c) {
@@ -39,7 +36,7 @@ public class NotificheBloccateCursorAdapter extends CursorAdapter {
 	
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
-		int vNameColumnIndex = cursor.getColumnIndex(NotificheBloccateHelper.NAME);
+		int vNameColumnIndex = cursor.getColumnIndex(PuntiDbHelper.NOME);
 		//int vImgColumnIndex = cursor.getColumnIndex(NotificheBloccateHelper.IMAGE);
 
 		ViewHolder vHolder = (ViewHolder)view.getTag();
