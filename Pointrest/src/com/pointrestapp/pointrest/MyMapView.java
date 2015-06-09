@@ -32,7 +32,7 @@ public class MyMapView extends MapView {
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		onInterceptTouchEvent(event);
+		//onInterceptTouchEvent(event);
 		return super.onTouchEvent(event);
 	}
 

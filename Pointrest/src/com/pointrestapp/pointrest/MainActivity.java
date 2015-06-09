@@ -1,6 +1,7 @@
 package com.pointrestapp.pointrest;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,7 +14,8 @@ import com.pointrestapp.pointrest.fragments.InfoAppFragment;
 import com.pointrestapp.pointrest.fragments.NavigationDrawerFragment;
 import com.pointrestapp.pointrest.fragments.NotificheFragment;
 public class MainActivity extends Activity implements
-		TabAdapter.Callback,
+		TabAdapter.MapCallback,
+		TabAdapter.ListCallback,
 		NavigationDrawerFragment.NavigationDrawerCallbacks,
 		FragmentListFrame.Callback{
 
@@ -125,6 +127,7 @@ public class MainActivity extends Activity implements
 	@Override
 	public void onTabSelected(int puntoType) {
 		mMapFragment.onTabSelected(puntoType);
+		mTitleScreenFragment.onTabSelected(puntoType);
 	}
 
 	@Override
@@ -152,8 +155,7 @@ public class MainActivity extends Activity implements
 
 	@Override
 	public void goToMapScreen(float x, float y) {
-		// TODO Auto-generated method stub
-		mMapFragment.prepareForShow(x, 227);
+		mMapFragment.prepareForShow(x, y);
 		getFragmentManager()
 		.beginTransaction()
 		.remove(mTitleScreenFragment)
@@ -164,6 +166,12 @@ public class MainActivity extends Activity implements
 	@Override
 	public void onBackPressed() {
 		mMapFragment.onBackPressed();
+		mTitleScreenFragment.OnBackPressed();
 		super.onBackPressed();
+	}
+
+	@Override
+	public Fragment getFragmentForTab(int puntoType) {
+		return mTitleScreenFragment.getFragmentForTab(puntoType);
 	}
 }
