@@ -10,10 +10,15 @@ import com.pointrestapp.pointrest.fragments.FragmentListFrame;
 public class TabAdapter extends FragmentPagerAdapter implements
 	ViewPager.OnPageChangeListener {
 
-    private final Callback mListener;
-    private final ViewPager mViewPager;	
+    private final MapCallback mMapListener;
+    private final ListCallback mListListener;
     private static final int TOTAL_TABS = 3;
 	
+    @Override
+    public int getItemPosition(Object object) {
+    	return POSITION_NONE;
+    } 
+    
 	@Override
 	public CharSequence getPageTitle(int position) {
 		String ret = "";
@@ -33,17 +38,15 @@ public class TabAdapter extends FragmentPagerAdapter implements
 		return ret;
 	}
 
-	public TabAdapter(Activity activity, ViewPager pager) {
+	public TabAdapter(Activity activity) {
 		super(activity.getFragmentManager());
-        mListener = (Callback)activity;
-        mViewPager = pager;
-        mViewPager.setAdapter(this);
-        mViewPager.setOnPageChangeListener(this);
+        mMapListener = (MapCallback)activity;
+        mListListener = (ListCallback)activity;
 	}
 
 	@Override
 	public Fragment getItem(int arg0) {
-		return FragmentListFrame.getInstance(arg0);
+		return mListListener.getFragmentForTab(arg0);
 	}
 
 	@Override
@@ -65,10 +68,14 @@ public class TabAdapter extends FragmentPagerAdapter implements
 
 	@Override
 	public void onPageSelected(int arg0){
-		mListener.onTabSelected(arg0);
+		mMapListener.onTabSelected(arg0);
 	}
 	
-	public interface Callback {
+	public interface MapCallback {
 		void onTabSelected(int puntoType);
+	}
+
+	public interface ListCallback {
+		Fragment getFragmentForTab(int puntoType);
 	}
 }

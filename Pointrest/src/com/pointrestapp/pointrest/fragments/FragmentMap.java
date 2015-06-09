@@ -3,7 +3,6 @@ package com.pointrestapp.pointrest.fragments;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.animation.AnimatorSet;
 import android.animation.LayoutTransition;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
@@ -32,10 +31,9 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.LatLngBounds.Builder;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.pointrestapp.pointrest.MainActivity;
 import com.pointrestapp.pointrest.MyMapView;
 import com.pointrestapp.pointrest.R;
-import com.pointrestapp.pointrest.R.id;
-import com.pointrestapp.pointrest.R.layout;
 import com.pointrestapp.pointrest.adapters.TabAdapter;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
 import com.pointrestapp.pointrest.data.PuntiDbHelper;
@@ -43,7 +41,7 @@ import com.pointrestapp.pointrest.data.PuntiDbHelper;
 
 public class FragmentMap extends Fragment  implements
 		OnMapReadyCallback,
-		TabAdapter.Callback,
+		TabAdapter.MapCallback,
 		ConnectionCallbacks,
 		OnConnectionFailedListener,
 		AnimatorUpdateListener {
@@ -56,6 +54,7 @@ public class FragmentMap extends Fragment  implements
 	private View mFrameBelow;
 	private LinearLayout mLayoutWhole;
 	private boolean mFullscreen;
+	private MainActivity mHostActivity;
 
 	public static FragmentMap getInstance(int aPosition){
 		FragmentMap tf = new FragmentMap();
@@ -64,7 +63,8 @@ public class FragmentMap extends Fragment  implements
 
 	@Override
 	public void onAttach(Activity activity) {
-		// TODO Auto-generated method stub
+		if (activity instanceof MainActivity)
+			mHostActivity = (MainActivity)activity;
 		super.onAttach(activity);
 	}
 
@@ -334,4 +334,5 @@ public class FragmentMap extends Fragment  implements
 			//b.setDuration(500);
 			mFrameBelow.startAnimation(a);
 		}
+
 }

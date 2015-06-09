@@ -1,5 +1,7 @@
 package com.pointrestapp.pointrest;
 
+import com.pointrestapp.pointrest.data.PreferitoHelper;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.view.LayoutInflater;

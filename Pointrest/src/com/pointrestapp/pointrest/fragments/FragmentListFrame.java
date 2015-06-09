@@ -30,8 +30,7 @@ import com.pointrestapp.pointrest.data.PuntiContentProvider;
 import com.pointrestapp.pointrest.data.PuntiDbHelper;
 
 
-public class FragmentListFrame extends Fragment 
-	implements LoaderCallbacks<Cursor>{
+public class FragmentListFrame extends Fragment {
 
 //	private static final int POI_LOADER_ID = Constants.TabType.POI;
 //	private static final int AC_LOADER_ID = Constants.TabType.AC;
@@ -40,6 +39,12 @@ public class FragmentListFrame extends Fragment
 	private ElencoListCursorAdapter mElencoListCursorAdapter;
 	private Callback mListener;
 	private int mCurrentTab;
+	private View mView;
+	ListView mListView;
+	
+	public FragmentListFrame() {
+		System.out.print(true);
+	}
 	
 	public static FragmentListFrame getInstance(int tabId) {
 		FragmentListFrame vFragment = new FragmentListFrame();
@@ -59,22 +64,20 @@ public class FragmentListFrame extends Fragment
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View vView = inflater.inflate(R.layout.transparent_list, container, false);
+		mView = inflater.inflate(R.layout.transparent_list, container, false);
 		
 		Bundle vBundle = getArguments();
 		
 		if (savedInstanceState != null)
 			vBundle = savedInstanceState;
 		
-		setUpGui(vView, vBundle);
-		return vView;
+		setUpGui(mView, vBundle);
+		return mView;
 	}
 
 	private void setUpGui(View aView, Bundle aBundle) {
-		ListView vListView = (ListView)aView.findViewById(R.id.listView_elenco);
-		mElencoListCursorAdapter = new ElencoListCursorAdapter(getActivity(), null, true);
-		vListView.setAdapter(mElencoListCursorAdapter);
-		vListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+		mListView = (ListView)aView.findViewById(R.id.listView_elenco);
+		mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
@@ -143,9 +146,23 @@ public class FragmentListFrame extends Fragment
 	
 	@Override
 	public void onResume() {
-		getLoaderManager().initLoader(mCurrentTab, null, this);
+		Cursor cursor = getActivity().getContentResolver()
+				.query(PuntiContentProvider.PUNTI_URI,
+						null,
+						PuntiDbHelper.TYPE + "=?",
+						new String[]{ mCurrentTab + "" },
+						null);
+		mElencoListCursorAdapter = new ElencoListCursorAdapter(getActivity(), cursor, true);
+		mListView.setAdapter(mElencoListCursorAdapter);
+		//mElencoListCursorAdapter.swapCursor(cursor);
 		super.onResume();
 	};
+	
+	@Override
+		public void onPause() {
+			// TODO Auto-generated method stub
+			super.onPause();
+		}
 	
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
@@ -153,27 +170,6 @@ public class FragmentListFrame extends Fragment
 		super.onSaveInstanceState(outState);
 	}
 
-	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		return new CursorLoader
-				(getActivity(),
-						PuntiContentProvider.PUNTI_URI,
-						null,
-						PuntiDbHelper.TYPE + "=?",
-						new String[]{ id + "" },
-						null);
-	}
-
-	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		mElencoListCursorAdapter.swapCursor(data);
-	}
-
-	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
-		mElencoListCursorAdapter.swapCursor(null);
-	}
-	
 	public interface Callback {
 		void goToDetailScreen(int pointId);
 		void goToMapScreen(float clixkedX, float clickedY);
