@@ -1,18 +1,26 @@
 package com.pointrestapp.pointrest;
 
+import java.util.ArrayList;
+import java.util.WeakHashMap;
+
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.pointrestapp.pointrest.adapters.TabAdapter;
+import com.pointrestapp.pointrest.fragments.FiltriRicercaFragment;
 import com.pointrestapp.pointrest.fragments.FragmentListFrame;
 import com.pointrestapp.pointrest.fragments.FragmentMap;
 import com.pointrestapp.pointrest.fragments.FragmentTitleScreen;
 import com.pointrestapp.pointrest.fragments.InfoAppFragment;
 import com.pointrestapp.pointrest.fragments.NavigationDrawerFragment;
 import com.pointrestapp.pointrest.fragments.NotificheFragment;
+import com.pointrestapp.pointrest.fragments.PreferitiFragment;
 public class MainActivity extends Activity implements
 		TabAdapter.MapCallback,
 		TabAdapter.ListCallback,
@@ -20,12 +28,11 @@ public class MainActivity extends Activity implements
 		FragmentListFrame.Callback{
 
 	private static final String TAG_MAP_SCREEN = "TAG_MAP_SCREEN";
-
 	private static final String TAG_TITLE_SCREEN = "TAG_TITLE_SCREEN";
-
-	private static final String TAG_NOTIFICHE = "TAG_NOTIFICHE";
-
 	private static final String TAG_INFO_APP = "TAG_INFO_APP";
+	private static final String TAG_FRAGMENT_NOTIFICHE = "TAG_NOTIFICHE";
+	private static final String TAG_PREFERITI = "TAG_PREFERITI";
+	private static final String TAG_FILTRI_RICERCA = "TAG_FILTRI_RICERCA";
 
 	/**
 	 * Fragment managing the behaviors, interactions and presentation of the
@@ -43,6 +50,7 @@ public class MainActivity extends Activity implements
 	 */
 	private CharSequence mTitle;
 
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -53,8 +61,8 @@ public class MainActivity extends Activity implements
 		mTitle = getTitle();
 
 		// Set up the drawer.
-		/*mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
-				(DrawerLayout) findViewById(R.id.drawer_layout));*/
+		mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
+				(DrawerLayout) findViewById(R.id.drawer_layout));
 		if (savedInstanceState == null) {
 			mTitleScreenFragment = FragmentTitleScreen.getInstance();
 			mMapFragment = FragmentMap.getInstance(0);
@@ -62,6 +70,7 @@ public class MainActivity extends Activity implements
 				.add(R.id.container, mMapFragment, TAG_MAP_SCREEN)
 				.add(R.id.container, mTitleScreenFragment, TAG_TITLE_SCREEN)
 				.commit();
+			
 		} else {
 			mTitleScreenFragment = (FragmentTitleScreen) getFragmentManager().findFragmentByTag(TAG_TITLE_SCREEN);
 			mMapFragment = (FragmentMap) getFragmentManager().findFragmentByTag(TAG_MAP_SCREEN);
@@ -70,6 +79,32 @@ public class MainActivity extends Activity implements
 
 	@Override
 	public void onNavigationDrawerItemSelected(int position) {
+		Fragment fragment;
+		String tag = "";
+	    switch(position) {
+	        default:
+	        case 0:
+	        	tag = TAG_FILTRI_RICERCA;
+	            fragment = new FiltriRicercaFragment();
+	            break;
+	        case 1:
+	        	tag = TAG_PREFERITI;
+	            fragment = new PreferitiFragment();
+	            break;
+	        case 2:
+	        	tag = TAG_FRAGMENT_NOTIFICHE;
+	            fragment = new NotificheFragment();
+	            break;
+	        case 3:
+	        	tag = TAG_INFO_APP; 
+	            fragment = new InfoAppFragment();
+	            break;
+	    }
+	    
+	    getFragmentManager().beginTransaction()
+	    .replace(R.id.container, fragment)
+	    .addToBackStack(null)
+	    .commit();
 		// update the main content by replacing fragments
 		/* FragmentManager fragmentManager = getFragmentManager();
 		fragmentManager
@@ -88,6 +123,9 @@ public class MainActivity extends Activity implements
 			break;
 		case 3:
 			mTitle = getString(R.string.title_section3);
+			break;
+		case 4:
+			mTitle = getString(R.string.title_section4);
 			break;
 		}
 	}
@@ -137,34 +175,32 @@ public class MainActivity extends Activity implements
 	
 	
 	public void goToNotifiche() {
-		// TODO Auto-generated method stub
-		getFragmentManager()
-		.beginTransaction()
-		.remove(mMapFragment)
-		.remove(mTitleScreenFragment)
-		.add(R.id.container, NotificheFragment.getInstance(), TAG_NOTIFICHE)
+		getFragmentManager().beginTransaction()
+		.replace(R.id.container, NotificheFragment.getInstance())
 		.addToBackStack(null)
-		.commit();
-	}
+		.commit();	}
 	
 	public void goToInfoApp() {
 		// TODO Auto-generated method stub
 		getFragmentManager().beginTransaction()
-		.replace(R.id.container, InfoAppFragment.getInstance(), TAG_INFO_APP).commit();
+		.replace(R.id.container, InfoAppFragment.getInstance(), TAG_INFO_APP)
+		.addToBackStack(null)
+		.commit();
 	}
 
 	@Override
 	public void goToMapScreen(float x, float y) {
 		mMapFragment.prepareForShow(x, y);
-		getFragmentManager()
-		.beginTransaction()
-		.remove(mTitleScreenFragment)
+		getFragmentManager().beginTransaction()
+		//.add(R.id.container, mTitleScreenFragment, TAG_MAP_SCREEN)
+		.hide(mTitleScreenFragment)
 		.addToBackStack(null)
 		.commit();
 	}
 	
 	@Override
 	public void onBackPressed() {
+		
 		mMapFragment.onBackPressed();
 		mTitleScreenFragment.OnBackPressed();
 		super.onBackPressed();
@@ -174,4 +210,5 @@ public class MainActivity extends Activity implements
 	public Fragment getFragmentForTab(int puntoType) {
 		return mTitleScreenFragment.getFragmentForTab(puntoType);
 	}
+	
 }
