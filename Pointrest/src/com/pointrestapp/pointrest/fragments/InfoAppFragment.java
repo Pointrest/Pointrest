@@ -2,6 +2,7 @@ package com.pointrestapp.pointrest.fragments;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -46,7 +47,15 @@ public class InfoAppFragment extends Fragment {
 				return false;
 			}
 		});
-		
+
+		String versionName;
+		try {
+			versionName = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionName;
+		} catch (NameNotFoundException e) {
+			//e.printStackTrace();
+			versionName = "1.0.2";
+		}
+		versione.setText(versionName);
 		return v;
 	}
 

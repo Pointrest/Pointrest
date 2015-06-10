@@ -48,7 +48,7 @@
             android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Autore/i" />
+            android:text="Autori" />
 
         <TextView
             android:id="@+id/autori"
@@ -56,7 +56,7 @@
             android:layout_height="wrap_content"
             android:gravity="right"
             android:paddingRight="10dp"
-            android:text="Nome/i Cognome/i" />
+            android:text="Milorad Stevanović,\nStefano Vuerich,\nLudovico Biondani,\nAndrea Menegat,\nRoberto Basso" />
     </LinearLayout>
 
     <TextView
