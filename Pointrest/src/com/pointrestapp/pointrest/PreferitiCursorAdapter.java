@@ -1,5 +1,6 @@
 package com.pointrestapp.pointrest;
 
+
 import com.pointrestapp.pointrest.data.PuntiDbHelper;
 
 import android.content.Context;
@@ -44,10 +45,11 @@ public class PreferitiCursorAdapter extends CursorAdapter {
 
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
+
 		int preferitoColumnIndex = cursor.getColumnIndex(PuntiDbHelper.NOME);
 		ViewHolder vholder = (ViewHolder) view.getTag();
 		
-		vholder.nome_preferito.setText(cursor.getString(preferitoColumnIndex));
+		//vholder.nome_preferito.setText(cursor.getString(preferitoColumnIndex));
 		//SETTARE IMMAGINE!
 		//vholder.nome_preferito.setImageResource(R.drawable.my_image);
 		vholder.info_p.setOnClickListener(new View.OnClickListener() {

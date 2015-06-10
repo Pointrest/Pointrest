@@ -30,7 +30,8 @@ import com.pointrestapp.pointrest.data.PuntiContentProvider;
 import com.pointrestapp.pointrest.data.PuntiDbHelper;
 
 
-public class FragmentListFrame extends Fragment {
+public class FragmentListFrame extends Fragment
+		implements LoaderCallbacks<Cursor> {
 
 //	private static final int POI_LOADER_ID = Constants.TabType.POI;
 //	private static final int AC_LOADER_ID = Constants.TabType.AC;
@@ -77,6 +78,8 @@ public class FragmentListFrame extends Fragment {
 
 	private void setUpGui(View aView, Bundle aBundle) {
 		mListView = (ListView)aView.findViewById(R.id.listView_elenco);
+		mElencoListCursorAdapter = new ElencoListCursorAdapter(getActivity(), null, true);
+		mListView.setAdapter(mElencoListCursorAdapter);
 		mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 			@Override
@@ -92,7 +95,7 @@ public class FragmentListFrame extends Fragment {
 		});
 		
 		FrameLayout vFrame = (FrameLayout)aView.findViewById(R.id.frame_transparent);
-/*
+
 		vFrame.setOnTouchListener(new OnTouchListener() {
 		    private static final int MAX_CLICK_DURATION = 200;
 		    private long startClickTime;
@@ -110,14 +113,14 @@ public class FragmentListFrame extends Fragment {
 	                if(clickDuration < MAX_CLICK_DURATION) {
 	                	//mListener.goToMapScreen(event.getX() * event.getXPrecision(), event.getY() * event.getYPrecision());
 	                	//mListener.goToMapScreen(event.getRawX(), event.getRawY());
-	                	mListener.goToMapScreen(event.getX(), event.getY() - FragmentTitleScreen.h);
+	                	mListener.goToMapScreen(event.getX(), event.getY());
 	                }
 	            }
 	        }
 	        return true;
 			}
 		});
-		*/
+		
 		vFrame.setOnLongClickListener(new View.OnLongClickListener() {
 			
 			@Override
@@ -146,15 +149,7 @@ public class FragmentListFrame extends Fragment {
 	
 	@Override
 	public void onResume() {
-		Cursor cursor = getActivity().getContentResolver()
-				.query(PuntiContentProvider.PUNTI_URI,
-						null,
-						PuntiDbHelper.TYPE + "=?",
-						new String[]{ mCurrentTab + "" },
-						null);
-		mElencoListCursorAdapter = new ElencoListCursorAdapter(getActivity(), cursor, true);
-		mListView.setAdapter(mElencoListCursorAdapter);
-		//mElencoListCursorAdapter.swapCursor(cursor);
+		getLoaderManager().initLoader(mCurrentTab, null, this);
 		super.onResume();
 	};
 	
@@ -173,5 +168,25 @@ public class FragmentListFrame extends Fragment {
 	public interface Callback {
 		void goToDetailScreen(int pointId);
 		void goToMapScreen(float clixkedX, float clickedY);
+	}
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		return new CursorLoader(getActivity(),
+								PuntiContentProvider.PUNTI_URI,
+								null,
+								PuntiDbHelper.TYPE + "=?",
+								new String[]{ mCurrentTab + "" },
+								null);
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		mElencoListCursorAdapter.swapCursor(data);
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		mElencoListCursorAdapter.swapCursor(null);
 	}
 }

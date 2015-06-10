@@ -187,10 +187,11 @@ public class MainActivity extends Activity implements
 		.addToBackStack(null)
 		.commit();
 	}
-
+	
 	@Override
 	public void goToMapScreen(float x, float y) {
 		mMapFragment.prepareForShow(x, y);
+
 		getFragmentManager().beginTransaction()
 		//.add(R.id.container, mTitleScreenFragment, TAG_MAP_SCREEN)
 		.hide(mTitleScreenFragment)
