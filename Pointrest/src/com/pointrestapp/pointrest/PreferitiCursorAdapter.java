@@ -1,6 +1,6 @@
 package com.pointrestapp.pointrest;
 
-import com.pointrestapp.pointrest.data.PreferitoHelper;
+import com.pointrestapp.pointrest.data.PuntiDbHelper;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -44,7 +44,7 @@ public class PreferitiCursorAdapter extends CursorAdapter {
 
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
-		int preferitoColumnIndex = cursor.getColumnIndex(PreferitoHelper.PREFERITO);
+		int preferitoColumnIndex = cursor.getColumnIndex(PuntiDbHelper.NOME);
 		ViewHolder vholder = (ViewHolder) view.getTag();
 		
 		vholder.nome_preferito.setText(cursor.getString(preferitoColumnIndex));

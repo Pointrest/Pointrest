@@ -41,6 +41,7 @@ public class ListsDialogRicerca extends DialogFragment {
 				public void onClick(DialogInterface dialog, int which) {
 					Intent tipologia = new Intent();
 					tipologia.putExtra("LIST", which);
+					tipologia.putExtra("IS_CATEGORY", false);
 					getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, tipologia);
 				}
 			});
@@ -52,7 +53,8 @@ public class ListsDialogRicerca extends DialogFragment {
 			public void onClick(DialogInterface dialog, int which) {
 				Intent tipologia = new Intent();
 				tipologia.putExtra("LIST", which);
-				getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, getActivity().getIntent());
+				tipologia.putExtra("IS_CATEGORY", true);
+				getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, tipologia);
 			}
 		});
 		}

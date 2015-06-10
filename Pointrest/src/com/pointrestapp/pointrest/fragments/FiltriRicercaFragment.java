@@ -20,7 +20,9 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.pointrestapp.pointrest.Constants;
 import com.pointrestapp.pointrest.ListsDialogRicerca;
 import com.pointrestapp.pointrest.R;
 
@@ -32,6 +34,7 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 	Button resetFiltri, cerca;
 	int mStackLevel = 0;
 	public static final int DIALOG_FRAGMENT = 1;
+	private int progressSeekBar = 0;
 	
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
@@ -42,7 +45,7 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View v = inflater.inflate(R.layout.fragment_notifiche, container, false);
+		View v = inflater.inflate(R.layout.fragment_search_filters, container, false);
 		
 		if (savedInstanceState != null) {
 	        mStackLevel = savedInstanceState.getInt("level");
@@ -57,6 +60,8 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 		soloPreferiti = (Switch)v.findViewById(R.id.notifichePromo);
 		resetFiltri = (Button)v.findViewById(R.id.resetFilters);
 		cerca = (Button)v.findViewById(R.id.cercaByFilter);
+		
+		txtMetri.setText("1 km");
 		
 		lTipo.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -78,27 +83,30 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 		});
 		raggio.setMax(19);
 		raggio.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-			  int progress = 0;
+			  
 			  
 			  @Override
 			  public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) {
-				  progress = progresValue + 1; //Toast.makeText(getActivity().getApplicationContext(), "Changing seekbar's progress", Toast.LENGTH_SHORT).show();
+				  progressSeekBar = progresValue + 1; //Toast.makeText(getActivity().getApplicationContext(), "Changing seekbar's progress", Toast.LENGTH_SHORT).show();
+				  txtMetri.setText( + progressSeekBar + " km");
 			  }
 			
 			  @Override
 			  public void onStartTrackingTouch(SeekBar seekBar) {
-				  txtMetri.setText( + progress + " km");
+				  txtMetri.setText( + progressSeekBar + " km");
 			  }
 			
 			  @Override
 			  public void onStopTrackingTouch(SeekBar seekBar) {
-				  txtMetri.setText( + progress + " km");// + seekBar.getMax());
+				  txtMetri.setText( + progressSeekBar + " km");// + seekBar.getMax());
 			  }
 		 });
 		 resetFiltri.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				raggio.setProgress(1);
+				progressSeekBar=0;
+				raggio.setProgress(0);
+				txtMetri.setText("1 km");
 				soloPreferiti.setChecked(false);
 				//to implement:
 				//tipo tutti
@@ -147,9 +155,26 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 	            case DIALOG_FRAGMENT:
 
 	                if (resultCode == Activity.RESULT_OK) {
-	                    int position = data.getIntExtra("TIPO", 0);
+	                    int position = data.getIntExtra("LIST", 999);
+	                    boolean is_category = data.getBooleanExtra("IS_CATEGORY", false);
+	                    if(!is_category){
+	                    	switch(position){
+	                    		case 0:
+	                    			//Constants.TabType.TUTTO;
+	                    			break;
+	                    		case 1:
+	                    			//Constants.TabType.AC;
+	                    			break;
+	                    		case 2:
+	                    			//Constants.TabType.POI;
+	                    			break;
+	                    	}
+	                    }else{
+	                    	
+	                    }
+	                    Toast.makeText(getActivity().getApplicationContext(), "Positions " + position + " || isCategory " + is_category, Toast.LENGTH_SHORT).show();
 	                } else if (resultCode == Activity.RESULT_CANCELED){
-	                    // After Cancel code.
+	                	Toast.makeText(getActivity().getApplicationContext(), "Result cancelled", Toast.LENGTH_SHORT).show();
 	                }
 
 	                break;
