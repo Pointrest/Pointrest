@@ -50,14 +50,12 @@ public class MainActivity extends Activity implements
 	 */
 	private CharSequence mTitle;
 
-	private ArrayList<Fragment> mCurrentFragments;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		mCurrentFragments = new ArrayList<Fragment>();
 		mNavigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager()
 				.findFragmentById(R.id.navigation_drawer);
 		mTitle = getTitle();
@@ -68,8 +66,6 @@ public class MainActivity extends Activity implements
 		if (savedInstanceState == null) {
 			mTitleScreenFragment = FragmentTitleScreen.getInstance();
 			mMapFragment = FragmentMap.getInstance(0);
-			mCurrentFragments.add(mMapFragment);
-			mCurrentFragments.add(mTitleScreenFragment);
 			getFragmentManager().beginTransaction()
 				.add(R.id.container, mMapFragment, TAG_MAP_SCREEN)
 				.add(R.id.container, mTitleScreenFragment, TAG_TITLE_SCREEN)
@@ -105,8 +101,8 @@ public class MainActivity extends Activity implements
 	            break;
 	    }
 	    
-	    removeAllFragments(getFragmentManager().beginTransaction())
-	    .add(R.id.container, fragment, tag)
+	    getFragmentManager().beginTransaction()
+	    .replace(R.id.container, fragment)
 	    .addToBackStack(null)
 	    .commit();
 		// update the main content by replacing fragments
@@ -179,22 +175,23 @@ public class MainActivity extends Activity implements
 	
 	
 	public void goToNotifiche() {
-		removeAllFragments(getFragmentManager().beginTransaction())
-		.add(R.id.container, NotificheFragment.getInstance())
+		getFragmentManager().beginTransaction()
+		.replace(R.id.container, NotificheFragment.getInstance())
 		.addToBackStack(null)
 		.commit();	}
 	
 	public void goToInfoApp() {
 		// TODO Auto-generated method stub
-		removeAllFragments(getFragmentManager().beginTransaction())
-		.add(R.id.container, InfoAppFragment.getInstance(), TAG_INFO_APP)
+		getFragmentManager().beginTransaction()
+		.replace(R.id.container, InfoAppFragment.getInstance(), TAG_INFO_APP)
+		.addToBackStack(null)
 		.commit();
 	}
 
 	@Override
 	public void goToMapScreen(float x, float y) {
 		mMapFragment.prepareForShow(x, y);
-		removeAllFragments(getFragmentManager().beginTransaction())
+		getFragmentManager().beginTransaction()
 		//.add(R.id.container, mTitleScreenFragment, TAG_MAP_SCREEN)
 		.hide(mTitleScreenFragment)
 		.addToBackStack(null)
@@ -214,21 +211,4 @@ public class MainActivity extends Activity implements
 		return mTitleScreenFragment.getFragmentForTab(puntoType);
 	}
 	
-	private FragmentTransaction removeAllFragments(FragmentTransaction fragmentTransaction){
-		ArrayList<Fragment> tmpList = new ArrayList<Fragment>(mCurrentFragments);
-		for (Fragment f : mCurrentFragments) {
-			fragmentTransaction.remove(f);
-			tmpList.remove(f);
-		}
-		mCurrentFragments = tmpList;
-		return fragmentTransaction;
-	}
-	private void addFragment(Fragment f){
-	    mCurrentFragments.add(f);
-	    FragmentManager fragmentManager = getFragmentManager(); 
-	    fragmentManager.beginTransaction()
-			.add(R.id.container, f)
-			.addToBackStack(null)
-	        .commit();
-	}
 }
