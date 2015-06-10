@@ -1,7 +1,5 @@
 package com.pointrestapp.pointrest;
 
-import com.pointrestapp.pointrest.data.PreferitoHelper;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.view.LayoutInflater;
@@ -44,10 +42,10 @@ public class PreferitiCursorAdapter extends CursorAdapter {
 
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
-		int preferitoColumnIndex = cursor.getColumnIndex(PreferitoHelper.PREFERITO);
+		//int preferitoColumnIndex = cursor.getColumnIndex(PreferitoHelper.PREFERITO);
 		ViewHolder vholder = (ViewHolder) view.getTag();
 		
-		vholder.nome_preferito.setText(cursor.getString(preferitoColumnIndex));
+		//vholder.nome_preferito.setText(cursor.getString(preferitoColumnIndex));
 		//SETTARE IMMAGINE!
 		//vholder.nome_preferito.setImageResource(R.drawable.my_image);
 		vholder.info_p.setOnClickListener(new View.OnClickListener() {

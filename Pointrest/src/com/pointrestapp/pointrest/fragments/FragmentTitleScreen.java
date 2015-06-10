@@ -1,16 +1,16 @@
 package com.pointrestapp.pointrest.fragments;
 
 import java.util.WeakHashMap;
-
+import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.pointrestapp.pointrest.Constants;
 import com.pointrestapp.pointrest.MyApplication;
 import com.pointrestapp.pointrest.R;
@@ -25,8 +25,8 @@ public class FragmentTitleScreen extends Fragment
 	private ViewPager mViewPager;
 	private Activity mActivity;
 	private TabAdapter mTabsAdapter;
-	private WeakHashMap<Integer, Fragment> mAdaptedFragments;
-	private int mCurrentTab = Constants.TabType.TUTTO;
+	//private WeakHashMap<Integer, Fragment> mAdaptedFragments;
+	private int mCurrentTab = 1;
 	
 	public static FragmentTitleScreen getInstance() {
 		return new FragmentTitleScreen();
@@ -53,24 +53,25 @@ public class FragmentTitleScreen extends Fragment
         	mCurrentTab = savedInstanceState.getInt(CURRENT_TAB);
         }
         
-        mTabsAdapter = new TabAdapter(mActivity);
-        mAdaptedFragments = ((MyApplication)getActivity().getApplication()).mAdaptedFragments;
+        mTabsAdapter = new TabAdapter(mActivity, getFragmentManager());
+        
+        //mAdaptedFragments = ((MyApplication)getActivity().getApplication()).mAdaptedFragments;
         mViewPager.setAdapter(mTabsAdapter);
         mViewPager.setOnPageChangeListener(mTabsAdapter);
-        mViewPager.setCurrentItem(mCurrentTab, true);
-        mTabsAdapter.notifyDataSetChanged();
 		return vView;
 	}
 	
 	@Override
 	public void onResume() {
+        mViewPager.setCurrentItem(mCurrentTab, true);
+        mTabsAdapter.onPageSelected(mCurrentTab);
 		super.onResume();
 	}
 
 	@Override
 	public Fragment getFragmentForTab(int puntoType) {
 		FragmentListFrame f = FragmentListFrame.getInstance(puntoType);
-		mAdaptedFragments.put(puntoType, f);
+		/*mAdaptedFragments.put(puntoType, f); */
 		return f;
 	}
 
@@ -80,10 +81,10 @@ public class FragmentTitleScreen extends Fragment
 
 	@Override
 	public void onTabSelected(int puntoType) {
-		Fragment f = mAdaptedFragments.get(puntoType);
+		/*Fragment f = mAdaptedFragments.get(puntoType);
 		if (f != null) {
 			f.onResume();
-		}
+		} */
 	}
 	@Override
 	public void onSaveInstanceState(Bundle outState) {

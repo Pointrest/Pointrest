@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.animation.LayoutTransition;
-import android.animation.ValueAnimator;
-import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.app.Activity;
 import android.app.Fragment;
 import android.database.Cursor;
@@ -14,6 +12,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.LinearLayout;
@@ -43,8 +42,7 @@ public class FragmentMap extends Fragment  implements
 		OnMapReadyCallback,
 		TabAdapter.MapCallback,
 		ConnectionCallbacks,
-		OnConnectionFailedListener,
-		AnimatorUpdateListener {
+		OnConnectionFailedListener {
 
 	private GoogleMap mMap;
 	private MyMapView mMapView;
@@ -55,6 +53,7 @@ public class FragmentMap extends Fragment  implements
 	private LinearLayout mLayoutWhole;
 	private boolean mFullscreen;
 	private MainActivity mHostActivity;
+	private int mCurrentTab;
 
 	public static FragmentMap getInstance(int aPosition){
 		FragmentMap tf = new FragmentMap();
@@ -117,6 +116,14 @@ public class FragmentMap extends Fragment  implements
 			}
 		});
 		
+		//We need this listener to avoid adding LatLngs to a 0 size MapView;
+		mMapView.getViewTreeObserver().addOnGlobalLayoutListener(
+			    new ViewTreeObserver.OnGlobalLayoutListener() {
+			      @Override
+			      public void onGlobalLayout() {
+			    	  showMarkersForType(mCurrentTab);
+			      }
+			    });
 		return vView;
 	}
 	
@@ -141,6 +148,7 @@ public class FragmentMap extends Fragment  implements
 	}
 
 	private void showMarkersForType(int puntoType) {
+		mCurrentTab = puntoType;
 		boolean haveAtLeastOnePointToShow = false;
 		//Che cazzo posso fare qua?
 		if (mMap == null)
@@ -320,18 +328,10 @@ public class FragmentMap extends Fragment  implements
 		        return true;
 		    }
 		}
-		@Override
-		public void onAnimationUpdate(ValueAnimator animation) {
-			// TODO Auto-generated method stub
-			
-		}
 		
 		public void onBackPressed() {
 			Animation a = new WeightChangeAnimation(mFrameBelow, 20f);
-			//Animation b = new WeightChangeAnimation(mFrameBelow, 0f);
-			//AnimatorSet s = new AnimatorSet();
 			a.setDuration(150);
-			//b.setDuration(500);
 			mFrameBelow.startAnimation(a);
 		}
 

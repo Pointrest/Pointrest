@@ -7,6 +7,6 @@ import android.app.Fragment;
 
 public class MyApplication extends Application {
 	
-	public WeakHashMap<Integer, Fragment> mAdaptedFragments = new WeakHashMap<Integer, Fragment>();
+	//public WeakHashMap<Integer, Fragment> mAdaptedFragments = new WeakHashMap<Integer, Fragment>();
 	
 }

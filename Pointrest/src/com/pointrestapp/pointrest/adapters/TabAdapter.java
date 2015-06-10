@@ -2,23 +2,22 @@ package com.pointrestapp.pointrest.adapters;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.support.v13.app.FragmentPagerAdapter;
+import android.app.FragmentManager;
+import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 
-import com.pointrestapp.pointrest.fragments.FragmentListFrame;
-
-public class TabAdapter extends FragmentPagerAdapter implements
+public class TabAdapter extends FragmentStatePagerAdapter implements
 	ViewPager.OnPageChangeListener {
 
     private final MapCallback mMapListener;
     private final ListCallback mListListener;
     private static final int TOTAL_TABS = 3;
-	
+	/*
     @Override
     public int getItemPosition(Object object) {
     	return POSITION_NONE;
     } 
-    
+    */
 	@Override
 	public CharSequence getPageTitle(int position) {
 		String ret = "";
@@ -38,8 +37,8 @@ public class TabAdapter extends FragmentPagerAdapter implements
 		return ret;
 	}
 
-	public TabAdapter(Activity activity) {
-		super(activity.getFragmentManager());
+	public TabAdapter(Activity activity, FragmentManager fm) {
+		super(fm);
         mMapListener = (MapCallback)activity;
         mListListener = (ListCallback)activity;
 	}

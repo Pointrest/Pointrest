@@ -152,13 +152,14 @@ public class MainActivity extends Activity implements
 		getFragmentManager().beginTransaction()
 		.replace(R.id.container, InfoAppFragment.getInstance(), TAG_INFO_APP).commit();
 	}
-
+	
 	@Override
 	public void goToMapScreen(float x, float y) {
 		mMapFragment.prepareForShow(x, y);
 		getFragmentManager()
 		.beginTransaction()
-		.remove(mTitleScreenFragment)
+		//.remove(mTitleScreenFragment)
+		.hide(mTitleScreenFragment)
 		.addToBackStack(null)
 		.commit();
 	}
