@@ -103,7 +103,7 @@ public class FragmentListFrame extends Fragment
 		    
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-			    
+				populateDbWithDummyPoint();
 		        switch (event.getAction()) {
 	            case MotionEvent.ACTION_DOWN: {
 	                startClickTime = Calendar.getInstance().getTimeInMillis();
@@ -122,25 +122,6 @@ public class FragmentListFrame extends Fragment
 	            }
 	        }
 	        return true;
-			}
-		});
-		
-		vFrame.setOnLongClickListener(new View.OnLongClickListener() {
-			
-			@Override
-			public boolean onLongClick(View v) {
-				ContentValues values = new ContentValues();
-				Random r = new Random();
-				int type = r.nextInt(3);
-				values.put(PuntiDbHelper.NOME, "punto" + type);
-				values.put(PuntiDbHelper.TYPE, type);
-				values.put(PuntiDbHelper.BLOCKED, Constants.NotificationBlocked.TRUE);
-				double lat = r.nextDouble() + r.nextInt(50);
-				double lang = r.nextDouble() + r.nextInt(50);
-				values.put(PuntiDbHelper.LATUTUDE, lat);
-				values.put(PuntiDbHelper.LONGITUDE, lang);
-				getActivity().getContentResolver().insert(PuntiContentProvider.PUNTI_URI, values);
-				return true;
 			}
 		});
 		
@@ -199,5 +180,20 @@ public class FragmentListFrame extends Fragment
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		mElencoListCursorAdapter.swapCursor(null);
+	}
+
+	private void populateDbWithDummyPoint() {
+		ContentValues values = new ContentValues();
+		Random r = new Random();
+		int type = r.nextInt(3);
+		values.put(PuntiDbHelper.NOME, "punto" + type);
+		values.put(PuntiDbHelper.TYPE, type);
+		values.put(PuntiDbHelper.BLOCKED, Constants.NotificationBlocked.TRUE);
+		double lat = r.nextDouble() + r.nextInt(50);
+		double lang = r.nextDouble() + r.nextInt(50);
+		values.put(PuntiDbHelper.LATUTUDE, lat);
+		values.put(PuntiDbHelper.LONGITUDE, lang);
+		values.put(PuntiDbHelper.FAVOURITE, Constants.NotificationBlocked.TRUE);
+		getActivity().getContentResolver().insert(PuntiContentProvider.PUNTI_URI, values);
 	}
 }
