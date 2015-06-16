@@ -13,4 +13,8 @@ public final class Constants {
 		public static final int FALSE = 0; 
 		public static final int TRUE = 1; 
 	}
+	public static class Favourite {
+		public static final int FALSE = 0; 
+		public static final int TRUE = 1; 
+	}
 }
