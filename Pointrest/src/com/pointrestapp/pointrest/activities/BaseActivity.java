@@ -2,26 +2,36 @@ package com.pointrestapp.pointrest.activities;
 
 import java.io.Serializable;
 
-import com.pointrestapp.pointrest.R;
-import com.pointrestapp.pointrest.fragments.NavigationDrawerFragment;
-
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.pointrestapp.pointrest.R;
+import com.pointrestapp.pointrest.data.PuntiContentProvider;
+import com.pointrestapp.pointrest.fragments.NavigationDrawerFragment;
+
 public class BaseActivity extends Activity implements
 			NavigationDrawerFragment.NavigationDrawerCallbacks{
 
 	private NavigationDrawerFragment mNavigationDrawerFragment;
 	private CharSequence mTitle;
+	
+    private static final String ACCOUNT = "dummyaccount";
+	private static final long SYNC_INTERVAL_IN_SECONDS = 360;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		createSyncAccountAndInitializeSyncAdapter(this);
 		
 		setContentView(R.layout.activity_main);
 
@@ -48,6 +58,7 @@ public class BaseActivity extends Activity implements
 			mTitle = getString(R.string.title_section4);
 			break;
 		}
+		restoreActionBar();
 	}
 	
 	@Override
@@ -99,8 +110,42 @@ public class BaseActivity extends Activity implements
 	
 	public void restoreActionBar() {
 		ActionBar actionBar = getActionBar();
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+		//actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 		actionBar.setDisplayShowTitleEnabled(true);
 		actionBar.setTitle(mTitle);
 	}
+	
+    private void createSyncAccountAndInitializeSyncAdapter(Context context) {
+        // Create the account type and default account
+        Account newAccount = new Account(
+                ACCOUNT, getResources().getString(R.string.pointrest_account_type));
+        // Get an instance of the Android account manager
+        AccountManager accountManager =
+                (AccountManager) context.getSystemService(
+                        ACCOUNT_SERVICE);
+        /*
+         * Add the account and account type, no password or user data
+         * If successful, return the Account object, otherwise report an error.
+         */
+        if (accountManager.addAccountExplicitly(newAccount, null, null)) {
+            /*
+             * If you don't set android:syncable="true" in
+             * in your <provider> element in the manifest,
+             * then call context.setIsSyncable(account, AUTHORITY, 1)
+             * here.
+             */
+        } else {
+            /*
+             * The account exists or some other error occurred. Log this, report it,
+             * or handle it internally.
+             */
+        }
+
+        ContentResolver.addPeriodicSync(
+                newAccount,
+                PuntiContentProvider.AUTHORITY,
+                Bundle.EMPTY,
+                SYNC_INTERVAL_IN_SECONDS);
+		
+    }
 }

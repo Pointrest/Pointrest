@@ -7,17 +7,19 @@
     <uses-sdk
         android:minSdkVersion="16"
         android:targetSdkVersion="22" />
-
+    <!-- internet -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-    <!--
-         The following two permissions are not required to use
-	     Google Maps Android API v2, but are recommended.
-    -->
+    <!-- maps -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <!-- sync adapter -->
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
 
     <application
         android:name="com.pointrestapp.pointrest.MyApplication"
@@ -51,6 +53,29 @@
             android:authorities="com.pointrestapp.pointrest.data.PuntiContentProvider"
             android:exported="false" >
         </provider>
+
+        <service
+            android:name="com.pointrestapp.pointrest.sync.PuntiAuthenticatorService" >
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+        <service
+            android:name="com.pointrestapp.pointrest.sync.PuntiSyncService"
+            android:exported="true"
+            android:process=":sync" >
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
     </application>
 
 </manifest>
