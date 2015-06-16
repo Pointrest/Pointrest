@@ -8,25 +8,30 @@ import android.os.Bundle;
 
 public class NotificheBloccateDialog extends DialogFragment {
 	public interface INotificheBloccateDialog {
-		public void onRipristina();
-		public void onVisualizza();
+		public void onRipristina(long id);
+		public void onVisualizza(long id);
 		public void onAnnulla();
 	}
+	private long tempID = 0;
 	
 	private static final String TITLE = "TITLE";
 	private INotificheBloccateDialog mListener;
 	
-	public static NotificheBloccateDialog newInstance(){
-		NotificheBloccateDialog mDialog = new NotificheBloccateDialog();
+	public static NotificheBloccateDialog newInstance(long id){
+		NotificheBloccateDialog mDialog = new NotificheBloccateDialog(id);
 		return mDialog;
 	}
 	
-	public static NotificheBloccateDialog newInstance(String title){
-	NotificheBloccateDialog mDialog = new NotificheBloccateDialog();
-	Bundle bundle = new Bundle();
-	bundle.putString(TITLE, title);
-	mDialog.setArguments(bundle);
-	return mDialog;
+	public NotificheBloccateDialog(long id){
+		tempID = id;
+	}
+	
+	public static NotificheBloccateDialog newInstance(String title, int id){
+		NotificheBloccateDialog mDialog = new NotificheBloccateDialog(id);
+		Bundle bundle = new Bundle();
+		bundle.putString(TITLE, title);
+		mDialog.setArguments(bundle);
+		return mDialog;
 	}
 
 	@Override
@@ -47,7 +52,7 @@ public class NotificheBloccateDialog extends DialogFragment {
 		if(bundle != null) {
 			builder.setTitle(bundle.getString(TITLE));
 		}  else {
-			builder.setTitle("Notifiche Bloccate");
+			builder.setTitle("Ripristino");
 		}
 		
 		builder.setMessage("Vuoi ripristinare l'elemento?");
@@ -57,18 +62,11 @@ public class NotificheBloccateDialog extends DialogFragment {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				if(mListener != null)
-					mListener.onRipristina();
+					mListener.onRipristina(tempID);
 				
 			}
 		}); 
-		builder.setNeutralButton("Visualizza", new DialogInterface.OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				if(mListener != null)
-					mListener.onVisualizza();	
-			}
-		});
+		
 		builder.setNegativeButton("Annulla", new DialogInterface.OnClickListener() {
 			
 			@Override

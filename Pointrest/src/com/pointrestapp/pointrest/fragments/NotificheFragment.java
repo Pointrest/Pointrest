@@ -9,6 +9,7 @@ import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,8 +35,8 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 	//private static final String CHIAVE = "CHIAVE1";	
 	private static final int NOTIFICHE_BLOCCATE_LOADER_ID = 0;
 	private NotificheBloccateCursorAdapter mCursorAdapter;
-	public static final String PREFS_NOTIFICATIONS = "prefs_notifications";
-	private SharedPreferences mSettings;
+	public static final String NOTIFICHE_FRAGMENT_PREFS_NOTIFICATIONS = "notifiche_fragment_prefs_notifications";
+	private SharedPreferences mSettings;	
 	
 	long pos;
 	
@@ -54,7 +55,7 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 		lista.setAdapter(mCursorAdapter);
 		
 		// Restore preferences
-		mSettings = this.getActivity().getSharedPreferences(PREFS_NOTIFICATIONS, Context.MODE_PRIVATE);
+		mSettings = this.getActivity().getSharedPreferences(NOTIFICHE_FRAGMENT_PREFS_NOTIFICATIONS, Context.MODE_PRIVATE);
         promo.setChecked(mSettings.getBoolean("promoNotification", false));
 		prossimita.setChecked(mSettings.getBoolean("preferenceNotification", false));
        
@@ -64,10 +65,10 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				pos=id;
-				NotificheBloccateDialog  dialog = NotificheBloccateDialog.newInstance();
+				NotificheBloccateDialog  dialog = NotificheBloccateDialog.newInstance(id);
 				dialog.show(getFragmentManager(), DIALOG_NOTIFICHE);
 				//String item = ((TextView)view).getText().toString();
-				//Toast mToast = Toast.makeText(getActivity().getApplicationContext(), "tag -> " + view.getTag(), Toast.LENGTH_SHORT);
+				//Toast mToast = Toast.makeText(getActivity().getApplicationContext(), "pos -> " + pos, Toast.LENGTH_SHORT);
                 //mToast.show();
 			}
 		});
@@ -90,7 +91,7 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				SharedPreferences.Editor editor = mSettings.edit();
-			    editor.putBoolean("silentMode", promo.isChecked());
+			    editor.putBoolean("promoNotification", promo.isChecked());
 			    editor.commit();
 			}
 		});
@@ -99,7 +100,7 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				SharedPreferences.Editor editor = mSettings.edit();
-				editor.putBoolean("silentMode", prossimita.isChecked());
+				editor.putBoolean("preferenceNotification", prossimita.isChecked());
 				editor.commit();
 			}
 		});
@@ -131,25 +132,26 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 	
 	/*-- Dialog --*/
 	@Override
-	public void onRipristina() {
+	public void onRipristina(long id) {
 		ContentValues values = new ContentValues();
 		values.put(PuntiDbHelper.BLOCKED, Constants.NotificationBlocked.FALSE);
-		getActivity().getContentResolver().update(PuntiContentProvider.PUNTI_URI, values, PuntiDbHelper._ID + "=" + pos, null);
+		getActivity().getContentResolver().update(PuntiContentProvider.PUNTI_URI, values, PuntiDbHelper._ID + "=" + id, null);
 		Toast mToast = Toast.makeText(getActivity().getApplicationContext(), "Ripristinato con successo!", Toast.LENGTH_SHORT);
         mToast.show();
 	}
 	
 	@Override
-	public void onVisualizza() {
+	public void onVisualizza(long id) {
 		visualizzaPIOnTheMap();
 	}
 	@Override
 	public void onAnnulla() {
-		//onBackPressed();
+		Toast mToast = Toast.makeText(getActivity().getApplicationContext(), "annulla dialog", Toast.LENGTH_SHORT);
+        mToast.show();
 	}
 	
 	public void visualizzaPIOnTheMap(){
-		Toast mToast = Toast.makeText(getActivity().getApplicationContext(), "(f)visualizzaPiOnTheMap with id: " + pos +" |to implement|", Toast.LENGTH_SHORT);
+		Toast mToast = Toast.makeText(getActivity().getApplicationContext(), "(f)visualizzaPiOnTheMap with position: " + pos +" |to implement|", Toast.LENGTH_SHORT);
         mToast.show();
 	}
 	public static NotificheFragment getInstance() {
