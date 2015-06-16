@@ -9,7 +9,9 @@ import android.app.Fragment;
 import android.database.Cursor;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -30,9 +32,10 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.LatLngBounds.Builder;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.pointrestapp.pointrest.MainActivity;
+import com.pointrestapp.pointrest.Constants;
 import com.pointrestapp.pointrest.MyMapView;
 import com.pointrestapp.pointrest.R;
+import com.pointrestapp.pointrest.activities.MainScreenActivity;
 import com.pointrestapp.pointrest.adapters.TabAdapter;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
 import com.pointrestapp.pointrest.data.PuntiDbHelper;
@@ -52,8 +55,9 @@ public class FragmentMap extends Fragment  implements
 	private View mFrameBelow;
 	private LinearLayout mLayoutWhole;
 	private boolean mFullscreen;
-	private MainActivity mHostActivity;
+	private MainScreenActivity mHostActivity;
 	private int mCurrentTab;
+	private boolean mLoadedMarkers;
 
 	public static FragmentMap getInstance(int aPosition){
 		FragmentMap tf = new FragmentMap();
@@ -62,8 +66,8 @@ public class FragmentMap extends Fragment  implements
 
 	@Override
 	public void onAttach(Activity activity) {
-		if (activity instanceof MainActivity)
-			mHostActivity = (MainActivity)activity;
+		if (activity instanceof MainScreenActivity)
+			mHostActivity = (MainScreenActivity)activity;
 		super.onAttach(activity);
 	}
 
@@ -100,13 +104,13 @@ public class FragmentMap extends Fragment  implements
 		
 		mLayoutWhole.setLayoutTransition(lt);
 		mMapView.onCreate(savedInstanceState);
-		/*mMapView.setOnTouchListener(new View.OnTouchListener() {
+		mMapView.setOnTouchListener(new View.OnTouchListener() {
 			
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				return true;
 			}
-		}); */
+		});
 		mMapView.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
@@ -116,13 +120,15 @@ public class FragmentMap extends Fragment  implements
 			}
 		});
 		
-		//We need this listener to avoid adding LatLngs to a 0 size MapView;
+		//We need this listener to avoid adding LatLngs to a 0 size MapView
 		mMapView.getViewTreeObserver().addOnGlobalLayoutListener(
 			    new ViewTreeObserver.OnGlobalLayoutListener() {
-			      @Override
-			      public void onGlobalLayout() {
-			    	  showMarkersForType(mCurrentTab);
-			      }
+			    	
+					@Override
+				      public void onGlobalLayout() {
+						if (!mLoadedMarkers)
+							onTabSelected(mCurrentTab);
+				      }
 			    });
 		return vView;
 	}
@@ -150,17 +156,27 @@ public class FragmentMap extends Fragment  implements
 	private void showMarkersForType(int puntoType) {
 		mCurrentTab = puntoType;
 		boolean haveAtLeastOnePointToShow = false;
-		//Che cazzo posso fare qua?
+		//Che c posso fare qua?
 		if (mMap == null)
 			return;
+		mLoadedMarkers = true;
 		mMap.clear();
 		Builder vBoundsBuilder = LatLngBounds.builder();
+		
+		
+		String selection = null;
+		String[] selectionArgs = null;
+		if (mCurrentTab != Constants.TabType.TUTTO) {
+			selection = PuntiDbHelper.TYPE + "=?";
+			selectionArgs = new String[] { puntoType + "" };
+		}
 		Cursor cursor = getActivity().getContentResolver().query(
 				PuntiContentProvider.PUNTI_URI,
-				null,
-				PuntiDbHelper.TYPE + "=?",
-				new String[]{ puntoType + "" },
-				null);
+								null,
+								selection,
+								selectionArgs,
+								null);
+		
 		int pointNameIndex = cursor.getColumnIndex(PuntiDbHelper.NOME);
 		int pointLatIndex = cursor.getColumnIndex(PuntiDbHelper.LATUTUDE);
 		int pointLonIndex = cursor.getColumnIndex(PuntiDbHelper.LONGITUDE);
@@ -177,7 +193,7 @@ public class FragmentMap extends Fragment  implements
 		}
 
 		if (haveAtLeastOnePointToShow)
-			mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(vBoundsBuilder.build(), 100));
+			mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(vBoundsBuilder.build(), 10));
 	}
 	
 	 
@@ -227,8 +243,8 @@ public class FragmentMap extends Fragment  implements
 			
 		}
 
-		public void prepareForShow(float x, float y) {
-			/* 
+		public void prepareForShow(final MotionEvent event) {
+			/*
 			long downTime = SystemClock.uptimeMillis();
 			long eventTime = SystemClock.uptimeMillis() + 100;
 			// List of meta states found here:     developer.android.com/reference/android/view/KeyEvent.html#getMetaState()
@@ -237,12 +253,11 @@ public class FragmentMap extends Fragment  implements
 			    downTime, 
 			    eventTime, 
 			    MotionEvent.ACTION_UP, 
-			    453, 
-			    234, 
+			    x, 
+			    y, 
 			    metaState
-			);
+			);*/
 
-			mMapView.dispatchTouchEvent(motionEvent); */
 /*			int h = mLayoutWhole.getHeight();
 			LayoutParamANimation a = new LayoutParamANimation(mMapView, h);
 			a.setDuration(500);
@@ -295,9 +310,30 @@ public class FragmentMap extends Fragment  implements
 			//Animation b = new WeightChangeAnimation(mFrameBelow, 0f);
 			//AnimatorSet s = new AnimatorSet();
 			a.setDuration(150);
+			a.setAnimationListener(new Animation.AnimationListener() {
+				
+				@Override
+				public void onAnimationStart(Animation animation) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					getActivity().getWindow().getDecorView().findViewById(android.R.id.content).dispatchTouchEvent(event);
+				}
+			});
 			//b.setDuration(500);
 			mFrameBelow.startAnimation(a);
 			mFullscreen = true;
+			//getActivity().getWindow().getDecorView().findViewById(android.R.id.content).dispatchTouchEvent(motionEvent); 
+
 		}
 		
 		public class WeightChangeAnimation extends Animation {
