@@ -1,6 +1,7 @@
 package com.pointrestapp.pointrest.fragments;
 
 import java.util.Calendar;
+import java.util.Currency;
 import java.util.Random;
 
 import android.app.Activity;
@@ -89,7 +90,7 @@ public class FragmentListFrame extends Fragment
 				
 				//to remove, only test
 				//((MainActivity) mListener).goToNotifiche();
-				mListener.goToMapScreen(0, 0);
+				//mListener.goToMapScreen(0, 0);
 			}
 			
 		});
@@ -113,7 +114,10 @@ public class FragmentListFrame extends Fragment
 	                if(clickDuration < MAX_CLICK_DURATION) {
 	                	//mListener.goToMapScreen(event.getX() * event.getXPrecision(), event.getY() * event.getYPrecision());
 	                	//mListener.goToMapScreen(event.getRawX(), event.getRawY());
-	                	mListener.goToMapScreen(event.getX(), event.getY());
+	                	//mListener.goToMapScreen(event.getX(), event.getY());
+	                	MotionEvent e = event;
+	                	e.setLocation(630, 1113);
+	                	mListener.goToMapScreen(event);
 	                }
 	            }
 	        }
@@ -168,15 +172,22 @@ public class FragmentListFrame extends Fragment
 	public interface Callback {
 		void goToDetailScreen(int pointId);
 		void goToMapScreen(float clixkedX, float clickedY);
+		void goToMapScreen(MotionEvent event);
 	}
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		String selection = null;
+		String[] selectionArgs = null;
+		if (mCurrentTab != Constants.TabType.TUTTO) {
+			selection = PuntiDbHelper.TYPE + "=?";
+			selectionArgs = new String[] { mCurrentTab + "" };
+		}
 		return new CursorLoader(getActivity(),
 								PuntiContentProvider.PUNTI_URI,
 								null,
-								PuntiDbHelper.TYPE + "=?",
-								new String[]{ mCurrentTab + "" },
+								selection,
+								selectionArgs,
 								null);
 	}
 
