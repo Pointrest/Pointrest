@@ -5,8 +5,10 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -36,6 +38,12 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 	public static final int DIALOG_FRAGMENT = 1;
 	private int progressSeekBar = 0;
 	
+	public static final String FILTRI_RICERCA_PREFS_NOTIFICATIONS = "filtri_ricerca_prefs_notifications";
+	private static final String TIPO_PI_SHARED = "tipo_pi_shared";
+	protected static final String RAGGIO_SHARED_PREF = "raggio_shared_pref";
+	protected static final String SOLO_PREFERITI_SHARED_PREF = "solo_preferiti_shared_pref";
+	private SharedPreferences mSettings;
+	
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 	    super.onSaveInstanceState(outState);
@@ -57,12 +65,31 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 		txtCategoria = (TextView)v.findViewById(R.id.categoria_pi);
 		txtMetri = (TextView)v.findViewById(R.id.metriBySeekBar);
 		raggio = (SeekBar)v.findViewById(R.id.raggioInteresse);
+		raggio.setMax(19);
 		soloPreferiti = (Switch)v.findViewById(R.id.notifichePromo);
 		resetFiltri = (Button)v.findViewById(R.id.resetFilters);
 		cerca = (Button)v.findViewById(R.id.cercaByFilter);
 		
 		txtMetri.setText("1 km");
 		
+		// Restore preferences
+		mSettings = this.getActivity().getSharedPreferences(FILTRI_RICERCA_PREFS_NOTIFICATIONS, Context.MODE_PRIVATE);
+		progressSeekBar = mSettings.getInt(RAGGIO_SHARED_PREF, 1);
+		raggio.setProgress(progressSeekBar - 1);
+		txtMetri.setText( + progressSeekBar + " km");
+		soloPreferiti.setChecked(mSettings.getBoolean(SOLO_PREFERITI_SHARED_PREF, false));
+		switch(mSettings.getInt(TIPO_PI_SHARED, 1)){
+			case 0:
+				txtTipo.setText("Punti di interesse");
+				break;
+			case 1:
+				txtTipo.setText("Tutti i PI");
+				break;
+			case 2:
+				txtTipo.setText("Attività commerciali");
+				break;	
+		}
+				
 		lTipo.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -78,10 +105,12 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 		soloPreferiti.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				//to impelent
+				SharedPreferences.Editor editor = mSettings.edit();
+			    editor.putBoolean(SOLO_PREFERITI_SHARED_PREF, soloPreferiti.isChecked());
+			    editor.commit();
 			}
 		});
-		raggio.setMax(19);
+		
 		raggio.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 			  
 			  
@@ -99,6 +128,9 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 			  @Override
 			  public void onStopTrackingTouch(SeekBar seekBar) {
 				  txtMetri.setText( + progressSeekBar + " km");// + seekBar.getMax());
+				  SharedPreferences.Editor editor = mSettings.edit();
+				  editor.putInt(RAGGIO_SHARED_PREF, progressSeekBar);
+				  editor.commit();
 			  }
 		 });
 		 resetFiltri.setOnClickListener(new View.OnClickListener() {
@@ -153,24 +185,35 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 	        switch(requestCode) {
 	            case DIALOG_FRAGMENT:
-
-	                if (resultCode == Activity.RESULT_OK) {
+	            	
+	            	SharedPreferences.Editor editor = mSettings.edit();
+	                
+	            	if (resultCode == Activity.RESULT_OK) {
 	                    int position = data.getIntExtra("LIST", 999);
 	                    boolean is_category = data.getBooleanExtra("IS_CATEGORY", false);
 	                    if(!is_category){
 	                    	switch(position){
 	                    		case 0:
+	                			    editor.putInt(TIPO_PI_SHARED, Constants.TabType.TUTTO);
+	                			    editor.commit();
 	                    			//Constants.TabType.TUTTO;
+	                			    txtTipo.setText("Tutti i PI");
 	                    			break;
 	                    		case 1:
+	                			    editor.putInt(TIPO_PI_SHARED, Constants.TabType.AC);
+	                			    editor.commit();
 	                    			//Constants.TabType.AC;
+	                			    txtTipo.setText("Attività commerciali");
 	                    			break;
 	                    		case 2:
+	                    			editor.putInt(TIPO_PI_SHARED, Constants.TabType.POI);
+	                			    editor.commit();
 	                    			//Constants.TabType.POI;
+	                			    txtTipo.setText("Punti di interesse");
 	                    			break;
 	                    	}
 	                    }else{
-	                    	
+	                    	//to implement con shared pref!
 	                    }
 	                    Toast.makeText(getActivity().getApplicationContext(), "Positions " + position + " || isCategory " + is_category, Toast.LENGTH_SHORT).show();
 	                } else if (resultCode == Activity.RESULT_CANCELED){
@@ -201,5 +244,10 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 	public void onLoaderReset(Loader<Cursor> loader) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public static FiltriRicercaFragment getInstance() {
+		// TODO Auto-generated method stub
+		return new FiltriRicercaFragment();
 	}
 }

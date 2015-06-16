@@ -8,26 +8,19 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:layout_marginRight="10dp"
+    android:layout_marginLeft="10dp">
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:text="Notifiche"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <Switch
         android:id="@+id/notifichePromoSwitch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/textView1"
         android:layout_marginTop="20dp"
-        android:text="Notifiche promo" />
+        android:text="Notifiche promo"
+        />
 
     <Switch
         android:id="@+id/notificheProssimitaSwitch"
@@ -37,6 +30,13 @@
         android:layout_below="@+id/notifichePromoSwitch"
         android:layout_marginTop="20dp"
         android:text="Notifiche prossimità PI" />
+    
+    <View
+	    android:layout_width="fill_parent"
+	    android:layout_height="1dp"
+	    android:layout_below="@+id/notificheProssimitaSwitch"
+        android:layout_marginTop="15dp"
+	    android:background="@android:color/darker_gray"/>
 
     <TextView
         android:id="@+id/textView2"
@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/notificheProssimitaSwitch"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         android:text="Notifiche bloccate:"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
