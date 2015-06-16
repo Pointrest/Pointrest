@@ -13,18 +13,43 @@ public class PuntiContentProvider extends ContentProvider {
 
 	public static final String AUTHORITY = "com.pointrestapp.pointrest.data.PuntiContentProvider";
 	public static final String PUNTI_PATH = "punti";
-	
+	public static final String CATEGORIE_PATH = "categorie";
+	public static final String SOTTOCATEGORIE_PATH = "sottocategorie";
+	public static final String PUNTI_IMAGES_PATH = "punti_images";
+
+
 	public static final Uri PUNTI_URI =
 			Uri.parse(ContentResolver.SCHEME_CONTENT +
 					"://" + AUTHORITY + "/" + PUNTI_PATH);
+	public static final Uri CATEGORIE_URI =
+			Uri.parse(ContentResolver.SCHEME_CONTENT +
+					"://" + AUTHORITY + "/" + CATEGORIE_PATH);
+	public static final Uri SOTTOCATEGORIE_URI =
+			Uri.parse(ContentResolver.SCHEME_CONTENT +
+					"://" + AUTHORITY + "/" + SOTTOCATEGORIE_PATH);
+	public static final Uri PUNTI_IMAGES_URI =
+			Uri.parse(ContentResolver.SCHEME_CONTENT +
+					"://" + AUTHORITY + "/" + PUNTI_IMAGES_PATH);
 	
 	private static final int FULL_PUNTI_TABLE = 0;
 	private static final int SINGLE_PUNTO = 1;
+	private static final int FULL_CATEGORIE_TABLE = 2;
+	private static final int SINGLE_CATEGORIA = 3;
+	private static final int FULL_SOTTOCATEGORIE_TABLE = 4;
+	private static final int SINGLE_SOTTOCATEGORIA = 5;
+	private static final int FULL_PUNTI_IMAGES_TABLE = 6;
+	private static final int SINGLE_PUNTO_IMAGE = 7;
 	
 	private static final UriMatcher mUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 	static {
 		mUriMatcher.addURI(AUTHORITY, PUNTI_PATH, FULL_PUNTI_TABLE);
 		mUriMatcher.addURI(AUTHORITY, PUNTI_PATH + "/#", SINGLE_PUNTO);
+		mUriMatcher.addURI(AUTHORITY, CATEGORIE_PATH, FULL_CATEGORIE_TABLE);
+		mUriMatcher.addURI(AUTHORITY, CATEGORIE_PATH + "/#", SINGLE_CATEGORIA);
+		mUriMatcher.addURI(AUTHORITY, SOTTOCATEGORIE_PATH, FULL_SOTTOCATEGORIE_TABLE);
+		mUriMatcher.addURI(AUTHORITY, SOTTOCATEGORIE_PATH + "/#", SINGLE_SOTTOCATEGORIA);
+		mUriMatcher.addURI(AUTHORITY, PUNTI_IMAGES_PATH, FULL_PUNTI_IMAGES_TABLE);
+		mUriMatcher.addURI(AUTHORITY, PUNTI_IMAGES_PATH + "/#", SINGLE_PUNTO_IMAGE);
 	}
 	private DbHelper mHelper;
 	
@@ -32,7 +57,18 @@ public class PuntiContentProvider extends ContentProvider {
 			+ "/punti";
 	public static final String MIME_TYPE_PUNTO = ContentResolver.CURSOR_ITEM_BASE_TYPE
 			+ "/punto";
-	
+	public static final String MIME_TYPE_CATEGORIE = ContentResolver.CURSOR_DIR_BASE_TYPE
+			+ "/categorie";
+	public static final String MIME_TYPE_CATEGORIA = ContentResolver.CURSOR_ITEM_BASE_TYPE
+			+ "/categoria";
+	public static final String MIME_TYPE_SOTTOCATEGORIE = ContentResolver.CURSOR_DIR_BASE_TYPE
+			+ "/sottocategorie";
+	public static final String MIME_TYPE_SOTTOCATEGORIA = ContentResolver.CURSOR_ITEM_BASE_TYPE
+			+ "/sottocategoria";
+	public static final String MIME_TYPE_PUNTI_IMAGES = ContentResolver.CURSOR_DIR_BASE_TYPE
+			+ "/punti_images";
+	public static final String MIME_TYPE_PUNTI_IMAGE = ContentResolver.CURSOR_ITEM_BASE_TYPE
+			+ "/punto_image";
 	@Override
 	public boolean onCreate() {
 		mHelper = new DbHelper(getContext());

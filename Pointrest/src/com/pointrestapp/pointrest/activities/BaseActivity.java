@@ -116,7 +116,7 @@ public class BaseActivity extends Activity implements
 	}
 	
     private void createSyncAccountAndInitializeSyncAdapter(Context context) {
-        // Create the account type and default account
+
         Account newAccount = new Account(
                 ACCOUNT, getResources().getString(R.string.pointrest_account_type));
         // Get an instance of the Android account manager
@@ -146,6 +146,16 @@ public class BaseActivity extends Activity implements
                 PuntiContentProvider.AUTHORITY,
                 Bundle.EMPTY,
                 SYNC_INTERVAL_IN_SECONDS);
-		
+        
+        /* manual update for testing
+        // remember to launch it on first run of the application, use
+        // the "learned about notification drawer flag" to check
+        Bundle settingsBundle = new Bundle();
+        settingsBundle.putBoolean(
+                ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        settingsBundle.putBoolean(
+                ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        ContentResolver.requestSync(newAccount, PuntiContentProvider.AUTHORITY, settingsBundle);
+		*/
     }
 }
