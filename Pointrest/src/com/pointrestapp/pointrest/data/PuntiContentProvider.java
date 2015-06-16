@@ -88,9 +88,8 @@ public class PuntiContentProvider extends ContentProvider {
 				vResult = vDb.insert(PuntiDbHelper.TABLE_NAME, null, values);
 				getContext().getContentResolver().notifyChange(uri, null);
 				return Uri.parse(PUNTI_PATH + "/" + vResult);
-			default : 
-				return null;
 		}
+		return null;
 	}
 
 	@Override

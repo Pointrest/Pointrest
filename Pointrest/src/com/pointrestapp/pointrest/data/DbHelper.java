@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DbHelper extends SQLiteOpenHelper {
 
 	private final static String DB_NAME = "pointrest.db";
-	private final static int DB_VERSION = 4;
+	private final static int DB_VERSION = 5;
 
 	public DbHelper(Context context) {
 		super(context, DB_NAME, null, DB_VERSION);
