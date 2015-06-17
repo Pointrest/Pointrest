@@ -24,7 +24,7 @@ public class BaseActivity extends Activity implements
 	private NavigationDrawerFragment mNavigationDrawerFragment;
 	private CharSequence mTitle;
 	
-    private static final String ACCOUNT = "dummyaccount";
+    private static final String ACCOUNT = "pointrestaccount";
 	private static final long SYNC_INTERVAL_IN_SECONDS = 360;
 
 	@Override
@@ -147,7 +147,7 @@ public class BaseActivity extends Activity implements
                 Bundle.EMPTY,
                 SYNC_INTERVAL_IN_SECONDS);
         
-        /* manual update for testing
+        // manual update for testing
         // remember to launch it on first run of the application, use
         // the "learned about notification drawer flag" to check
         Bundle settingsBundle = new Bundle();
@@ -156,6 +156,6 @@ public class BaseActivity extends Activity implements
         settingsBundle.putBoolean(
                 ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
         ContentResolver.requestSync(newAccount, PuntiContentProvider.AUTHORITY, settingsBundle);
-		*/
+		//
     }
 }
