@@ -20,6 +20,12 @@
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" >
+    </uses-permission>
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" >
+    </uses-permission>
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" >
+    </uses-permission>
 
     <application
         android:name="com.pointrestapp.pointrest.MyApplication"
@@ -54,8 +60,7 @@
             android:exported="false" >
         </provider>
 
-        <service
-            android:name="com.pointrestapp.pointrest.sync.PuntiAuthenticatorService" >
+        <service android:name="com.pointrestapp.pointrest.sync.PuntiAuthenticatorService" >
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
