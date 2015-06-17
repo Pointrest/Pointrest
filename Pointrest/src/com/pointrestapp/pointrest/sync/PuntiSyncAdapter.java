@@ -313,10 +313,10 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter {
 				
 			    ContentValues pointValues = new ContentValues();
 			    
-			    pointValues.put(PuntiDbHelper.BLOCKED, false);
+			    pointValues.put(PuntiDbHelper.BLOCKED, 1);
 			    pointValues.put(PuntiDbHelper.CATEGORY_ID, categoriaId);
 			    pointValues.put(PuntiDbHelper.DESCRIZIONE, descrizione);
-			    pointValues.put(PuntiDbHelper.FAVOURITE, false);
+			    pointValues.put(PuntiDbHelper.FAVOURITE, 1);
 			    pointValues.put(PuntiDbHelper.LATUTUDE, lat);
 			    pointValues.put(PuntiDbHelper.LONGITUDE, lang);
 			    pointValues.put(PuntiDbHelper.NOME, name);

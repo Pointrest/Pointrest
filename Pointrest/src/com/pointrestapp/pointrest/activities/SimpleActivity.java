@@ -3,14 +3,13 @@ package com.pointrestapp.pointrest.activities;
 import android.app.Fragment;
 import android.os.Bundle;
 
-import com.pointrestapp.pointrest.NotificheBloccateDialog.INotificheBloccateDialog;
 import com.pointrestapp.pointrest.R;
 import com.pointrestapp.pointrest.fragments.FiltriRicercaFragment;
 import com.pointrestapp.pointrest.fragments.InfoAppFragment;
 import com.pointrestapp.pointrest.fragments.NotificheFragment;
 import com.pointrestapp.pointrest.fragments.PreferitiFragment;
 
-public class SimpleActivity extends BaseActivity implements INotificheBloccateDialog {
+public class SimpleActivity extends BaseActivity {
 
 	public static final String FRAGMENT_TO_LOAD =  "fragmenttoload";
 	private NotificheFragment mNotificheFragment;
@@ -64,20 +63,5 @@ public class SimpleActivity extends BaseActivity implements INotificheBloccateDi
 		INFOAPP
 	}
 
-	@Override
-	public void onRipristina(long id) {
-		mNotificheFragment.onRipristina(id);
-	}
-
-	@Override
-	public void onVisualizza(long id) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onAnnulla() {
-		// TODO Auto-generated method stub
-		
-	}
+	
 }

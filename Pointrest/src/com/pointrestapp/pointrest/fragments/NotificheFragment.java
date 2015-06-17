@@ -1,15 +1,18 @@
 package com.pointrestapp.pointrest.fragments;
 
+import android.app.Activity;
+import android.app.DialogFragment;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,19 +21,21 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pointrestapp.pointrest.Constants;
-import com.pointrestapp.pointrest.NotificheBloccateDialog;
-import com.pointrestapp.pointrest.NotificheBloccateDialog.INotificheBloccateDialog;
+import com.pointrestapp.pointrest.DialogNotificheBloccate;
 import com.pointrestapp.pointrest.R;
 import com.pointrestapp.pointrest.adapters.NotificheBloccateCursorAdapter;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
 import com.pointrestapp.pointrest.data.PuntiDbHelper;
 
-public class NotificheFragment extends Fragment implements LoaderCallbacks<Cursor>, INotificheBloccateDialog{
+public class NotificheFragment extends Fragment implements LoaderCallbacks<Cursor>{
 	Switch promo, prossimita;
+	TextView titoloPrelista;
 	ListView lista;
+	int mStackLevel = 0;
 	
 	//private static final String CHIAVE = "CHIAVE1";	
 	private static final int NOTIFICHE_BLOCCATE_LOADER_ID = 0;
@@ -41,6 +46,7 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 	long pos;
 	
 	private static final String DIALOG_NOTIFICHE = "DIALOG_NOTIFICHE";
+	protected static final int DIALOG_NOTIFICHE_BLOCCATE = 0;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,6 +56,7 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 		promo = (Switch)v.findViewById(R.id.notifichePromoSwitch);
 		prossimita = (Switch)v.findViewById(R.id.notificheProssimitaSwitch);
 		lista = (ListView)v.findViewById(R.id.listaNotificheBloccate);
+		titoloPrelista = (TextView)v.findViewById(R.id.txtTitoloPrelistaNotificheBloccate);
 		
 		mCursorAdapter = new NotificheBloccateCursorAdapter(getActivity(), null);
 		lista.setAdapter(mCursorAdapter);
@@ -65,8 +72,9 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				pos=id;
-				NotificheBloccateDialog  dialog = NotificheBloccateDialog.newInstance(id);
-				dialog.show(getFragmentManager(), DIALOG_NOTIFICHE);
+				//NotificheBloccateDialog  dialog = NotificheBloccateDialog.newInstance(id);
+				//dialog.show(getFragmentManager(), DIALOG_NOTIFICHE);
+				
 				//String item = ((TextView)view).getText().toString();
 				//Toast mToast = Toast.makeText(getActivity().getApplicationContext(), "pos -> " + pos, Toast.LENGTH_SHORT);
                 //mToast.show();
@@ -80,7 +88,8 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 					int position, long id) {
 				pos = id;
 				
-				
+				apriDialogRipristina(id);
+		        
 				return false;
 				
 			}
@@ -105,9 +114,21 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 			}
 		});
 		
-		getLoaderManager().initLoader(NOTIFICHE_BLOCCATE_LOADER_ID, null, this);	
+		getLoaderManager().initLoader(NOTIFICHE_BLOCCATE_LOADER_ID, null, this);
+		
+		
 		return v;
 	}
+	
+	private void isEmptyTheList(){
+		 if(lista.getAdapter().getCount() == 0){
+			 titoloPrelista.setText("Nessuna notifica bloccata");
+		 }
+		 else{
+			 titoloPrelista.setText("Notifiche bloccate:");
+		 }
+	}
+	
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		return new CursorLoader
@@ -129,24 +150,38 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 		mCursorAdapter.swapCursor(null);
 	}
 	
+	public void apriDialogRipristina(long id){
+
+		mStackLevel++;
+
+	    FragmentTransaction ft = getActivity().getFragmentManager().beginTransaction();
+	    Fragment prev = getActivity().getFragmentManager().findFragmentByTag("dialog");
+	    if (prev != null) {
+	        ft.remove(prev);
+	    }
+	    ft.addToBackStack(null);
+	    DialogFragment dialogFrag = DialogNotificheBloccate.getInstance(id);
+        dialogFrag.setTargetFragment(this, DIALOG_NOTIFICHE_BLOCCATE);
+        dialogFrag.show(getFragmentManager().beginTransaction(), "ripristina_notifica_bloccata");
+        
+	}
 	
-	/*-- Dialog --*/
 	@Override
-	public void onRipristina(long id) {
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    	if (resultCode == Activity.RESULT_OK) {
+            rimuoviDallaListaRipristinando(data.getLongExtra("ID", -1));
+            //Toast.makeText(getActivity().getApplicationContext(), "ripristinando..", Toast.LENGTH_SHORT).show();
+        } else if (resultCode == Activity.RESULT_CANCELED){
+        	
+        	Toast.makeText(getActivity().getApplicationContext(), "annulla", Toast.LENGTH_SHORT).show();
+        }
+	}
+	
+	private void rimuoviDallaListaRipristinando(long id){
 		ContentValues values = new ContentValues();
 		values.put(PuntiDbHelper.BLOCKED, Constants.NotificationBlocked.FALSE);
 		getActivity().getContentResolver().update(PuntiContentProvider.PUNTI_URI, values, PuntiDbHelper._ID + "=" + id, null);
 		Toast mToast = Toast.makeText(getActivity().getApplicationContext(), "Ripristinato con successo!", Toast.LENGTH_SHORT);
-        mToast.show();
-	}
-	
-	@Override
-	public void onVisualizza(long id) {
-		visualizzaPIOnTheMap();
-	}
-	@Override
-	public void onAnnulla() {
-		Toast mToast = Toast.makeText(getActivity().getApplicationContext(), "annulla dialog", Toast.LENGTH_SHORT);
         mToast.show();
 	}
 	
