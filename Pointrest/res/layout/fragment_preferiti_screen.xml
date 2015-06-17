@@ -1,17 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/RelativeLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" 
+    android:layout_marginLeft="10dp"
     android:layout_marginRight="10dp"
-    android:layout_marginLeft="10dp">
+    android:orientation="vertical" >
 
     <ListView
         android:id="@+id/list_preferiti"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
         tools:listitem="@layout/element_preferiti_screen" >
     </ListView>
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/txt_noPreferitiPresenti"
+        android:layout_width="match_parent"
+        android:layout_marginTop="20dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:visibility="invisible"
+        android:gravity="center"
+        android:text="Nessun preferito presente"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+</RelativeLayout>

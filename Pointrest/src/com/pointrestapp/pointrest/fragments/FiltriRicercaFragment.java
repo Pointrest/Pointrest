@@ -24,8 +24,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.pointrest.dialog.ListsDialogRicerca;
 import com.pointrestapp.pointrest.Constants;
-import com.pointrestapp.pointrest.ListsDialogRicerca;
 import com.pointrestapp.pointrest.R;
 
 public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<Cursor>{
@@ -78,13 +78,13 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 		txtMetri.setText( + progressSeekBar + " km");
 		soloPreferiti.setChecked(mSettings.getBoolean(SOLO_PREFERITI_SHARED_PREF, false));
 		switch(mSettings.getInt(TIPO_PI_SHARED, 1)){
-			case 0:
+			case Constants.TabType.POI:
 				txtTipo.setText("Punti di interesse");
 				break;
-			case 1:
+			case Constants.TabType.TUTTO:
 				txtTipo.setText("Tutti i PI");
 				break;
-			case 2:
+			case Constants.TabType.AC:
 				txtTipo.setText("Attività commerciali");
 				break;	
 		}
@@ -139,9 +139,11 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 				raggio.setProgress(0);
 				txtMetri.setText("1 km");
 				soloPreferiti.setChecked(false);
-				//to implement:
-				//tipo tutti
-				//categoria tutte
+				SharedPreferences.Editor editor = mSettings.edit();
+				txtTipo.setText("Tutti i PI");
+				editor.putInt(TIPO_PI_SHARED, Constants.TabType.TUTTO);
+			    editor.commit();
+				//TO IMPLEMENT ---> categoria tutte
 			}
 		 });
 		 cerca.setOnClickListener(new View.OnClickListener() {
@@ -169,12 +171,25 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 	    }
 	    ft.addToBackStack(null);
 
-	    if(!isCategoryTipe){
-	            DialogFragment dialogFrag = ListsDialogRicerca.getInstance(10, "Scegli il tipo di PI", false);
+	    if(isCategoryTipe){
+	    	DialogFragment dialogFrag;
+	    		if(txtTipo.getText() == "Punti di interesse")//0
+	    		{
+	    			dialogFrag = ListsDialogRicerca.getInstance(10, "Scegli la categoria", true, Constants.TabType.POI);
+	    		}
+	    		else if(txtTipo.getText() == "Attività commerciali") //2
+	    		{
+					dialogFrag = ListsDialogRicerca.getInstance(10, "Scegli la categoria", true, Constants.TabType.AC);
+	    		}
+	    		else//(txtTipo.getText() == "Tutti i PI") //1
+	    		{
+    				dialogFrag = ListsDialogRicerca.getInstance(10, "Scegli la categoria", true, Constants.TabType.TUTTO);
+	    		}
+	            
 	            dialogFrag.setTargetFragment(this, DIALOG_FRAGMENT);
 	            dialogFrag.show(getFragmentManager().beginTransaction(), "dialog");
 	    }else{
-	    	DialogFragment dialogFrag = ListsDialogRicerca.getInstance(11, "Scegli la categoria", true);
+	    	DialogFragment dialogFrag = ListsDialogRicerca.getInstance(11, "Scegli il tipo di PI", false, -10);
             dialogFrag.setTargetFragment(this, DIALOG_FRAGMENT);
             dialogFrag.show(getFragmentManager().beginTransaction(), "dialog");
 	    }

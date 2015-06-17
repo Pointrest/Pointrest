@@ -24,8 +24,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.pointrest.dialog.DialogNotificheBloccate;
 import com.pointrestapp.pointrest.Constants;
-import com.pointrestapp.pointrest.DialogNotificheBloccate;
 import com.pointrestapp.pointrest.R;
 import com.pointrestapp.pointrest.adapters.NotificheBloccateCursorAdapter;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
@@ -72,17 +72,11 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				pos=id;
-				//NotificheBloccateDialog  dialog = NotificheBloccateDialog.newInstance(id);
-				//dialog.show(getFragmentManager(), DIALOG_NOTIFICHE);
 				
-				//String item = ((TextView)view).getText().toString();
-				//Toast mToast = Toast.makeText(getActivity().getApplicationContext(), "pos -> " + pos, Toast.LENGTH_SHORT);
-                //mToast.show();
 			}
 		});
 		
 		lista.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					int position, long id) {
@@ -90,10 +84,8 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 				
 				apriDialogRipristina(id);
 		        
-				return false;
-				
-			}
-			
+				return false;				
+			}			
 		});	
 		
 		promo.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -113,15 +105,19 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 				editor.commit();
 			}
 		});
-		
+				
 		getLoaderManager().initLoader(NOTIFICHE_BLOCCATE_LOADER_ID, null, this);
-		
-		
+		Cursor c = getActivity().getContentResolver()
+				.query(PuntiContentProvider.PUNTI_URI, null,
+						PuntiDbHelper.BLOCKED + "=?",
+						new String[]{ Constants.NotificationBlocked.TRUE + "" },
+						null);
+		isEmptyTheList(c);
 		return v;
 	}
 	
-	private void isEmptyTheList(){
-		 if(lista.getAdapter().getCount() == 0){
+	private void isEmptyTheList(Cursor c){
+		if (!c.moveToNext()){
 			 titoloPrelista.setText("Nessuna notifica bloccata");
 		 }
 		 else{
