@@ -37,7 +37,7 @@ public class ElencoListCursorAdapter extends CursorAdapter {
 
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
-		int vPointTypeIndex = cursor.getColumnIndex(PuntiDbHelper.TYPE);
+		int vPointTypeIndex = cursor.getColumnIndex(PuntiDbHelper.CATEGORY_ID);
 		
 		int typeId = cursor.getInt(vPointTypeIndex);
 

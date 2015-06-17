@@ -1,14 +1,14 @@
 package com.pointrestapp.pointrest.sync;
 
-import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.SyncHttpClient;
 
 public class PuntiRestClient {
 	
-	  private static final String BASE_URL = "http://pointrest.org/";
+	  private static final String BASE_URL = "http://www.pointerest.somee.com/api/";
 
-	  private static AsyncHttpClient client = new AsyncHttpClient();
+	  private static SyncHttpClient client = new SyncHttpClient();
 
 	  public static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
 	      client.get(getAbsoluteUrl(url), params, responseHandler);

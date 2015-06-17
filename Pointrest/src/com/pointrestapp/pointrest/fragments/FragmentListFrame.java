@@ -103,7 +103,7 @@ public class FragmentListFrame extends Fragment
 		    
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				populateDbWithDummyPoint();
+				//populateDbWithDummyPoint();
 		        switch (event.getAction()) {
 	            case MotionEvent.ACTION_DOWN: {
 	                startClickTime = Calendar.getInstance().getTimeInMillis();
@@ -161,7 +161,7 @@ public class FragmentListFrame extends Fragment
 		String selection = null;
 		String[] selectionArgs = null;
 		if (mCurrentTab != Constants.TabType.TUTTO) {
-			selection = PuntiDbHelper.TYPE + "=?";
+			selection = PuntiDbHelper.CATEGORY_ID + "=?";
 			selectionArgs = new String[] { mCurrentTab + "" };
 		}
 		return new CursorLoader(getActivity(),
@@ -187,7 +187,7 @@ public class FragmentListFrame extends Fragment
 		Random r = new Random();
 		int type = r.nextInt(3);
 		values.put(PuntiDbHelper.NOME, "punto" + type);
-		values.put(PuntiDbHelper.TYPE, type);
+		values.put(PuntiDbHelper.CATEGORY_ID, type);
 		values.put(PuntiDbHelper.BLOCKED, r.nextBoolean());
 		double lat = r.nextDouble() + r.nextInt(50);
 		double lang = r.nextDouble() + r.nextInt(50);

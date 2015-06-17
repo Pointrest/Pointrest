@@ -27,19 +27,24 @@ public class SimpleActivity extends BaseActivity implements INotificheBloccateDi
 	
 	protected void loadFragment(FragmentToLoad which) {
 		Fragment fragment = null;
+		int section;
 		switch (which) {
 			case NOTIFICATIONS:
 				mNotificheFragment = NotificheFragment.getInstance();
 				fragment = mNotificheFragment;
+				section = FragmentToLoad.NOTIFICATIONS.ordinal() + 1;
 				break;
 			case INFOAPP:
 				fragment = InfoAppFragment.getInstance();
+				section = FragmentToLoad.INFOAPP.ordinal() + 1;
 				break;
 			case FILTERS:
 				fragment = FiltriRicercaFragment.getInstance();
+				section = FragmentToLoad.FILTERS.ordinal() + 1;
 				break;
 			case FAVOURITES:
 				fragment = PreferitiFragment.getInstance();
+				section = FragmentToLoad.FAVOURITES.ordinal() + 1;
 				break;
 			default:
 				return;
@@ -48,8 +53,8 @@ public class SimpleActivity extends BaseActivity implements INotificheBloccateDi
 		getFragmentManager().beginTransaction()
 		.replace(R.id.container, fragment)
 		.commit();
-		
-		this.onSectionAttached(FragmentToLoad.FILTERS.ordinal() + 1);
+		this.onSectionAttached(section);
+		this.restoreActionBar();
 	}
 	
 	protected enum FragmentToLoad {

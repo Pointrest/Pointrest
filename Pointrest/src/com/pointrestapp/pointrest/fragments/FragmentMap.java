@@ -167,7 +167,7 @@ public class FragmentMap extends Fragment  implements
 		String selection = null;
 		String[] selectionArgs = null;
 		if (mCurrentTab != Constants.TabType.TUTTO) {
-			selection = PuntiDbHelper.TYPE + "=?";
+			selection = PuntiDbHelper.CATEGORY_ID + "=?";
 			selectionArgs = new String[] { puntoType + "" };
 		}
 		Cursor cursor = getActivity().getContentResolver().query(

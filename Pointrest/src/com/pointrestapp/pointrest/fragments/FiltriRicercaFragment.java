@@ -40,7 +40,6 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 	
 	public static final String FILTRI_RICERCA_PREFS_NOTIFICATIONS = "filtri_ricerca_prefs_notifications";
 	private static final String TIPO_PI_SHARED = "tipo_pi_shared";
-	protected static final String RAGGIO_SHARED_PREF = "raggio_shared_pref";
 	protected static final String SOLO_PREFERITI_SHARED_PREF = "solo_preferiti_shared_pref";
 	private SharedPreferences mSettings;
 	
@@ -74,7 +73,7 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 		
 		// Restore preferences
 		mSettings = this.getActivity().getSharedPreferences(FILTRI_RICERCA_PREFS_NOTIFICATIONS, Context.MODE_PRIVATE);
-		progressSeekBar = mSettings.getInt(RAGGIO_SHARED_PREF, 1);
+		progressSeekBar = mSettings.getInt(Constants.SharedPreferences.RAGGIO, 1);
 		raggio.setProgress(progressSeekBar - 1);
 		txtMetri.setText( + progressSeekBar + " km");
 		soloPreferiti.setChecked(mSettings.getBoolean(SOLO_PREFERITI_SHARED_PREF, false));
@@ -129,7 +128,7 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 			  public void onStopTrackingTouch(SeekBar seekBar) {
 				  txtMetri.setText( + progressSeekBar + " km");// + seekBar.getMax());
 				  SharedPreferences.Editor editor = mSettings.edit();
-				  editor.putInt(RAGGIO_SHARED_PREF, progressSeekBar);
+				  editor.putInt(Constants.SharedPreferences.RAGGIO, progressSeekBar);
 				  editor.commit();
 			  }
 		 });
