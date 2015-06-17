@@ -71,13 +71,11 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter {
         PuntiRestClient.get(url, null, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                // If the response is JSONObject instead of expected JSONArray
-            	System.out.println();
+
             }
             
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray sottocategorie) {
-            	System.out.println();
             	parseSottoCategorieJSONArray(sottocategorie);
             }
         });
@@ -90,13 +88,10 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter {
         PuntiRestClient.get(url, null, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                // If the response is JSONObject instead of expected JSONArray
-            	System.out.println();
             }
             
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray categorie) {
-            	System.out.println();
             	parseCategorieJSONArray(categorie);
             }
         });
@@ -268,11 +263,11 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter {
 			}
 			
 			Cursor imagesCursor = mContext.getContentResolver().query(PuntiContentProvider.PUNTI_IMAGES_URI, new String[]{PuntiImagesDbHelper._ID}, null, null, null);
-			int imageIdIndex = imagesCursor.getColumnIndex(PuntiDbHelper._ID);
+			int imageIdIndex = imagesCursor.getColumnIndex(PuntiImagesDbHelper._ID);
 			Set<Integer> imagesCurrentlyInDb = new TreeSet<Integer>();
 			
-			while (cursor.moveToNext()) {
-				imagesCurrentlyInDb.add(cursor.getInt(imageIdIndex));
+			while (imagesCursor.moveToNext()) {
+				imagesCurrentlyInDb.add(imagesCursor.getInt(imageIdIndex));
 			}
 			
 			for (int i = 0; i < points.length(); ++i) {
@@ -297,10 +292,8 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter {
 				
 				JSONArray imagesArray = point.getJSONArray(IMAGES_ID);
 				if (imagesArray.length() > 0) {
-					//images = new int[imagesArray.length()];
 					ContentValues imageCv = null;
 				    for(int j = 0; j < imagesArray.length(); j++){
-				        //images[j] = imagesArray.getInt(j);
 				    	int imgId = imagesArray.getInt(j);
 						imageCv = new ContentValues();
 						imageCv.put(PuntiImagesDbHelper._ID, imgId);
