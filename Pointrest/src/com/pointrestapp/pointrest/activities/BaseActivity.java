@@ -1,36 +1,70 @@
 package com.pointrestapp.pointrest.activities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.common.api.Result;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingRequest;
+import com.google.android.gms.location.LocationServices;
+import com.pointrestapp.pointrest.Constants;
+import com.pointrestapp.pointrest.GeofenceTransitionsIntentService;
 import com.pointrestapp.pointrest.R;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
 import com.pointrestapp.pointrest.fragments.NavigationDrawerFragment;
 
 public class BaseActivity extends Activity implements
-			NavigationDrawerFragment.NavigationDrawerCallbacks{
+			NavigationDrawerFragment.NavigationDrawerCallbacks,
+			ConnectionCallbacks,
+			OnConnectionFailedListener,
+			ResultCallback<Status> {
 
 	private NavigationDrawerFragment mNavigationDrawerFragment;
 	private CharSequence mTitle;
-	
+	private GoogleApiClient mGoogleApiClient;
+	private boolean mResolvingError = false;
+	private boolean mConnectedToPlayServices;
+	private PendingIntent mGeofencePendingIntent;
+	private List<Geofence> mGeofenceList = new ArrayList<Geofence>();
+
     private static final String ACCOUNT = "pointrestaccount";
 	private static final long SYNC_INTERVAL_IN_SECONDS = 360;
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (!mResolvingError) {  // more about this later
+            mGoogleApiClient.connect();
+        }
+    }
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
+		buildGoogleApiClient();
 		createSyncAccountAndInitializeSyncAdapter(this);
 		
 		setContentView(R.layout.activity_main);
@@ -158,4 +192,124 @@ public class BaseActivity extends Activity implements
         ContentResolver.requestSync(newAccount, PuntiContentProvider.AUTHORITY, settingsBundle);
 		//
     }
+	
+    public Location getCurrentUserLocation(){
+    	if (!mConnectedToPlayServices)
+    		return null;
+    	return LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+    }
+    
+    /**
+     * Here we setup the fences.
+     * We'll first put a fence around the user's current location
+     * so we can use it's exit callback to update the db since
+     * the user left our aggiornated zone.
+     * We chose 4 km for now, but the ideal solution would be to
+     * keep adding fences for the various points, and when we reach 99
+     * which is the max geofences we can have, we call it a day and
+     * take the distance of the farthest point as the trigger radius.
+     * As of now I don't know how to efficiently implement this.
+     */
+    public void setUpGeofences() {
+    	/*
+    	Cursor c = getContentResolver().query
+    			(PuntiContentProvider.PUNTI_URI,
+    					null, null, null, null);
+    	
+    	if (c.moveToNext()) {
+    		
+    	}
+    	
+		SharedPreferences pointrestPreferences =
+				this.getSharedPreferences(Constants.POINTREST_PREFERENCES, Context.MODE_PRIVATE);
+		
+		int raggio = pointrestPreferences.getInt(Constants.SharedPreferences.RAGGIO, 100);
+		double lang = pointrestPreferences.getLong(Constants.SharedPreferences.LANG, 65);
+		double lat = pointrestPreferences.getLong(Constants.SharedPreferences.LAT, 45);
+    	*/
+    	Location l = getCurrentUserLocation();
+    	if (l == null)
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	mGeofenceList.add(new Geofence.Builder()
+        // Set the request ID of the geofence. This is a string to identify this
+        // geofence.
+        .setRequestId(Constants.BASE_FENCE_ID)
+
+        .setCircularRegion(
+                l.getLatitude(),
+                l.getLongitude(),
+                10
+        )
+        .setExpirationDuration(Geofence.NEVER_EXPIRE)
+        .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
+                Geofence.GEOFENCE_TRANSITION_EXIT)
+        .build());
+    }
+    
+	protected synchronized void buildGoogleApiClient() {
+	    mGoogleApiClient = new GoogleApiClient.Builder(this, this, this)
+	        .addApi(LocationServices.API)
+	        .build();
+	}
+	
+	private GeofencingRequest getGeofencingRequest() {
+	    GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
+	    builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
+	    builder.addGeofences(mGeofenceList);
+	    return builder.build();
+	}
+	
+    private PendingIntent getGeofencePendingIntent() {
+        // Reuse the PendingIntent if we already have it.
+        if (mGeofencePendingIntent != null) {
+            return mGeofencePendingIntent;
+        }
+        Intent intent = new Intent(this, GeofenceTransitionsIntentService.class);
+        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
+        // calling addGeofences() and removeGeofences().
+        return PendingIntent.getService(this, 0, intent, PendingIntent.
+                FLAG_UPDATE_CURRENT);
+    }
+    
+	@Override
+	public void onConnectionFailed(ConnectionResult arg0) {
+		// TODO Auto-generated method stub
+		System.out.println();
+	}
+
+	@Override
+	public void onConnected(Bundle arg0) {
+		// TODO Auto-generated method stub
+		System.out.println();
+		mConnectedToPlayServices = true;
+		setUpGeofences();
+	    LocationServices.GeofencingApi.addGeofences(
+                mGoogleApiClient,
+                getGeofencingRequest(),
+                getGeofencePendingIntent()
+        ).setResultCallback(this);
+	}
+
+	@Override
+	public void onConnectionSuspended(int arg0) {
+		// TODO Auto-generated method stub
+		System.out.println();
+	}
+	
+    @Override
+    protected void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
+    }
+
+	@Override
+	public void onResult(Status arg0) {
+		Toast.makeText(this, "geofffff", Toast.LENGTH_SHORT).show();
+	}
 }

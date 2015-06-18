@@ -10,6 +10,7 @@ public final class Constants {
 	}
 	
 	public static final String CATEGORY_TYPE = "tabtype";
+	public static final String BASE_FENCE_ID = "base_fence_id";
 	public static class TabType {
 		public static int POI;
 		public static final int TUTTO = -1;
