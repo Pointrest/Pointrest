@@ -49,8 +49,8 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter {
 				mContext.getSharedPreferences(Constants.POINTREST_PREFERENCES, Context.MODE_PRIVATE);
 		
 		int raggio = pointrestPreferences.getInt(Constants.SharedPreferences.RAGGIO, 100);
-		double lang = pointrestPreferences.getLong(Constants.SharedPreferences.LANG, 65);
-		double lat = pointrestPreferences.getLong(Constants.SharedPreferences.LAT, 45);
+		double lang = pointrestPreferences.getFloat(Constants.SharedPreferences.LANG, 65);
+		double lat = pointrestPreferences.getFloat(Constants.SharedPreferences.LAT, 45);
 		
 		//Try and get the points
 		try {
@@ -313,7 +313,7 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter {
 			    pointValues.put(PuntiDbHelper.DESCRIZIONE, descrizione);
 			    pointValues.put(PuntiDbHelper.FAVOURITE, 1);
 			    pointValues.put(PuntiDbHelper.LATUTUDE, lat);
-			    pointValues.put(PuntiDbHelper.LONGITUDE, lang);
+			    pointValues.put(PuntiDbHelper.LANGITUDE, lang);
 			    pointValues.put(PuntiDbHelper.NOME, name);
 			    pointValues.put(PuntiDbHelper._ID, serverId);
 			    pointValues.put(PuntiDbHelper.SOTTOCATEGORIA_ID, sottocategoriaId);
