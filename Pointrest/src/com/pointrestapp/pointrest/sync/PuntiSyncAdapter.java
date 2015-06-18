@@ -121,12 +121,14 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter {
         final String ID = "ID";
         final String CATEGORY_NAME = "CategoryName";
         
+        //We need to be careful not to add double items so we keep track of two collections
 		Vector<ContentValues> categoriesToUpdateVector = new Vector<ContentValues>(categorie.length());
 		Vector<ContentValues> categoriesToAddVector = new Vector<ContentValues>(categorie.length());
 		
+		//We'll use this set to figure out if we already have the item in the db
+		Set<Integer> categoriesCurrentlyInDb = new TreeSet<Integer>();
 		Cursor cursor = mContext.getContentResolver().query(PuntiContentProvider.CATEGORIE_URI, new String[]{CategorieDbHelper._ID}, null, null, null);
 		int serverIdIndex = cursor.getColumnIndex(CategorieDbHelper._ID);
-		Set<Integer> categoriesCurrentlyInDb = new TreeSet<Integer>();
 		
 		while (cursor.moveToNext()) {
 			categoriesCurrentlyInDb.add(cursor.getInt(serverIdIndex));
