@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.pointrestapp.pointrest.Constants;
 import com.pointrestapp.pointrest.DialogNotificheBloccate;
 import com.pointrestapp.pointrest.R;
+import com.pointrestapp.pointrest.activities.BaseActivity;
 import com.pointrestapp.pointrest.adapters.NotificheBloccateCursorAdapter;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
 import com.pointrestapp.pointrest.data.PuntiDbHelper;
@@ -44,9 +45,16 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 	private SharedPreferences mSettings;	
 	
 	long pos;
+	private BaseActivity mBaseActivity;
 	
 	private static final String DIALOG_NOTIFICHE = "DIALOG_NOTIFICHE";
 	protected static final int DIALOG_NOTIFICHE_BLOCCATE = 0;
+	
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		mBaseActivity = (BaseActivity)activity;
+	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -101,7 +109,10 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				SharedPreferences.Editor editor = mSettings.edit();
 			    editor.putBoolean("promoNotification", promo.isChecked());
-			    editor.commit();
+			    editor.commit();	
+			    
+			    //DA CANCELLARE
+			    mBaseActivity.launchLocalNotification(0);
 			}
 		});
 		

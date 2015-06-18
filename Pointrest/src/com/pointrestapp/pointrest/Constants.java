@@ -24,4 +24,7 @@ public final class Constants {
 		public static final int FALSE = 0; 
 		public static final int TRUE = 1; 
 	}
+	
+	public static final String LOCAL_NOTIFICATION_TAG = "tag";
+	public static int NOTIFICATION_ID = 0;
 }
