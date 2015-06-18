@@ -289,7 +289,7 @@ public class BaseActivity extends Activity implements
     			(PuntiContentProvider.PUNTI_URI,
     					null, null, null, null);
     	
-    	int langIndex = c.getColumnIndex(PuntiDbHelper.LANGITUDE);
+    	int langIndex = c.getColumnIndex(PuntiDbHelper.LONGITUDE);
     	int latIndex =  c.getColumnIndex(PuntiDbHelper.LATUTUDE);
     	int idIndex = c.getColumnIndex(PuntiDbHelper._ID);
     	

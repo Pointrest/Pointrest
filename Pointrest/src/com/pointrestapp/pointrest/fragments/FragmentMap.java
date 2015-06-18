@@ -159,7 +159,7 @@ public class FragmentMap extends Fragment  implements
 		
 		int pointNameIndex = cursor.getColumnIndex(PuntiDbHelper.NOME);
 		int pointLatIndex = cursor.getColumnIndex(PuntiDbHelper.LATUTUDE);
-		int pointLonIndex = cursor.getColumnIndex(PuntiDbHelper.LANGITUDE);
+		int pointLonIndex = cursor.getColumnIndex(PuntiDbHelper.LONGITUDE);
 		
 		while (cursor.moveToNext()) {
 			haveAtLeastOnePointToShow = true;

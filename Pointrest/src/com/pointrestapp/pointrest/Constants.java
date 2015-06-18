@@ -12,9 +12,9 @@ public final class Constants {
 	public static final String CATEGORY_TYPE = "tabtype";
 	public static final String BASE_FENCE_ID = "base_fence_id";
 	public static class TabType {
-		public static int POI;
+		public static int POI = 1;
 		public static final int TUTTO = -1;
-		public static int AC;
+		public static int AC = 7;
 	}
 	public static class NotificationBlocked {
 		public static final int FALSE = 0; 
