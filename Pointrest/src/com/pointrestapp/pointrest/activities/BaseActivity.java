@@ -3,11 +3,8 @@ package com.pointrestapp.pointrest.activities;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
-
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.ActionBar;
@@ -21,10 +18,8 @@ import android.database.Cursor;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -57,7 +52,6 @@ public class BaseActivity extends Activity implements
 	private List<Geofence> mGeofenceList = new ArrayList<Geofence>();
 	private static final String ACCOUNT = "pointrestaccount";
 	private static final long SYNC_INTERVAL_IN_SECONDS = 360;
-	private int cont;
 
 	private MyLatLng godPoint; 
 
