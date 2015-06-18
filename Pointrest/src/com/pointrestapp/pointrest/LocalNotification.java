@@ -3,6 +3,7 @@ package com.pointrestapp.pointrest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.concurrent.ExecutionException;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -16,7 +17,9 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
+import com.bumptech.glide.Glide;
 import com.pointrestapp.pointrest.activities.MainScreenActivity;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
 import com.pointrestapp.pointrest.data.PuntiDbHelper;
@@ -82,11 +85,18 @@ public class LocalNotification extends AsyncTask<Void, Void, Void> {
 		        
 		        Bitmap remote_picture = null;
 		        
-				try {
-		            remote_picture = BitmapFactory.decodeStream((InputStream) new URL(sample_url).getContent());
-		        } catch (IOException e) {
-		            e.printStackTrace();
-		        }
+		        try {
+                	remote_picture = Glide.
+                        with(mContext).
+                        load(sample_url).
+                        asBitmap().
+                        into(-1,-1).
+                        get();
+                 } catch (final ExecutionException e) {
+                     Log.e("LOCALNOTIFICATION", e.getMessage());
+                 } catch (final InterruptedException e) {
+                     Log.e("LOCALNOTIFICATION", e.getMessage());
+                 }
 
 		        // Add the big picture to the style.
 		        notiStyle.bigPicture(remote_picture);
