@@ -27,4 +27,6 @@ public final class Constants {
 	
 	public static final String LOCAL_NOTIFICATION_TAG = "tag";
 	public static int NOTIFICATION_ID = 0;
+	
+	public static final String BASE_URL = "http://www.pointerest.somee.com/api/";
 }

@@ -5,7 +5,9 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.net.URL;
+
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.ActionBar;
@@ -28,11 +30,15 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -45,7 +51,9 @@ import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 import com.pointrestapp.pointrest.Constants;
 import com.pointrestapp.pointrest.GeofenceTransitionsIntentService;
+
 import android.view.View;
+
 import com.pointrestapp.pointrest.Constants;
 import com.pointrestapp.pointrest.R;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
@@ -239,6 +247,8 @@ public class BaseActivity extends Activity implements
     		 if(cursor.moveToNext()){
     			 name = cursor.getString(nameIndex); 
     			 description = cursor.getString(descriptionIndex);
+    			 
+    			 cursor.close();
     		 }
     		 
     		 //GET IMAGE ID
@@ -271,11 +281,18 @@ public class BaseActivity extends Activity implements
     		        
     		        Bitmap remote_picture = null;
     		        
-    				try {
-    		            remote_picture = BitmapFactory.decodeStream((InputStream) new URL(sample_url).getContent());
-    		        } catch (IOException e) {
-    		            e.printStackTrace();
-    		        }
+                    try {
+                    	remote_picture = Glide.
+                            with(getApplicationContext()).
+                            load(sample_url).
+                            asBitmap().
+                            into(-1,-1).
+                            get();
+                     } catch (final ExecutionException e) {
+                         Log.e("LOCALNOTIFICATION", e.getMessage());
+                     } catch (final InterruptedException e) {
+                         Log.e("LOCALNOTIFICATION", e.getMessage());
+                     }
 
     		        // Add the big picture to the style.
     		        notiStyle.bigPicture(remote_picture);
