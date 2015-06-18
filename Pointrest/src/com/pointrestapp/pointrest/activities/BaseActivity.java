@@ -1,11 +1,13 @@
 package com.pointrestapp.pointrest.activities;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.net.URL;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.ActionBar;
@@ -14,30 +16,19 @@ import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
-import android.content.ContentResolver;
-import android.content.Context;
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
-import android.os.Build;
+import android.location.Location;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-import com.google.android.gms.common.api.Result;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.Geofence;
@@ -45,8 +36,7 @@ import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 import com.pointrestapp.pointrest.Constants;
 import com.pointrestapp.pointrest.GeofenceTransitionsIntentService;
-import android.view.View;
-import com.pointrestapp.pointrest.Constants;
+import com.pointrestapp.pointrest.LocalNotification;
 import com.pointrestapp.pointrest.R;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
 import com.pointrestapp.pointrest.data.PuntiDbHelper;
@@ -69,6 +59,9 @@ public class BaseActivity extends Activity implements
 	private static final long SYNC_INTERVAL_IN_SECONDS = 360;
 	private int cont;
 
+	private MyLatLng godPoint; 
+
+	
     @Override
     protected void onStart() {
         super.onStart();
@@ -82,7 +75,6 @@ public class BaseActivity extends Activity implements
 		super.onCreate(savedInstanceState);
 		
 		buildGoogleApiClient();
-		createSyncAccountAndInitializeSyncAdapter(this);
 		
 		setContentView(R.layout.activity_main);
 
@@ -210,116 +202,8 @@ public class BaseActivity extends Activity implements
     }
     
     public void launchLocalNotification(int id) {
-    	new CreateNotification(id).execute();	    
+    	new LocalNotification(this, id).execute();	    
 	}
-    
-    private class CreateNotification extends AsyncTask<Void, Void, Void> {
-
-        private int id;
-
-		public CreateNotification(int id) {
-         this.id = id;
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-
-        	int temp = 2;
-    		
-    		 Intent resultIntent = new Intent(getApplication(), MainScreenActivity.class);
-    		 
-    		 Cursor cursor = getContentResolver().query(PuntiContentProvider.PUNTI_URI, null, PuntiDbHelper._ID + "=?",
-    						new String[]{temp + "" }, null);
-    		 
-    		 int nameIndex = cursor.getColumnIndex(PuntiDbHelper.NOME);
-    		 int descriptionIndex = cursor.getColumnIndex(PuntiDbHelper.DESCRIZIONE);	
-    		 
-    		 String name = "pointerest notification";
-    		 String description = "pointerest description";
-    		 if(cursor.moveToNext()){
-    			 name = cursor.getString(nameIndex); 
-    			 description = cursor.getString(descriptionIndex);
-    		 }
-    		 
-    		 //GET IMAGE ID
-//    		 cursor = getContentResolver().query(PuntiContentProvider.PUNTI_IMAGES_URI, null, PuntiImagesDbHelper.PUNTO_ID + "=?",
-//    					new String[]{temp + "" }, null);
-//    		 
-//    		 int idImageIndex = cursor.getColumnIndex(PuntiImagesDbHelper._ID);
-//    		 
-//    		 int idImage = -1;
-//    		 if(cursor.moveToNext())
-//    			 idImage = cursor.getInt(idImageIndex);
-    		 
-    		 	TaskStackBuilder stackBuilder = TaskStackBuilder.create(getApplication());
-
-    	        // Adds the back stack for the Intent (but not the Intent itself).
-    	        stackBuilder.addParentStack(MainScreenActivity.class);
-
-    	        // Adds the Intent that starts the Activity to the top of the stack.
-    	        stackBuilder.addNextIntent(resultIntent);
-    		 
-    			PendingIntent resultPendingIntent = PendingIntent.getActivity(getApplication(), 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-    						 
-    			 if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-    				 
-    				NotificationCompat.BigPictureStyle notiStyle = new NotificationCompat.BigPictureStyle();
-    		        notiStyle.setBigContentTitle(name);
-    		        notiStyle.setSummaryText("Pointerest");
-    		        	
-    		        String sample_url = "http://codeversed.com/androidifysteve.png";
-    		        
-    		        Bitmap remote_picture = null;
-    		        
-    				try {
-    		            remote_picture = BitmapFactory.decodeStream((InputStream) new URL(sample_url).getContent());
-    		        } catch (IOException e) {
-    		            e.printStackTrace();
-    		        }
-
-    		        // Add the big picture to the style.
-    		        notiStyle.bigPicture(remote_picture);
-    		        
-   				 NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplication())
- 				.setSmallIcon(R.drawable.ic_launcher)
- 	            .setAutoCancel(true)
- 	            .setLargeIcon(remote_picture)
- 	            .setContentIntent(resultPendingIntent)
-// 	            .addAction(R.drawable.ic_launcher, "One", resultPendingIntent)
-// 	            .addAction(R.drawable.ic_launcher, "Two", resultPendingIntent)
-// 	            .addAction(R.drawable.ic_launcher, "Three", resultPendingIntent)
- 	            .setContentTitle(name)
- 	            .setContentText(description)
- 	            .setTicker("Pointerest");
-
-    				 notification.setStyle(notiStyle);
-    				 notification.setNumber(cont++);
-    				 
-    				 NotificationManager mNotificationManager = (NotificationManager) getApplication().getSystemService(Context.NOTIFICATION_SERVICE);			
-    				 mNotificationManager.notify(Constants.NOTIFICATION_ID, notification.build());
-    				 
-    			 }else{
-    				 NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplication());
-    				 notification.setAutoCancel(true)
-    			     .setDefaults(Notification.DEFAULT_ALL)
-    			     .setWhen(System.currentTimeMillis())         
-    			     .setSmallIcon(R.drawable.ic_launcher)
-    			     .setTicker("Pointerest")            
-    			     .setContentTitle(name)
-    			     .setContentText(description)
-    			     .setDefaults(Notification.DEFAULT_LIGHTS| Notification.DEFAULT_SOUND)
-    			     .setContentIntent(resultPendingIntent)
-    			     .setAutoCancel(true);
-    				 
-    				 NotificationManager notificationManager = (NotificationManager) getApplication().getSystemService(Context.NOTIFICATION_SERVICE);
-    				    notificationManager.notify(Constants.NOTIFICATION_ID, notification.build());
-    			 }	
-           
-
-            return null;
-
-        }
-    }
 	
     public Location getCurrentUserLocation(){
     	if (!mConnectedToPlayServices)
@@ -330,54 +214,124 @@ public class BaseActivity extends Activity implements
     
     /**
      * Here we setup the fences.
-     * We'll first put a fence around the user's current location
+     * We'll first put up a fence around the user's current location
      * so we can use it's exit callback to update the db since
      * the user left our aggiornated zone.
-     * We chose 4 km for now, but the ideal solution would be to
-     * keep adding fences for the various points, and when we reach 99
-     * which is the max geofences we can have, we call it a day and
-     * take the distance of the farthest point as the trigger radius.
-     * As of now I don't know how to efficiently implement this.
+     * We chose 3 km for now.
+     * And since the maximum number of geofences is 99,
+     * we add points them until we reach the limit and call it a day
+     * In that case the scatto for db aggiornating lowers to the 
+     * distance of the farthest point.
+     * This is to be implemented soon.
      */
+	static double distance(double fromLat, double fromLon, double toLat, double toLon) {
+	    double radius = 6378137;   // approximate Earth radius, *in meters*
+	    double deltaLat = toLat - fromLat;
+	    double deltaLon = toLon - fromLon;
+	    double angle = 2 * Math.asin( Math.sqrt(
+	        Math.pow(Math.sin(deltaLat/2), 2) + 
+	        Math.cos(fromLat) * Math.cos(toLat) * 
+	        Math.pow(Math.sin(deltaLon/2), 2) ) );
+	    return radius * angle;
+	}
+	
+	private class MyLatLng implements Comparable<MyLatLng> {
+		
+		public int id;
+		public double lat, lang;
+		
+		public MyLatLng(int id, double lat, double lang) {
+			this.id = id;
+			this.lat = lat;
+			this.lang = lang;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + id;
+			long temp;
+			temp = Double.doubleToLongBits(lang);
+			result = prime * result + (int) (temp ^ (temp >>> 32));
+			temp = Double.doubleToLongBits(lat);
+			result = prime * result + (int) (temp ^ (temp >>> 32));
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			MyLatLng other = (MyLatLng) obj;
+			if (id != other.id)
+				return false;
+			if (Double.doubleToLongBits(lang) != Double
+					.doubleToLongBits(other.lang))
+				return false;
+			if (Double.doubleToLongBits(lat) != Double
+					.doubleToLongBits(other.lat))
+				return false;
+			return true;
+		}
+
+		@Override
+		public int compareTo(MyLatLng another) {
+			double thisDistanceFromGodPoint = distance(godPoint.lat, godPoint.lang, another.lat, another.lang);
+			double otherDistanceFromGodPoint = distance(godPoint.lat, godPoint.lang, lat, lang);
+			
+			return (int) Math.round(thisDistanceFromGodPoint - otherDistanceFromGodPoint);
+		}
+		
+	}
+	
     public void setUpGeofences() {
-    	/*
+    	
     	Cursor c = getContentResolver().query
     			(PuntiContentProvider.PUNTI_URI,
     					null, null, null, null);
     	
-    	if (c.moveToNext()) {
+    	int langIndex = c.getColumnIndex(PuntiDbHelper.LANGITUDE);
+    	int latIndex =  c.getColumnIndex(PuntiDbHelper.LATUTUDE);
+    	int idIndex = c.getColumnIndex(PuntiDbHelper._ID);
+    	
+    	Set<MyLatLng> points = new TreeSet<MyLatLng>();
+
+    	while (c.moveToNext()) {
+    		double lat = c.getDouble(latIndex);
+    		double lang = c.getDouble(langIndex);
+    		int id = c.getInt(idIndex);
     		
+    		points.add(new MyLatLng(id, lat, lang));    		
     	}
     	
-		SharedPreferences pointrestPreferences =
-				this.getSharedPreferences(Constants.POINTREST_PREFERENCES, Context.MODE_PRIVATE);
-		
-		int raggio = pointrestPreferences.getInt(Constants.SharedPreferences.RAGGIO, 100);
-		double lang = pointrestPreferences.getLong(Constants.SharedPreferences.LANG, 65);
-		double lat = pointrestPreferences.getLong(Constants.SharedPreferences.LAT, 45);
-    	*/
-    	Location l = getCurrentUserLocation();
-    	if (l == null)
-			try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-    	mGeofenceList.add(new Geofence.Builder()
-        // Set the request ID of the geofence. This is a string to identify this
-        // geofence.
-        .setRequestId(Constants.BASE_FENCE_ID)
-
-        .setCircularRegion(
-                l.getLatitude(),
-                l.getLongitude(),
-                10
-        )
-        .setExpirationDuration(Geofence.NEVER_EXPIRE)
-        .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
-                Geofence.GEOFENCE_TRANSITION_EXIT)
-        .build());
+    	int maxFences = 99;
+    	for (MyLatLng myLatLng : points) {
+    		if (maxFences > 0 && myLatLng.lang < 90 && myLatLng.lat < 90) {
+        		mGeofenceList.add(new Geofence.Builder()
+                .setRequestId(myLatLng.id + "")
+                .setCircularRegion(
+                		myLatLng.lat,
+                		myLatLng.lang,
+                        Constants.POINT_NOTIFICATION_RADIUS
+                )
+                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
+                .build());
+        		--maxFences;
+    		}
+		}
+    	
+	    LocationServices.GeofencingApi.addGeofences(
+                mGoogleApiClient,
+                getGeofencingRequest(),
+                getGeofencePendingIntent()
+        ).setResultCallback(this);
+    	
     }
     
 	protected synchronized void buildGoogleApiClient() {
@@ -394,7 +348,6 @@ public class BaseActivity extends Activity implements
 	}
 	
     private PendingIntent getGeofencePendingIntent() {
-        // Reuse the PendingIntent if we already have it.
         if (mGeofencePendingIntent != null) {
             return mGeofencePendingIntent;
         }
@@ -413,20 +366,33 @@ public class BaseActivity extends Activity implements
 
 	@Override
 	public void onConnected(Bundle arg0) {
-		// TODO Auto-generated method stub
-		System.out.println();
 		mConnectedToPlayServices = true;
+		godPoint = saveGodPointToSharedPreferencesAndReturnIt();
+		createSyncAccountAndInitializeSyncAdapter(this);		
+		//Temporarily here; Will be moved elsewhere
 		setUpGeofences();
-	    LocationServices.GeofencingApi.addGeofences(
-                mGoogleApiClient,
-                getGeofencingRequest(),
-                getGeofencePendingIntent()
-        ).setResultCallback(this);
+		//
+	}
+	
+
+	private MyLatLng saveGodPointToSharedPreferencesAndReturnIt() {
+		
+    	Location loc = getCurrentUserLocation();
+    	double lat = loc.getLatitude();
+    	double lang = loc.getLongitude();
+    	
+		SharedPreferences pointrestPreferences =
+				this.getSharedPreferences(Constants.POINTREST_PREFERENCES, Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = pointrestPreferences.edit();
+	    editor.putFloat(Constants.SharedPreferences.LANG, (float)lang);
+	    editor.putFloat(Constants.SharedPreferences.LAT, (float)lat);
+	    editor.commit();
+	    
+	    return new MyLatLng(-1, lat, lang);
 	}
 
 	@Override
 	public void onConnectionSuspended(int arg0) {
-		// TODO Auto-generated method stub
 		System.out.println();
 	}
 	
@@ -438,6 +404,5 @@ public class BaseActivity extends Activity implements
 
 	@Override
 	public void onResult(Status arg0) {
-		Toast.makeText(this, "geofffff", Toast.LENGTH_SHORT).show();
 	}
 }

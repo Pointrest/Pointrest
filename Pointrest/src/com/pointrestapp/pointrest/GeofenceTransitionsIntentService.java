@@ -14,8 +14,8 @@ import com.google.android.gms.location.GeofencingEvent;
 public class GeofenceTransitionsIntentService extends IntentService {
 
 	Context c;
-	public GeofenceTransitionsIntentService(String name) {
-		super(name);
+	public GeofenceTransitionsIntentService() {
+		super("");
 		// TODO Auto-generated constructor stub
 	}
 
@@ -33,14 +33,15 @@ public class GeofenceTransitionsIntentService extends IntentService {
         // Test that the reported transition was of interest.
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ||
                 geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
-
+        		new LocalNotification(getApplicationContext(), 2).execute();
             // Get the geofences that were triggered. A single event can trigger
             // multiple geofences.
         	
-            List triggeringGeofences = geofencingEvent.getTriggeringGeofences();
-            Toast.makeText(getApplicationContext(), "geofenceserviceintentcalling", Toast.LENGTH_LONG);
+            //List triggeringGeofences = geofencingEvent.getTriggeringGeofences();
+            //Toast.makeText(getApplicationContext(), "geofenceserviceintentcalling", Toast.LENGTH_LONG);
         } else {
             // Log the error.
         }
     }
+
 }
