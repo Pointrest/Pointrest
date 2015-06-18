@@ -290,7 +290,7 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter {
 				sottocategoriaId = point.getInt(SOTTOCATEGORIA_ID);
 				descrizione = point.getString(DESCRIZIONE);
 				lat = point.getDouble(LATITUDINE);
-				lang = point.getLong(LONGITUDINE);
+				lang = point.getDouble(LONGITUDINE);
 				
 				JSONArray imagesArray = point.getJSONArray(IMAGES_ID);
 				if (imagesArray.length() > 0) {
@@ -313,7 +313,7 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter {
 			    pointValues.put(PuntiDbHelper.DESCRIZIONE, descrizione);
 			    pointValues.put(PuntiDbHelper.FAVOURITE, 1);
 			    pointValues.put(PuntiDbHelper.LATUTUDE, lat);
-			    pointValues.put(PuntiDbHelper.LANGITUDE, lang);
+			    pointValues.put(PuntiDbHelper.LONGITUDE, lang);
 			    pointValues.put(PuntiDbHelper.NOME, name);
 			    pointValues.put(PuntiDbHelper._ID, serverId);
 			    pointValues.put(PuntiDbHelper.SOTTOCATEGORIA_ID, sottocategoriaId);

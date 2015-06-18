@@ -57,7 +57,21 @@ public class FragmentTitleScreen extends Fragment
 	@Override
 	public void onResume() {
         mViewPager.setCurrentItem(mCurrentTab, true);
-        mTabsAdapter.onPageSelected(mCurrentTab);
+        int tab = 0;
+        switch (mCurrentTab) {
+		case -1:
+			tab = 1;
+			break;
+		case 1:
+			tab = 0;
+			break;
+		case 7:
+			tab = 2;
+			break;
+		default:
+			break;
+		}
+        mTabsAdapter.onPageSelected(tab);
 		super.onResume();
 	}
 
@@ -75,6 +89,7 @@ public class FragmentTitleScreen extends Fragment
 	public void onTabSelected(int puntoType) {
 		mCurrentTab = puntoType;
 	}
+	
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		outState.putInt(CURRENT_TAB, mCurrentTab);

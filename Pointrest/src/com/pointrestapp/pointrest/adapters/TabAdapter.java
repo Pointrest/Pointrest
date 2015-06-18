@@ -72,7 +72,7 @@ public class TabAdapter extends FragmentPagerAdapter implements
 
 	@Override
 	public void onPageSelected(int arg0){
-		mMapListener.onTabSelected(arg0);
+		mMapListener.onTabSelected(mTabs.get(arg0).first);
 	}
 	
 	public interface MapCallback {
