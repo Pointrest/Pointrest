@@ -40,7 +40,7 @@ public class FragmentListFrame extends Fragment
 
 	private ElencoListCursorAdapter mElencoListCursorAdapter;
 	private Callback mListener;
-	private int mCurrentTab;
+	private int mCurrentCategory;
 	private View mView;
 	ListView mListView;
 	
@@ -48,10 +48,10 @@ public class FragmentListFrame extends Fragment
 		System.out.print(true);
 	}
 	
-	public static FragmentListFrame getInstance(int tabId) {
+	public static FragmentListFrame getInstance(int categoryId) {
 		FragmentListFrame vFragment = new FragmentListFrame();
 		Bundle vBundle = new Bundle();
-		vBundle.putInt(Constants.TAB_TYPE, tabId);
+		vBundle.putInt(Constants.CATEGORY_TYPE, categoryId);
 		vFragment.setArguments(vBundle);
 		return vFragment;
 	}
@@ -126,15 +126,15 @@ public class FragmentListFrame extends Fragment
 		});
 		
 		if (aBundle != null) {
-			int tabId = aBundle.getInt(Constants.TAB_TYPE);
-			mCurrentTab = tabId;
+			int categoryId = aBundle.getInt(Constants.CATEGORY_TYPE);
+			mCurrentCategory = categoryId;
 		}
 		
 	}
 	
 	@Override
 	public void onResume() {
-		getLoaderManager().initLoader(mCurrentTab, null, this);
+		getLoaderManager().initLoader(mCurrentCategory, null, this);
 		super.onResume();
 	};
 	
@@ -146,7 +146,7 @@ public class FragmentListFrame extends Fragment
 	
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
-		outState.putInt(Constants.TAB_TYPE, mCurrentTab);
+		outState.putInt(Constants.CATEGORY_TYPE, mCurrentCategory);
 		super.onSaveInstanceState(outState);
 	}
 
@@ -160,9 +160,9 @@ public class FragmentListFrame extends Fragment
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		String selection = null;
 		String[] selectionArgs = null;
-		if (mCurrentTab != Constants.TabType.TUTTO) {
+		if (mCurrentCategory != Constants.TabType.TUTTO) {
 			selection = PuntiDbHelper.CATEGORY_ID + "=?";
-			selectionArgs = new String[] { mCurrentTab + "" };
+			selectionArgs = new String[] { mCurrentCategory + "" };
 		}
 		return new CursorLoader(getActivity(),
 								PuntiContentProvider.PUNTI_URI,

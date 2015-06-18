@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ContentValues;
+import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -27,6 +28,7 @@ import com.pointrestapp.pointrest.data.PuntiDbHelper;
 public class PreferitiFragment extends Fragment implements LoaderCallbacks<Cursor>{
 
 	protected static final int DIALOG_PREFERITI_FRAGMENT = 0;
+	private static final int PREFERITI_LOADER_ID = 34;
 	ListView lista;
 	private PreferitiCursorAdapter mCursorAdapter;
 	int mStackLevel = 0;
@@ -61,7 +63,8 @@ public class PreferitiFragment extends Fragment implements LoaderCallbacks<Curso
 			}
 		});	
 		
-		
+		getLoaderManager().initLoader(PREFERITI_LOADER_ID, null, this);
+
 		return v;
 	}
 	
@@ -101,19 +104,24 @@ public class PreferitiFragment extends Fragment implements LoaderCallbacks<Curso
 	
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		// TODO Auto-generated method stub
-		return null;
+		return new CursorLoader
+				(getActivity(),
+						PuntiContentProvider.PUNTI_URI,
+						null,
+						PuntiDbHelper.FAVOURITE + "=?",
+						new String[]{ Constants.Favourite.TRUE + "" },
+						null);
 	}
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		// TODO Auto-generated method stub
+		mCursorAdapter.swapCursor(data);
 		
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		// TODO Auto-generated method stub
+		mCursorAdapter.swapCursor(null);
 		
 	}
 }
