@@ -1,5 +1,6 @@
 package com.pointrestapp.pointrest.fragments;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ContentValues;
@@ -9,7 +10,6 @@ import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +24,7 @@ import com.pointrestapp.pointrest.Constants;
 import com.pointrestapp.pointrest.NotificheBloccateDialog;
 import com.pointrestapp.pointrest.NotificheBloccateDialog.INotificheBloccateDialog;
 import com.pointrestapp.pointrest.R;
+import com.pointrestapp.pointrest.activities.BaseActivity;
 import com.pointrestapp.pointrest.adapters.NotificheBloccateCursorAdapter;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
 import com.pointrestapp.pointrest.data.PuntiDbHelper;
@@ -39,8 +40,15 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 	private SharedPreferences mSettings;	
 	
 	long pos;
+	private BaseActivity mBaseActivity;
 	
 	private static final String DIALOG_NOTIFICHE = "DIALOG_NOTIFICHE";
+	
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		mBaseActivity = (BaseActivity)activity;
+	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -92,7 +100,10 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				SharedPreferences.Editor editor = mSettings.edit();
 			    editor.putBoolean("promoNotification", promo.isChecked());
-			    editor.commit();
+			    editor.commit();	
+			    
+			    //DA CANCELLARE
+			    mBaseActivity.launchLocalNotification(0);
 			}
 		});
 		
