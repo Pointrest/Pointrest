@@ -192,7 +192,7 @@ public class FragmentListFrame extends Fragment
 		double lat = r.nextDouble() + r.nextInt(50);
 		double lang = r.nextDouble() + r.nextInt(50);
 		values.put(PuntiDbHelper.LATUTUDE, lat);
-		values.put(PuntiDbHelper.LONGITUDE, lang);
+		values.put(PuntiDbHelper.LANGITUDE, lang);
 		values.put(PuntiDbHelper.FAVOURITE, r.nextBoolean());
 		getActivity().getContentResolver().insert(PuntiContentProvider.PUNTI_URI, values);
 	}

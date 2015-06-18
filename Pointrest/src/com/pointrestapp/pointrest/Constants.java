@@ -26,6 +26,8 @@ public final class Constants {
 	}
 	
 	public static final String LOCAL_NOTIFICATION_TAG = "tag";
+	public static final float POINT_NOTIFICATION_RADIUS = 100;
+	public static final float UPDATE_DB_RADIUS_SCATTO = 3000;
 	public static int NOTIFICATION_ID = 0;
 	
 	public static final String BASE_URL = "http://www.pointerest.somee.com/api/";
