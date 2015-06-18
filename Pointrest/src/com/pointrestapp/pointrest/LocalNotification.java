@@ -37,13 +37,11 @@ public class LocalNotification extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-
-    	int temp = 2;
 		
 		 Intent resultIntent = new Intent(mContext, MainScreenActivity.class);
 		 
 		 Cursor cursor = mContext.getContentResolver().query(PuntiContentProvider.PUNTI_URI, null, PuntiDbHelper._ID + "=?",
-						new String[]{temp + "" }, null);
+						new String[]{mId + "" }, null);
 		 
 		 int nameIndex = cursor.getColumnIndex(PuntiDbHelper.NOME);
 		 int descriptionIndex = cursor.getColumnIndex(PuntiDbHelper.DESCRIZIONE);	
@@ -66,10 +64,8 @@ public class LocalNotification extends AsyncTask<Void, Void, Void> {
 //			 idImage = cursor.getInt(idImageIndex);
 		 
 		 	TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
-
 	        // Adds the back stack for the Intent (but not the Intent itself).
 	        stackBuilder.addParentStack(MainScreenActivity.class);
-
 	        // Adds the Intent that starts the Activity to the top of the stack.
 	        stackBuilder.addNextIntent(resultIntent);
 		 
@@ -106,9 +102,6 @@ public class LocalNotification extends AsyncTask<Void, Void, Void> {
 	            .setAutoCancel(true)
 	            .setLargeIcon(remote_picture)
 	            .setContentIntent(resultPendingIntent)
-//	            .addAction(R.drawable.ic_launcher, "One", resultPendingIntent)
-//	            .addAction(R.drawable.ic_launcher, "Two", resultPendingIntent)
-//	            .addAction(R.drawable.ic_launcher, "Three", resultPendingIntent)
 	            .setContentTitle(name)
 	            .setContentText(description)
 	            .setTicker("Pointerest");
@@ -135,9 +128,8 @@ public class LocalNotification extends AsyncTask<Void, Void, Void> {
 				 NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 				    notificationManager.notify(Constants.NOTIFICATION_ID, notification.build());
 			 }	
-       
-
-        return null;
+			 
+			 return null;
 
     }
 }
