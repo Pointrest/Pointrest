@@ -20,9 +20,11 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.pointrestapp.pointrest.activities.MainScreenActivity;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
 import com.pointrestapp.pointrest.data.PuntiDbHelper;
+import com.pointrestapp.pointrest.data.PuntiImagesDbHelper;
 
 public class LocalNotification extends AsyncTask<Void, Void, Void> {
 
@@ -54,14 +56,14 @@ public class LocalNotification extends AsyncTask<Void, Void, Void> {
 		 }
 		 
 		 //GET IMAGE ID
-//		 cursor = getContentResolver().query(PuntiContentProvider.PUNTI_IMAGES_URI, null, PuntiImagesDbHelper.PUNTO_ID + "=?",
-//					new String[]{temp + "" }, null);
-//		 
-//		 int idImageIndex = cursor.getColumnIndex(PuntiImagesDbHelper._ID);
-//		 
-//		 int idImage = -1;
-//		 if(cursor.moveToNext())
-//			 idImage = cursor.getInt(idImageIndex);
+		 cursor = mContext.getContentResolver().query(PuntiContentProvider.PUNTI_IMAGES_URI, null, PuntiImagesDbHelper.PUNTO_ID + "=?",
+					new String[]{mId + "" }, null);
+		 
+		 int idImageIndex = cursor.getColumnIndex(PuntiImagesDbHelper._ID);
+		 
+		 int idImage = 1;
+		 if(cursor.moveToNext())
+			 idImage = cursor.getInt(idImageIndex);
 		 
 		 	TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
 	        // Adds the back stack for the Intent (but not the Intent itself).
@@ -76,16 +78,15 @@ public class LocalNotification extends AsyncTask<Void, Void, Void> {
 				NotificationCompat.BigPictureStyle notiStyle = new NotificationCompat.BigPictureStyle();
 		        notiStyle.setBigContentTitle(name);
 		        notiStyle.setSummaryText("Pointerest");
-		        	
-		        String sample_url = "http://codeversed.com/androidifysteve.png";
 		        
 		        Bitmap remote_picture = null;
 		        
 		        try {
                 	remote_picture = Glide.
                         with(mContext).
-                        load(sample_url).
-                        asBitmap().
+                        load(Constants.BASE_URL + "immagini/" + idImage).
+                        asBitmap()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL).
                         into(-1,-1).
                         get();
                  } catch (final ExecutionException e) {

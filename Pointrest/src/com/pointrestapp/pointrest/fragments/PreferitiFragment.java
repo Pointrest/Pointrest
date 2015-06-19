@@ -16,10 +16,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.pointrest.dialog.DialogPreferitiFragment;
 import com.pointrestapp.pointrest.Constants;
-import com.pointrestapp.pointrest.DialogPreferitiFragment;
 import com.pointrestapp.pointrest.R;
 import com.pointrestapp.pointrest.adapters.PreferitiCursorAdapter;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
@@ -30,6 +31,7 @@ public class PreferitiFragment extends Fragment implements LoaderCallbacks<Curso
 	protected static final int DIALOG_PREFERITI_FRAGMENT = 0;
 	private static final int PREFERITI_LOADER_ID = 34;
 	ListView lista;
+	TextView txtNoPref;
 	private PreferitiCursorAdapter mCursorAdapter;
 	int mStackLevel = 0;
 	
@@ -42,6 +44,7 @@ public class PreferitiFragment extends Fragment implements LoaderCallbacks<Curso
 		View v = inflater.inflate(R.layout.fragment_preferiti_screen, container, false);
 		
 		lista = (ListView)v.findViewById(R.id.list_preferiti);
+		txtNoPref = (TextView)v.findViewById(R.id.txt_noPreferitiPresenti);
 		mCursorAdapter = new PreferitiCursorAdapter(getActivity(), null);
 		lista.setAdapter(mCursorAdapter);
 		
@@ -54,7 +57,6 @@ public class PreferitiFragment extends Fragment implements LoaderCallbacks<Curso
 		});
 		
 		lista.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					int position, long id) {
@@ -65,7 +67,23 @@ public class PreferitiFragment extends Fragment implements LoaderCallbacks<Curso
 		
 		getLoaderManager().initLoader(PREFERITI_LOADER_ID, null, this);
 
+		Cursor c = getActivity().getContentResolver()
+				.query(PuntiContentProvider.PUNTI_URI, null,
+						PuntiDbHelper.BLOCKED + "=?",
+						new String[]{ Constants.NotificationBlocked.TRUE + "" },
+						null);
+		isEmptyTheList(c);
+		
 		return v;
+	}
+	
+	private void isEmptyTheList(Cursor c){
+		if (!c.moveToNext()){
+			 txtNoPref.setVisibility(View.VISIBLE);
+		 }
+		 else{
+			 txtNoPref.setVisibility(View.INVISIBLE);
+		 }
 	}
 	
 	public void dialogRimuoviPreferito(long id){
