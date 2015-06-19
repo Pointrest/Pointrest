@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.ActionBar;
@@ -20,6 +21,7 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -36,8 +38,10 @@ import com.pointrestapp.pointrest.R;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
 import com.pointrestapp.pointrest.data.PuntiDbHelper;
 import com.pointrestapp.pointrest.fragments.NavigationDrawerFragment;
+import com.pointrestapp.pointrest.sync.PuntiSyncAdapter;
 
 public class BaseActivity extends Activity implements
+			PuntiSyncAdapter.OnDataReadyListener, 
 			NavigationDrawerFragment.NavigationDrawerCallbacks,
 			ConnectionCallbacks,
 			OnConnectionFailedListener,
@@ -152,7 +156,23 @@ public class BaseActivity extends Activity implements
 		actionBar.setTitle(mTitle);
 	}
 	
-    private void createSyncAccountAndInitializeSyncAdapter(Context context) {
+	@Override
+	public void onDataReady() {
+		runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				setupUi();
+			}
+		});
+	}
+	
+    protected void setupUi() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void createSyncAccountAndInitializeSyncAdapter(Context context) {
 
         Account newAccount = new Account(
                 ACCOUNT, getResources().getString(R.string.pointrest_account_type));
@@ -284,7 +304,8 @@ public class BaseActivity extends Activity implements
 	}
 	
     public void setUpGeofences() {
-    	
+    	if (godPoint == null)
+    		return;
     	Cursor c = getContentResolver().query
     			(PuntiContentProvider.PUNTI_URI,
     					null, null, null, null);
@@ -361,11 +382,9 @@ public class BaseActivity extends Activity implements
 	@Override
 	public void onConnected(Bundle arg0) {
 		mConnectedToPlayServices = true;
+		createSyncAccountAndInitializeSyncAdapter(this);
 		godPoint = saveGodPointToSharedPreferencesAndReturnIt();
-		createSyncAccountAndInitializeSyncAdapter(this);		
-		//Temporarily here; Will be moved elsewhere
-		setUpGeofences();
-		//
+
 	}
 	
 
@@ -398,5 +417,6 @@ public class BaseActivity extends Activity implements
 
 	@Override
 	public void onResult(Status arg0) {
+		
 	}
 }

@@ -1,6 +1,5 @@
 package com.pointrestapp.pointrest.fragments;
 
-import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
@@ -9,46 +8,38 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.pointrestapp.pointrest.Constants;
 import com.pointrestapp.pointrest.R;
 import com.pointrestapp.pointrest.adapters.TabAdapter;
 
 public class FragmentTitleScreen extends Fragment
-	implements TabAdapter.ListCallback,
-			   TabAdapter.MapCallback {
+	implements TabAdapter.TabSelectedListener {
 
 	
-	private static final String CURRENT_TAB = "CURRENT_TAB";
+	private static final String CATEGORY_ID = "category_id";
 	private ViewPager mViewPager;
-	private Activity mActivity;
 	private TabAdapter mTabsAdapter;
-	private int mCurrentTab = 1;
+	private int mCategoryId = Constants.TabType.TUTTO;
 	
 	public static FragmentTitleScreen getInstance() {
 		return new FragmentTitleScreen();
 	}
 
 	@Override
-	public void onAttach(Activity activity) {
-		mActivity = activity;
-		super.onAttach(activity);
-	}
-
-	@SuppressLint("NewApi")
-	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View vView = inflater.inflate(R.layout.fragment_title_screen, container, false);
         mViewPager = (ViewPager) vView.findViewById(R.id.pager);
-        ActionBar bar = mActivity.getActionBar();
+        Activity vActivity = getActivity();
+        ActionBar bar = vActivity.getActionBar();
         bar.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
         
         if (savedInstanceState != null) {
-        	mCurrentTab = savedInstanceState.getInt(CURRENT_TAB);
+        	mCategoryId = savedInstanceState.getInt(CATEGORY_ID);
         }
         
-        mTabsAdapter = new TabAdapter(mActivity, getChildFragmentManager());
-        
-        //mAdaptedFragments = ((MyApplication)getActivity().getApplication()).mAdaptedFragments;
+        mTabsAdapter = new TabAdapter(vActivity, getFragmentManager());
         mViewPager.setAdapter(mTabsAdapter);
         mViewPager.setOnPageChangeListener(mTabsAdapter);
 		return vView;
@@ -56,43 +47,23 @@ public class FragmentTitleScreen extends Fragment
 	
 	@Override
 	public void onResume() {
-        mViewPager.setCurrentItem(mCurrentTab, true);
-        int tab = 0;
-        switch (mCurrentTab) {
-		case -1:
-			tab = 1;
-			break;
-		case 1:
-			tab = 0;
-			break;
-		case 7:
-			tab = 2;
-			break;
-		default:
-			break;
-		}
-        mTabsAdapter.onPageSelected(tab);
+        int tab = mTabsAdapter.getTabPositionFromCategoryId(mCategoryId);
+        mViewPager.setCurrentItem(tab, true);
 		super.onResume();
 	}
 
-	@Override
-	public Fragment getFragmentForTab(int puntoType) {
-		FragmentListFrame f = FragmentListFrame.getInstance(puntoType);
-		return f;
-	}
-
 	public void OnBackPressed() {
-		onTabSelected(mCurrentTab);
+		onTabSelected(mCategoryId);
 	}
 
 	@Override
-	public void onTabSelected(int puntoType) {
-		mCurrentTab = puntoType;
+	public void onTabSelected(int categoryId) {
+		mCategoryId = categoryId;
 	}
 	
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
-		outState.putInt(CURRENT_TAB, mCurrentTab);
+		outState.putInt(CATEGORY_ID, mCategoryId);
 		super.onSaveInstanceState(outState);
 	}
 }

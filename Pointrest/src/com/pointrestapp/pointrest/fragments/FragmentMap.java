@@ -43,7 +43,7 @@ import com.pointrestapp.pointrest.data.PuntiDbHelper;
 
 public class FragmentMap extends Fragment  implements
 		OnMapReadyCallback,
-		TabAdapter.MapCallback {
+		TabAdapter.TabSelectedListener {
 
 	private GoogleMap mMap;
 	private MyMapView mMapView;
@@ -52,7 +52,7 @@ public class FragmentMap extends Fragment  implements
 	private LinearLayout mLayoutWhole;
 	private boolean mFullscreen;
 	private MainScreenActivity mHostActivity;
-	private int mCurrentTab;
+	private int mCategoryId;
 	private boolean mLoadedMarkers;
 
 	public static FragmentMap getInstance(int aPosition){
@@ -108,7 +108,7 @@ public class FragmentMap extends Fragment  implements
 					@Override
 				      public void onGlobalLayout() {
 						if (!mLoadedMarkers)
-							onTabSelected(mCurrentTab);
+							onTabSelected(mCategoryId);
 				      }
 			    });
 		return vView;
@@ -129,15 +129,15 @@ public class FragmentMap extends Fragment  implements
 	}
 
 	@Override
-	public void onTabSelected(int puntoType) {
-		showMarkersForType(puntoType);
+	public void onTabSelected(int categoryId) {
+		showMarkersForType(categoryId);
 	}
 
-	private void showMarkersForType(int puntoType) {
-		mCurrentTab = puntoType;
+	private void showMarkersForType(int categoryId) {
+		mCategoryId = categoryId;
 		boolean haveAtLeastOnePointToShow = false;
 		//Che c posso fare qua?
-		if (mMap == null)
+		if (mMap == null || getActivity() == null)
 			return;
 		mLoadedMarkers = true;
 		mMap.clear();
@@ -146,9 +146,9 @@ public class FragmentMap extends Fragment  implements
 		
 		String selection = null;
 		String[] selectionArgs = null;
-		if (mCurrentTab != Constants.TabType.TUTTO) {
+		if (mCategoryId != Constants.TabType.TUTTO) {
 			selection = PuntiDbHelper.CATEGORY_ID + "=?";
-			selectionArgs = new String[] { puntoType + "" };
+			selectionArgs = new String[] { categoryId + "" };
 		}
 		Cursor cursor = getActivity().getContentResolver().query(
 				PuntiContentProvider.PUNTI_URI,
@@ -327,4 +327,7 @@ public class FragmentMap extends Fragment  implements
 			mFrameBelow.startAnimation(a);
 		}
 
+		public void updateMarkers() {
+			showMarkersForType(mCategoryId);
+		}
 }
