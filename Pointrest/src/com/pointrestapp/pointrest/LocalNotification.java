@@ -20,6 +20,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.pointrestapp.pointrest.activities.MainScreenActivity;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
 import com.pointrestapp.pointrest.data.PuntiDbHelper;
@@ -84,7 +85,8 @@ public class LocalNotification extends AsyncTask<Void, Void, Void> {
                 	remote_picture = Glide.
                         with(mContext).
                         load(Constants.BASE_URL + "immagini/" + idImage).
-                        asBitmap().
+                        asBitmap()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL).
                         into(-1,-1).
                         get();
                  } catch (final ExecutionException e) {
