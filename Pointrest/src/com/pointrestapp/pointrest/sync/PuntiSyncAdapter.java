@@ -49,8 +49,8 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter {
 				mContext.getSharedPreferences(Constants.POINTREST_PREFERENCES, Context.MODE_PRIVATE);
 		
 		int raggio = pointrestPreferences.getInt(Constants.SharedPreferences.RAGGIO, 100);
-		double lang = pointrestPreferences.getLong(Constants.SharedPreferences.LANG, 65);
-		double lat = pointrestPreferences.getLong(Constants.SharedPreferences.LAT, 45);
+		double lang = pointrestPreferences.getFloat(Constants.SharedPreferences.LANG, 65);
+		double lat = pointrestPreferences.getFloat(Constants.SharedPreferences.LAT, 45);
 		
 		//Try and get the points
 		try {
@@ -71,13 +71,11 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter {
         PuntiRestClient.get(url, null, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                // If the response is JSONObject instead of expected JSONArray
-            	System.out.println();
+
             }
             
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray sottocategorie) {
-            	System.out.println();
             	parseSottoCategorieJSONArray(sottocategorie);
             }
         });
@@ -90,13 +88,10 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter {
         PuntiRestClient.get(url, null, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                // If the response is JSONObject instead of expected JSONArray
-            	System.out.println();
             }
             
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray categorie) {
-            	System.out.println();
             	parseCategorieJSONArray(categorie);
             }
         });
@@ -126,12 +121,14 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter {
         final String ID = "ID";
         final String CATEGORY_NAME = "CategoryName";
         
+        //We need to be careful not to add double items so we keep track of two collections
 		Vector<ContentValues> categoriesToUpdateVector = new Vector<ContentValues>(categorie.length());
 		Vector<ContentValues> categoriesToAddVector = new Vector<ContentValues>(categorie.length());
 		
+		//We'll use this set to figure out if we already have the item in the db
+		Set<Integer> categoriesCurrentlyInDb = new TreeSet<Integer>();
 		Cursor cursor = mContext.getContentResolver().query(PuntiContentProvider.CATEGORIE_URI, new String[]{CategorieDbHelper._ID}, null, null, null);
 		int serverIdIndex = cursor.getColumnIndex(CategorieDbHelper._ID);
-		Set<Integer> categoriesCurrentlyInDb = new TreeSet<Integer>();
 		
 		while (cursor.moveToNext()) {
 			categoriesCurrentlyInDb.add(cursor.getInt(serverIdIndex));
@@ -268,11 +265,11 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter {
 			}
 			
 			Cursor imagesCursor = mContext.getContentResolver().query(PuntiContentProvider.PUNTI_IMAGES_URI, new String[]{PuntiImagesDbHelper._ID}, null, null, null);
-			int imageIdIndex = imagesCursor.getColumnIndex(PuntiDbHelper._ID);
+			int imageIdIndex = imagesCursor.getColumnIndex(PuntiImagesDbHelper._ID);
 			Set<Integer> imagesCurrentlyInDb = new TreeSet<Integer>();
 			
-			while (cursor.moveToNext()) {
-				imagesCurrentlyInDb.add(cursor.getInt(imageIdIndex));
+			while (imagesCursor.moveToNext()) {
+				imagesCurrentlyInDb.add(imagesCursor.getInt(imageIdIndex));
 			}
 			
 			for (int i = 0; i < points.length(); ++i) {
@@ -293,14 +290,12 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter {
 				sottocategoriaId = point.getInt(SOTTOCATEGORIA_ID);
 				descrizione = point.getString(DESCRIZIONE);
 				lat = point.getDouble(LATITUDINE);
-				lang = point.getLong(LONGITUDINE);
+				lang = point.getDouble(LONGITUDINE);
 				
 				JSONArray imagesArray = point.getJSONArray(IMAGES_ID);
 				if (imagesArray.length() > 0) {
-					//images = new int[imagesArray.length()];
 					ContentValues imageCv = null;
 				    for(int j = 0; j < imagesArray.length(); j++){
-				        //images[j] = imagesArray.getInt(j);
 				    	int imgId = imagesArray.getInt(j);
 						imageCv = new ContentValues();
 						imageCv.put(PuntiImagesDbHelper._ID, imgId);

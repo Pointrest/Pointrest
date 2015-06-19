@@ -1,6 +1,5 @@
 package com.pointrestapp.pointrest.activities;
 
-import android.app.ActionBar;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -18,25 +17,8 @@ public class MainScreenActivity extends BaseActivity implements
 
 	private static final String TAG_MAP_SCREEN = "TAG_MAP_SCREEN";
 	private static final String TAG_TITLE_SCREEN = "TAG_TITLE_SCREEN";
-	private static final String TAG_INFO_APP = "TAG_INFO_APP";
-	private static final String TAG_FRAGMENT_NOTIFICHE = "TAG_NOTIFICHE";
-	private static final String TAG_PREFERITI = "TAG_PREFERITI";
-	private static final String TAG_FILTRI_RICERCA = "TAG_FILTRI_RICERCA";
 
-	/*
-	private static Set<String> mTags;
-	static {
-		mTags =  new HashSet<String>();
-		mTags.add(TAG_MAP_SCREEN);
-		mTags.add(TAG_TITLE_SCREEN);
-		mTags.add(TAG_INFO_APP);
-		mTags.add(TAG_FRAGMENT_NOTIFICHE);
-		mTags.add(TAG_PREFERITI);
-		mTags.add(TAG_FILTRI_RICERCA);
-	}; */
-	
-	private FragmentTitleScreen mTitleScreenFragment;
-	
+	private FragmentTitleScreen mTitleScreenFragment;	
 	private FragmentMap mMapFragment;
 	
 	@Override

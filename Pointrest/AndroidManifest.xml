@@ -81,6 +81,7 @@
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/syncadapter" />
         </service>
+        <service android:name="com.pointrestapp.pointrest.GeofenceTransitionsIntentService" />
     </application>
 
 </manifest>

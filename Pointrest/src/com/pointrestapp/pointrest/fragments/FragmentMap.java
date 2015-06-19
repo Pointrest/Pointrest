@@ -43,15 +43,11 @@ import com.pointrestapp.pointrest.data.PuntiDbHelper;
 
 public class FragmentMap extends Fragment  implements
 		OnMapReadyCallback,
-		TabAdapter.MapCallback,
-		ConnectionCallbacks,
-		OnConnectionFailedListener {
+		TabAdapter.MapCallback {
 
 	private GoogleMap mMap;
 	private MyMapView mMapView;
-	private Location mCurrentLocation;
 	private List<Marker> mMarkers = new ArrayList<Marker>();
-	private GoogleApiClient mGoogleApiClient;
 	private View mFrameBelow;
 	private LinearLayout mLayoutWhole;
 	private boolean mFullscreen;
@@ -74,34 +70,19 @@ public class FragmentMap extends Fragment  implements
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		buildGoogleApiClient();
 	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View vView = inflater.inflate(R.layout.fragment_map_frame, container, false);
-		//View v2 = inflater.inflate(R.layout.fragment_map, (ViewGroup)vView, false);
-		//mMapFragment = (MapFragment)getFragmentManager()
-		//		.findFragmentById(R.id.fragment_map);
-		//A hack for Android versions where the childFM wasn't available
-		//if (mMapFragment == null) {
-		//	mMapFragment = (MapFragment)getChildFragmentManager()
-		//			.findFragmentById(R.id.fragment_map);
-		//}
-		//getChildFragmentManager().beginTransaction()
-		//	.add(R.id.frame_map_above, mMapFragment)
-		//	.commit();
+
 		mMapView = (MyMapView)vView.findViewById(R.id.mapview);
 		mFrameBelow = (View)vView.findViewById(R.id.frame_map_below);
 		mLayoutWhole = (LinearLayout)vView.findViewById(R.id.linear_tab);
 		LayoutTransition lt = new LayoutTransition();
 		lt.setStartDelay(LayoutTransition.CHANGE_DISAPPEARING, 2000);
 		lt.setDuration(5000);
-//		lt.setStagger(LayoutTransition.CHANGE_DISAPPEARING, 0);
-//		lt.setStartDelay(LayoutTransition.CHANGE_APPEARING, 0);
-//		lt.setStagger(LayoutTransition.CHANGE_APPEARING, 0);
-		
-		
+
 		mLayoutWhole.setLayoutTransition(lt);
 		mMapView.onCreate(savedInstanceState);
 		mMapView.setOnTouchListener(new View.OnTouchListener() {
@@ -137,8 +118,7 @@ public class FragmentMap extends Fragment  implements
 	public void onMapReady(GoogleMap arg0) {
 		mMap = arg0;
 		mMap.setMyLocationEnabled(true);
-		mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
+
 		/*mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
 			
 			@Override
@@ -217,30 +197,6 @@ public class FragmentMap extends Fragment  implements
 			super.onLowMemory();
 			if (mMapView != null)
 				mMapView.onLowMemory();
-		}
-		
-		protected synchronized void buildGoogleApiClient() {
-		    mGoogleApiClient = new GoogleApiClient.Builder(getActivity(), this, this)
-		        .addApi(LocationServices.API)
-		        .build();
-		}
-
-		@Override
-		public void onConnectionFailed(ConnectionResult arg0) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void onConnected(Bundle arg0) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void onConnectionSuspended(int arg0) {
-			// TODO Auto-generated method stub
-			
 		}
 
 		public void prepareForShow(final MotionEvent event) {

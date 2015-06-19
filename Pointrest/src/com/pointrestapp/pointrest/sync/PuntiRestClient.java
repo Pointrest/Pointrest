@@ -3,10 +3,11 @@ package com.pointrestapp.pointrest.sync;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.SyncHttpClient;
+import com.pointrestapp.pointrest.Constants;
 
 public class PuntiRestClient {
 	
-	  private static final String BASE_URL = "http://www.pointerest.somee.com/api/";
+	  
 
 	  private static SyncHttpClient client = new SyncHttpClient();
 
@@ -19,6 +20,6 @@ public class PuntiRestClient {
 	  }
 
 	  private static String getAbsoluteUrl(String relativeUrl) {
-	      return BASE_URL + relativeUrl;
+	      return Constants.BASE_URL + relativeUrl;
 	  }
 }
