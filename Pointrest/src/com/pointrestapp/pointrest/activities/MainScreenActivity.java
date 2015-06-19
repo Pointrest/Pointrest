@@ -2,7 +2,6 @@ package com.pointrestapp.pointrest.activities;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Bundle;
@@ -31,7 +30,6 @@ public class MainScreenActivity extends BaseActivity implements
     private ContentObserver mObserver;
     private boolean mInitialized = false;
     
-    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -46,6 +44,7 @@ public class MainScreenActivity extends BaseActivity implements
 		if (savedInstanceState != null)
 			b = (Bundle) savedInstanceState.clone();
 		final Bundle bFinal = b;
+		
 		//The first time the app is launched, we must wait until the Categories are populated
 		//before we initialize the viewPager. We know PUNTI get populated for last
 		//so we listen to those changes
@@ -56,16 +55,15 @@ public class MainScreenActivity extends BaseActivity implements
 				super.onChange(selfChange, uri);
 				if (!mInitialized)
 					initializeScreen(bFinal);
-				else
+				else {
 					mMapFragment.updateMarkers();
+				}
 			}
 		};
-        getContentResolver().registerContentObserver(PuntiContentProvider.PUNTI_URI, false, mObserver);
+        getContentResolver().registerContentObserver(PuntiContentProvider.DUMMY_NOTIFIER_URI, false, mObserver);
 	}
 
 	protected void initializeScreen(Bundle savedInstanceState) {
-		if (!mInitialized)
-			this.setUpGeofences();
 		if (savedInstanceState == null) {
 			mTitleScreenFragment = FragmentTitleScreen.getInstance();
 			mMapFragment = FragmentMap.getInstance(0);
@@ -77,7 +75,7 @@ public class MainScreenActivity extends BaseActivity implements
 		} else {
 			mTitleScreenFragment = (FragmentTitleScreen) getFragmentManager().findFragmentByTag(TAG_TITLE_SCREEN);
 			mMapFragment = (FragmentMap) getFragmentManager().findFragmentByTag(TAG_MAP_SCREEN);
-		}		
+		}
 		mInitialized = true;
 	}
 
