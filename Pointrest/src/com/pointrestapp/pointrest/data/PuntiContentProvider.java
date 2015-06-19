@@ -17,7 +17,6 @@ public class PuntiContentProvider extends ContentProvider {
 	public static final String SOTTOCATEGORIE_PATH = "sottocategorie";
 	public static final String PUNTI_IMAGES_PATH = "punti_images";
 
-
 	public static final Uri PUNTI_URI =
 			Uri.parse(ContentResolver.SCHEME_CONTENT +
 					"://" + AUTHORITY + "/" + PUNTI_PATH);
@@ -30,6 +29,9 @@ public class PuntiContentProvider extends ContentProvider {
 	public static final Uri PUNTI_IMAGES_URI =
 			Uri.parse(ContentResolver.SCHEME_CONTENT +
 					"://" + AUTHORITY + "/" + PUNTI_IMAGES_PATH);
+	public static final Uri DUMMY_NOTIFIER_URI = 
+			Uri.parse(ContentResolver.SCHEME_CONTENT +
+					"://" + AUTHORITY + "/" + "doneLoading");			
 	
 	private static final int FULL_PUNTI_TABLE = 0;
 	private static final int SINGLE_PUNTO = 1;

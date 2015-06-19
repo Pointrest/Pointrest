@@ -58,7 +58,7 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter {
 			getAllSottoCategorie();
 			getPoints(lang, lat, raggio);
 			pointrestPreferences.edit().putBoolean(Constants.RAN_FOR_THE_FIRST_TIME, true).commit();
-			mContext.getContentResolver().notifyChange(PuntiContentProvider.PUNTI_URI, null, false);
+			mContext.getContentResolver().notifyChange(PuntiContentProvider.DUMMY_NOTIFIER_URI, null, false);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
