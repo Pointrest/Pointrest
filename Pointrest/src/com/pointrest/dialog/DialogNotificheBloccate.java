@@ -1,4 +1,4 @@
-package com.pointrestapp.pointrest;
+package com.pointrest.dialog;
 
 import android.app.Activity;
 import android.app.AlertDialog;
