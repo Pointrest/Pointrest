@@ -83,18 +83,17 @@ public class LocalNotification extends AsyncTask<Void, Void, Void> {
 		        
 		        try {
                 	remote_picture = Glide.
-                        with(mContext).
-                        load(Constants.BASE_URL + "immagini/" + idImage).
-                        asBitmap()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL).
-                        into(-1,-1).
-                        get();
+                        with(mContext)
+                        .load(Constants.BASE_URL + "immagini/" + idImage)
+                        .asBitmap()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(100,100)
+                        .get();
                  } catch (final ExecutionException e) {
                      Log.e("LOCALNOTIFICATION", e.getMessage());
                  } catch (final InterruptedException e) {
                      Log.e("LOCALNOTIFICATION", e.getMessage());
                  }
-
 		        // Add the big picture to the style.
 		        notiStyle.bigPicture(remote_picture);
 		        

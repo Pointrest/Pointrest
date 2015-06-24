@@ -104,7 +104,7 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 			    editor.commit();	
 			    
 			    //DA CANCELLARE
-			    mBaseActivity.launchLocalNotification(2);
+			    mBaseActivity.launchLocalNotification(28);
 			}
 		});
 		
