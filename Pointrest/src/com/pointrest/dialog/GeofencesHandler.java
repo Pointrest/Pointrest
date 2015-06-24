@@ -23,30 +23,20 @@ import com.pointrestapp.pointrest.GeofenceTransitionsIntentService;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
 import com.pointrestapp.pointrest.data.PuntiDbHelper;
 
-public class GeoFences {
+public class GeofencesHandler {
     
 	private MyLatLng godPoint; 
 	private PendingIntent mGeofencePendingIntent;
 	private List<Geofence> mGeofenceList = new ArrayList<Geofence>();
 	private Context mContext;
 	private GoogleApiClient mGoogleApiClient;
-	public boolean mConnectedToPlayServices;
 	
-	public GeoFences (Context aContext, GoogleApiClient gac) {
+	public GeofencesHandler (Context aContext, GoogleApiClient gac) {
 		mContext = aContext;
+		mGoogleApiClient = gac;
+		godPoint = saveGodPointToSharedPreferencesAndReturnIt();
 	}
-    /**
-     * Here we setup the fences.
-     * We'll first put up a fence around the user's current location
-     * so we can use it's exit callback to update the db since
-     * the user left our aggiornated zone.
-     * We chose 3 km for now.
-     * And since the maximum number of geofences is 99,
-     * we add points them until we reach the limit and call it a day
-     * In that case the scatto for db aggiornating lowers to the 
-     * distance of the farthest point.
-     * This is to be implemented soon.
-     */
+
 	static double distance(double fromLat, double fromLon, double toLat, double toLon) {
 	    double radius = 6378137;   // approximate Earth radius, *in meters*
 	    double deltaLat = toLat - fromLat;
@@ -114,8 +104,6 @@ public class GeoFences {
 
 	
     public Location getCurrentUserLocation(){
-    	if (!mConnectedToPlayServices)
-    		return null;
     	return LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
     }
@@ -156,9 +144,21 @@ public class GeoFences {
                 FLAG_UPDATE_CURRENT);
     }
 	
-    public void setUpGeofences() {
-    	if (godPoint == null || !mConnectedToPlayServices)
-    		return;
+    /**
+     * Here we setup the fences.
+     * We'll first put up a fence around the user's current location
+     * so we can use it's exit callback to update the db since
+     * the user left our aggiornated zone.
+     * We chose 3 km for now.
+     * And since the maximum number of geofences is 99,
+     * we add points them until we reach the limit and call it a day
+     * In that case the scatto for db aggiornating lowers to the 
+     * distance of the farthest point.
+     * This is to be implemented soon.
+     */
+    public void putUpGeofences() {
+    	
+    	mGeofenceList.add(putUpUpdateTriggerFenceAndReturnIt());
     	
     	Cursor c = mContext.getContentResolver().query
     			(PuntiContentProvider.PUNTI_URI,
@@ -182,7 +182,7 @@ public class GeoFences {
     	
     	int maxFences = 99;
     	for (MyLatLng myLatLng : points) {
-    		if (maxFences > 0 && myLatLng.lang < 90 && myLatLng.lat < 90) {
+    		if (maxFences > 0) {
         		mGeofenceList.add(new Geofence.Builder()
                 .setRequestId(myLatLng.id + "")
                 .setCircularRegion(
@@ -204,4 +204,17 @@ public class GeoFences {
 	        ).setResultCallback((ResultCallback<Status>) mContext);
     	
     }
+
+	private Geofence putUpUpdateTriggerFenceAndReturnIt() {
+		return new Geofence.Builder()
+        .setRequestId(Constants.TRIGGER_RADIUS_FENCE_ID)
+        .setCircularRegion(
+        		godPoint.lat,
+        		godPoint.lang,
+                Constants.POINT_NOTIFICATION_RADIUS
+        )
+        .setExpirationDuration(Geofence.NEVER_EXPIRE)
+        .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT)
+        .build();
+	}
 }

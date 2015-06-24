@@ -135,6 +135,7 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter {
 		while (cursor.moveToNext()) {
 			categoriesCurrentlyInDb.add(cursor.getInt(serverIdIndex));
 		}
+        cursor.close();
         
         try {
         	
@@ -194,7 +195,9 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter {
 		while (cursor.moveToNext()) {
 			sottocategorieCurrentlyInDb.add(cursor.getInt(serverIdIndex));
 		}
-        
+		
+        cursor.close();
+		
         try {
         	
             for (int i = 0; i < sottocategorie.length(); ++i) {
@@ -265,6 +268,7 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter {
 			while (cursor.moveToNext()) {
 				pointsCurrentlyInDb.add(cursor.getInt(serverIdIndex));
 			}
+			cursor.close();
 			
 			Cursor imagesCursor = mContext.getContentResolver().query(PuntiContentProvider.PUNTI_IMAGES_URI, new String[]{PuntiImagesDbHelper._ID}, null, null, null);
 			int imageIdIndex = imagesCursor.getColumnIndex(PuntiImagesDbHelper._ID);
@@ -273,6 +277,7 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter {
 			while (imagesCursor.moveToNext()) {
 				imagesCurrentlyInDb.add(imagesCursor.getInt(imageIdIndex));
 			}
+			cursor.close();
 			
 			for (int i = 0; i < points.length(); ++i) {
 				
@@ -350,10 +355,6 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	public interface OnDataReadyListener {
-		void onDataReady();
 	}
 
 }

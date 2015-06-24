@@ -31,35 +31,29 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
-import com.pointrest.dialog.GeoFences;
+import com.pointrest.dialog.GeofencesHandler;
 import com.pointrestapp.pointrest.Constants;
 import com.pointrestapp.pointrest.GeofenceTransitionsIntentService;
 import com.pointrestapp.pointrest.LocalNotification;
 import com.pointrestapp.pointrest.R;
+import com.pointrestapp.pointrest.Utilities;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
 import com.pointrestapp.pointrest.data.PuntiDbHelper;
 import com.pointrestapp.pointrest.fragments.NavigationDrawerFragment;
 import com.pointrestapp.pointrest.sync.PuntiSyncAdapter;
 
 public class BaseActivity extends Activity implements
-			PuntiSyncAdapter.OnDataReadyListener, 
 			NavigationDrawerFragment.NavigationDrawerCallbacks,
 			ConnectionCallbacks,
 			OnConnectionFailedListener,
 			ResultCallback<Status> {
 
+	private static final long SYNC_INTERVAL_IN_SECONDS = 60;
 	private NavigationDrawerFragment mNavigationDrawerFragment;
 	private CharSequence mTitle;
 	private GoogleApiClient mGoogleApiClient;
 	private boolean mResolvingError = false;
-	private boolean mConnectedToPlayServices = false;
 
-	private static final String ACCOUNT = "pointrestaccount";
-	private static final long SYNC_INTERVAL_IN_SECONDS = 360;
-
-    private GeoFences mGeoFences;
-
-	
     @Override
     protected void onStart() {
         super.onStart();
@@ -155,31 +149,15 @@ public class BaseActivity extends Activity implements
 		actionBar.setDisplayShowTitleEnabled(true);
 		actionBar.setTitle(mTitle);
 	}
-	
-	@Override
-	public void onDataReady() {
-		runOnUiThread(new Runnable() {
-			
-			@Override
-			public void run() {
-				setupUi();
-			}
-		});
-	}
-	
-    protected void setupUi() {
-		// TODO Auto-generated method stub
-		
-	}
 
-	private void createSyncAccountAndInitializeSyncAdapter(Context context) {
+	private static void createSyncAccountAndInitializeSyncAdapter(Context context) {
 
         Account newAccount = new Account(
-                ACCOUNT, getResources().getString(R.string.pointrest_account_type));
-        // Get an instance of the Android account manager
+                Constants.ACCOUNT, context.getResources().getString(R.string.pointrest_account_type));
+
         AccountManager accountManager =
                 (AccountManager) context.getSystemService(
-                        ACCOUNT_SERVICE);
+                        Context.ACCOUNT_SERVICE);
         /*
          * Add the account and account type, no password or user data
          * If successful, return the Account object, otherwise report an error.
@@ -199,7 +177,7 @@ public class BaseActivity extends Activity implements
         }
         
 		SharedPreferences vPintrestPreferences =
-				this.getSharedPreferences(Constants.POINTREST_PREFERENCES, Context.MODE_PRIVATE);
+				context.getSharedPreferences(Constants.POINTREST_PREFERENCES, Context.MODE_PRIVATE);
 		
 		if (!vPintrestPreferences.getBoolean(Constants.RAN_FOR_THE_FIRST_TIME, false)) {
 	        Bundle settingsBundle = new Bundle();
@@ -235,14 +213,13 @@ public class BaseActivity extends Activity implements
 
 	@Override
 	public void onConnected(Bundle arg0) {
-		mConnectedToPlayServices = true;
 		createSyncAccountAndInitializeSyncAdapter(this);
-		mGeoFences = new GeoFences(this, mGoogleApiClient);
-		mGeoFences.saveGodPointToSharedPreferencesAndReturnIt();
-		mGeoFences.setUpGeofences();
 	}
 
-
+	public void doTheGeoFenceThing(){
+		new GeofencesHandler(this, mGoogleApiClient).putUpGeofences();
+	}
+	
 	@Override
 	public void onConnectionSuspended(int arg0) {
 		System.out.println();
