@@ -53,8 +53,10 @@ public class MainScreenActivity extends BaseActivity implements
 			@Override
 			public void onChange(boolean selfChange, Uri uri) {
 				super.onChange(selfChange, uri);
-				if (!mInitialized)
+				if (!mInitialized) {
 					initializeScreen(bFinal);
+					MainScreenActivity.this.doTheGeoFenceThing();
+				}
 				else {
 					mMapFragment.updateMarkers();
 				}

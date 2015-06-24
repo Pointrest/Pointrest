@@ -62,7 +62,7 @@ public class FragmentListFrame extends Fragment
 			mListener = (Callback)activity;
 		super.onAttach(activity);
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {

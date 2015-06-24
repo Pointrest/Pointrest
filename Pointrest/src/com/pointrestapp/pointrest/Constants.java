@@ -32,4 +32,7 @@ public final class Constants {
 	
 	public static final String BASE_URL = "http://www.pointerest.somee.com/api/";
 	public static final String RAN_FOR_THE_FIRST_TIME = "ran_already";
+	public static final String TRIGGER_RADIUS_FENCE_ID = "triggerfenceblah";
+	public static final String ACCOUNT = "pointrestaccount";
+
 }
