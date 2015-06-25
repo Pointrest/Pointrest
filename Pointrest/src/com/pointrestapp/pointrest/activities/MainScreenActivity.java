@@ -81,7 +81,7 @@ public class MainScreenActivity extends BaseActivity implements
 
 	@Override
 	public void onTabSelected(int puntoType) {
-		//Ogni tanto è null, come cazzo fa ad essere chiamato questo prima dell'oncreate dell'activity!?
+		//Ogni tanto è null, come fa ad essere chiamato questo prima dell'oncreate dell'activity!?
 		if (mMapFragment != null && mTitleScreenFragment != null) {
 			mMapFragment.onTabSelected(puntoType);
 			mTitleScreenFragment.onTabSelected(puntoType);
@@ -108,8 +108,10 @@ public class MainScreenActivity extends BaseActivity implements
 	 */
 	@Override
 	public void onBackPressed() {
-		mMapFragment.onBackPressed();
-		mTitleScreenFragment.OnBackPressed();
+		if (mMapFragment != null)
+			mMapFragment.onBackPressed();
+		if (mTitleScreenFragment != null)
+			mTitleScreenFragment.OnBackPressed();
 		super.onBackPressed();
 	}
 

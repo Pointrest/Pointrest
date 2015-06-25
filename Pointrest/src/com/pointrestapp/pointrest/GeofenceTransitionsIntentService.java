@@ -29,9 +29,8 @@ public class GeofenceTransitionsIntentService extends IntentService {
             return;
         }
 
-        // Get the transition type.
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
-
+        
         List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
         for (Geofence fence : triggeringGeofences) {
         	String fenceId = fence.getRequestId();

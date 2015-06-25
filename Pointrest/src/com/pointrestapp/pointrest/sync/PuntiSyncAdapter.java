@@ -27,7 +27,6 @@ import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.location.LocationServices;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.pointrest.dialog.GeofencesHandler;
 import com.pointrestapp.pointrest.Constants;
 import com.pointrestapp.pointrest.data.CategorieDbHelper;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
