@@ -9,8 +9,12 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.pointrestapp.pointrest.Constants;
 import com.pointrestapp.pointrest.R;
+import com.pointrestapp.pointrest.data.PuntiContentProvider;
 import com.pointrestapp.pointrest.data.PuntiDbHelper;
+import com.pointrestapp.pointrest.data.PuntiImagesDbHelper;
 
 public class NotificheBloccateCursorAdapter extends CursorAdapter {
 	public NotificheBloccateCursorAdapter(Context context, Cursor c) {
@@ -37,14 +41,26 @@ public class NotificheBloccateCursorAdapter extends CursorAdapter {
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 		int vNameColumnIndex = cursor.getColumnIndex(PuntiDbHelper.NOME);
-		//int vImgColumnIndex = cursor.getColumnIndex(NotificheBloccateHelper.IMAGE);
 
 		ViewHolder vHolder = (ViewHolder)view.getTag();
 		
 		vHolder.nomePI.setText(cursor.getString(vNameColumnIndex));
-		//byte[] decodedString = Base64.decode(cursor.getString(vImgColumnIndex), Base64.DEFAULT);
-		//Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-		//vHolder.img.setImageBitmap(decodedByte);
+
+		int preferitoIdColumnIndex = cursor.getColumnIndex(PuntiDbHelper._ID);
+		
+		Cursor c = context.getContentResolver()
+				.query(PuntiContentProvider.PUNTI_IMAGES_URI, 
+						new String[]{PuntiImagesDbHelper._ID + ""},
+						PuntiImagesDbHelper.PUNTO_ID + "=?",
+						new String[]{ cursor.getInt(preferitoIdColumnIndex) + "" },
+						null);
+		
+		if(c.moveToFirst()){
+			int imgIdOnRemoteDB = c.getInt(0);
+			Glide.with(context).load(Constants.BASE_URL + "immagini/" + imgIdOnRemoteDB).placeholder(R.drawable.ic_place_black_36dp).crossFade().into(vHolder.img);
+			
+			c.close();
+		}
 		
 	}
 

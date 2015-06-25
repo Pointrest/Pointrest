@@ -36,7 +36,6 @@ import com.pointrestapp.pointrest.Constants;
 import com.pointrestapp.pointrest.GeofenceTransitionsIntentService;
 import com.pointrestapp.pointrest.LocalNotification;
 import com.pointrestapp.pointrest.R;
-import com.pointrestapp.pointrest.Utilities;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
 import com.pointrestapp.pointrest.data.PuntiDbHelper;
 import com.pointrestapp.pointrest.fragments.NavigationDrawerFragment;
@@ -91,7 +90,7 @@ public class BaseActivity extends Activity implements
 			break;
 		case 4:
 			mTitle = getString(R.string.title_section4);
-			break;				
+			break;
 		}
 		restoreActionBar();
 	}

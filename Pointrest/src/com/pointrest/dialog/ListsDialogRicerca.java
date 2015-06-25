@@ -59,20 +59,23 @@ public class ListsDialogRicerca extends DialogFragment {
 		}else{
 			Cursor c = getActivity().getContentResolver()
 					.query(PuntiContentProvider.SOTTOCATEGORIE_URI, 
-							new String[]{SottocategoriaDbHelper.NAME + ""},
+							new String[]{SottocategoriaDbHelper.NAME + "", SottocategoriaDbHelper._ID + ""},
 							SottocategoriaDbHelper.CATEGORIA_ID + "=?",
 							new String[]{ categoriaPrincipale + "" },
 							null);
 			
-			String[] columnNames = {};
+			String[] columnNames = new String[c.getCount()];
+			final int[] columnIdNames = new int[c.getCount()];
 			int tmpCursorIndex = 0;
 			
-			while(c.moveToNext()){
-				columnNames[tmpCursorIndex] = c.getString(tmpCursorIndex);
-				tmpCursorIndex++;
+			if(c.moveToFirst()){
+				do{
+					columnNames[tmpCursorIndex] = c.getString(0);
+					columnIdNames[tmpCursorIndex] = c.getInt(1);
+					tmpCursorIndex++;
+				}while(c.moveToNext());
 			}
-			
-			
+			c.close();
 			vBuilder.setItems(columnNames,//new String[]{"AAA",  "BBB", "CCC", "DDD" }, 
 					new DialogInterface.OnClickListener() {
 			
@@ -81,6 +84,7 @@ public class ListsDialogRicerca extends DialogFragment {
 				Intent tipologia = new Intent();
 				tipologia.putExtra("LIST", which);
 				tipologia.putExtra("IS_CATEGORY", true);
+				tipologia.putExtra("CATEGORY_ID", columnIdNames[which]);
 				getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, tipologia);
 			}
 		});
