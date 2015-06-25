@@ -19,8 +19,15 @@ import android.content.SharedPreferences;
 import android.content.SyncResult;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.location.LocationServices;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.pointrest.dialog.GeofencesHandler;
 import com.pointrestapp.pointrest.Constants;
 import com.pointrestapp.pointrest.data.CategorieDbHelper;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
@@ -29,41 +36,42 @@ import com.pointrestapp.pointrest.data.PuntiImagesDbHelper;
 import com.pointrestapp.pointrest.data.SottocategoriaDbHelper;
 
 
-public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter {
+public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter  implements
+			ConnectionCallbacks,
+			OnConnectionFailedListener {
 
 	private ContentResolver mContentResolver;
 	private Context mContext;
+	private GoogleApiClient mGoogleApiClient;
+	private boolean mResolvingError = false;
+	private int raggio;
+	private float lang;
+	private float lat;
+	private SharedPreferences pointrestPreferences;
+	private GeofencesHandler mGeofencesHandler;
 
 	public PuntiSyncAdapter(Context context, boolean autoInitialize) {
 		super(context, autoInitialize);
 		mContext = context;
-		mContentResolver = context.getContentResolver();
+		mContentResolver = mContext.getContentResolver();
+		buildGoogleApiClient();
 	}
 
 	@Override
 	public void onPerformSync(Account account, Bundle extras, String authority,
 			ContentProviderClient provider, SyncResult syncResult) {
 		
-		//Previously saved user prefs
-		SharedPreferences pointrestPreferences =
-				mContext.getSharedPreferences(Constants.POINTREST_PREFERENCES, Context.MODE_PRIVATE);
-		
-		int raggio = pointrestPreferences.getInt(Constants.SharedPreferences.RAGGIO, 100);
-		double lang = pointrestPreferences.getFloat(Constants.SharedPreferences.LANG, 65);
-		double lat = pointrestPreferences.getFloat(Constants.SharedPreferences.LAT, 45);
-		
-		//Try and get the points
-		try {
-			getAllCategorie();
-			getAllSottoCategorie();
-			getPoints(lang, lat, raggio);
-			pointrestPreferences.edit().putBoolean(Constants.RAN_FOR_THE_FIRST_TIME, true).commit();
-			mContext.getContentResolver().notifyChange(PuntiContentProvider.DUMMY_NOTIFIER_URI, null, false);
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		//We're going to sync in the onConnected callback
+        if (!mResolvingError) {  // more about this later
+            mGoogleApiClient.connect();
+        }
+
+	}
+	
+	private synchronized void buildGoogleApiClient() {
+	    mGoogleApiClient = new GoogleApiClient.Builder(mContext, this, this)
+	        .addApi(LocationServices.API)
+	        .build();
 	}
 	
     private void getAllSottoCategorie() {
@@ -129,7 +137,7 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter {
 		
 		//We'll use this set to figure out if we already have the item in the db
 		Set<Integer> categoriesCurrentlyInDb = new TreeSet<Integer>();
-		Cursor cursor = mContext.getContentResolver().query(PuntiContentProvider.CATEGORIE_URI, new String[]{CategorieDbHelper._ID}, null, null, null);
+		Cursor cursor = mContentResolver.query(PuntiContentProvider.CATEGORIE_URI, new String[]{CategorieDbHelper._ID}, null, null, null);
 		int serverIdIndex = cursor.getColumnIndex(CategorieDbHelper._ID);
 		
 		while (cursor.moveToNext()) {
@@ -157,25 +165,27 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter {
             		categoriesToUpdateVector.add(cv);
             	else
             		categoriesToAddVector.add(cv);
-            	
-            	//add to content provider
-    			if (categoriesToAddVector.size() > 0) {
-    				ContentValues[] cVValues = new ContentValues[categoriesToAddVector.size()];
-    				categoriesToAddVector.toArray(cVValues);
-    				mContentResolver.bulkInsert(PuntiContentProvider.CATEGORIE_URI, cVValues);
-    			}
-    			
-    			if (categoriesToUpdateVector.size() > 0) {
-    				for (ContentValues vals : categoriesToUpdateVector) {
-    					mContentResolver.update(PuntiContentProvider.CATEGORIE_URI,
-    							vals, CategorieDbHelper._ID + "=" + vals.getAsInteger(ID), null);
-    				}
-    			}
-            	
             }
+        	
+        	//add to content provider
+			if (categoriesToAddVector.size() > 0) {
+				ContentValues[] cVValues = new ContentValues[categoriesToAddVector.size()];
+				categoriesToAddVector.toArray(cVValues);
+				mContentResolver.bulkInsert(PuntiContentProvider.CATEGORIE_URI, cVValues);
+			}
+			
+			if (categoriesToUpdateVector.size() > 0) {
+				for (ContentValues vals : categoriesToUpdateVector) {
+					mContentResolver.update(PuntiContentProvider.CATEGORIE_URI,
+							vals, CategorieDbHelper._ID + "=" + vals.getAsInteger(ID), null);
+				}
+			}
+            
 		} catch (Exception e) {
-			// TODO: handle exception
+			handleException(e);
 		}
+        
+		getAllSottoCategorie();        
 	}
 
 	private void parseSottoCategorieJSONArray(JSONArray sottocategorie) {
@@ -185,18 +195,18 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter {
         final String SOTTOCATEGORIA_NAME = "SubCategoryName";
         
         
-		Vector<ContentValues> sottocategorieToUpdateVector = new Vector<ContentValues>(sottocategorie.length());
-		Vector<ContentValues> sottocategorieToAddVector = new Vector<ContentValues>(sottocategorie.length());
+		Vector<ContentValues> sottocategorieToUpdateVector = new Vector<ContentValues>();
+		Vector<ContentValues> sottocategorieToAddVector = new Vector<ContentValues>();
 		
-		Cursor cursor = mContext.getContentResolver().query(PuntiContentProvider.SOTTOCATEGORIE_URI, new String[]{SottocategoriaDbHelper._ID}, null, null, null);
-		int serverIdIndex = cursor.getColumnIndex(SottocategoriaDbHelper._ID);
+		Cursor sottoCategorieCursor = mContentResolver.query(PuntiContentProvider.SOTTOCATEGORIE_URI, new String[]{SottocategoriaDbHelper._ID}, null, null, null);
+		int sottocategoriaIdIndex = sottoCategorieCursor.getColumnIndex(SottocategoriaDbHelper._ID);
 		Set<Integer> sottocategorieCurrentlyInDb = new TreeSet<Integer>();
 		
-		while (cursor.moveToNext()) {
-			sottocategorieCurrentlyInDb.add(cursor.getInt(serverIdIndex));
+		while (sottoCategorieCursor.moveToNext()) {
+			sottocategorieCurrentlyInDb.add(sottoCategorieCursor.getInt(sottocategoriaIdIndex));
 		}
 		
-        cursor.close();
+        sottoCategorieCursor.close();
 		
         try {
         	
@@ -221,25 +231,28 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter {
             		sottocategorieToUpdateVector.add(cv);
             	else
             		sottocategorieToAddVector.add(cv);
-            	
-            	//add to content provider
-    			if (sottocategorieToAddVector.size() > 0) {
-    				ContentValues[] cVValues = new ContentValues[sottocategorieToAddVector.size()];
-    				sottocategorieToAddVector.toArray(cVValues);
-    				mContentResolver.bulkInsert(PuntiContentProvider.SOTTOCATEGORIE_URI, cVValues);
-    			}
-    			
-    			if (sottocategorieToUpdateVector.size() > 0) {
-    				for (ContentValues vals : sottocategorieToUpdateVector) {
-    					mContentResolver.update(PuntiContentProvider.SOTTOCATEGORIE_URI,
-    							vals, SottocategoriaDbHelper._ID + "=" + vals.getAsInteger(ID), null);
-    				}
-    			}
-            	
             }
+            
+        	//add to content provider
+			if (sottocategorieToAddVector.size() > 0) {
+				ContentValues[] cVValues = new ContentValues[sottocategorieToAddVector.size()];
+				sottocategorieToAddVector.toArray(cVValues);
+				mContentResolver.bulkInsert(PuntiContentProvider.SOTTOCATEGORIE_URI, cVValues);
+			}
+			
+			if (sottocategorieToUpdateVector.size() > 0) {
+				for (ContentValues vals : sottocategorieToUpdateVector) {
+					mContentResolver.update(PuntiContentProvider.SOTTOCATEGORIE_URI,
+							vals, SottocategoriaDbHelper._ID + "=" + vals.getAsInteger(ID), null);
+				}
+			}
+			
+    		getPoints(lang, lat, raggio);
+
 		} catch (Exception e) {
-			// TODO: handle exception
+			handleException(e);
 		}
+        		
 	}
 
 	private void parsePuntiJSONArray(JSONArray points) {
@@ -261,7 +274,7 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter {
 			
 			Vector<ContentValues> imagesToAddVector = new Vector<ContentValues>();
 			
-			Cursor cursor = mContext.getContentResolver().query(PuntiContentProvider.PUNTI_URI, new String[]{PuntiDbHelper._ID}, null, null, null);
+			Cursor cursor = mContentResolver.query(PuntiContentProvider.PUNTI_URI, new String[]{PuntiDbHelper._ID}, null, null, null);
 			int serverIdIndex = cursor.getColumnIndex(PuntiDbHelper._ID);
 			Set<Integer> pointsCurrentlyInDb = new TreeSet<Integer>();
 			
@@ -270,7 +283,7 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter {
 			}
 			cursor.close();
 			
-			Cursor imagesCursor = mContext.getContentResolver().query(PuntiContentProvider.PUNTI_IMAGES_URI, new String[]{PuntiImagesDbHelper._ID}, null, null, null);
+			Cursor imagesCursor = mContentResolver.query(PuntiContentProvider.PUNTI_IMAGES_URI, new String[]{PuntiImagesDbHelper._ID}, null, null, null);
 			int imageIdIndex = imagesCursor.getColumnIndex(PuntiImagesDbHelper._ID);
 			Set<Integer> imagesCurrentlyInDb = new TreeSet<Integer>();
 			
@@ -350,11 +363,57 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter {
 				imagesToAddVector.toArray(cvImageValues);
 				mContentResolver.bulkInsert(PuntiContentProvider.PUNTI_IMAGES_URI, cvImageValues);
 			}
-			
+			mContentResolver.notifyChange(PuntiContentProvider.DUMMY_NOTIFIER_URI, null, false);
+
+			finiliazeRequest();
 
 		} catch (JSONException e) {
+			handleException(e);
 			e.printStackTrace();
 		}
 	}
 
+	@Override
+	public void onConnectionFailed(ConnectionResult arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onConnected(Bundle arg0) {
+		
+		mGeofencesHandler = new GeofencesHandler(mContext, mGoogleApiClient);
+		
+		//Previously saved user prefs
+		pointrestPreferences =
+				mContext.getSharedPreferences(Constants.POINTREST_PREFERENCES, Context.MODE_PRIVATE);
+		
+		raggio = pointrestPreferences.getInt(Constants.SharedPreferences.RAGGIO, 100);
+		lang = pointrestPreferences.getFloat(Constants.SharedPreferences.LANG, 65);
+		lat = pointrestPreferences.getFloat(Constants.SharedPreferences.LAT, 45);
+		
+		getAllCategorie();		
+	}
+
+	@Override
+	public void onConnectionSuspended(int arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void handleException(Exception e) {
+		String message = "errorrrrrr";
+		if (e != null)
+			message = e.getMessage();
+		if (mGoogleApiClient != null)
+			mGoogleApiClient.disconnect();
+		Log.e("Pointrest SyncAdapter", message);
+	}
+	
+	private void finiliazeRequest() {
+		pointrestPreferences.edit().putBoolean(Constants.RAN_FOR_THE_FIRST_TIME, true).commit();
+		mContentResolver.notifyChange(PuntiContentProvider.DUMMY_NOTIFIER_URI, null, false);
+		mGeofencesHandler.putUpGeofences();
+		mGoogleApiClient.disconnect();
+	}
 }

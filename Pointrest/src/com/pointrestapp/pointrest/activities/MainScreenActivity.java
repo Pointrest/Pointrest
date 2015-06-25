@@ -53,16 +53,14 @@ public class MainScreenActivity extends BaseActivity implements
 			@Override
 			public void onChange(boolean selfChange, Uri uri) {
 				super.onChange(selfChange, uri);
-				if (!mInitialized) {
+				if (!mInitialized)
 					initializeScreen(bFinal);
-					MainScreenActivity.this.doTheGeoFenceThing();
-				}
-				else {
+				else
 					mMapFragment.updateMarkers();
-				}
 			}
 		};
         getContentResolver().registerContentObserver(PuntiContentProvider.DUMMY_NOTIFIER_URI, false, mObserver);
+        getContentResolver().registerContentObserver(PuntiContentProvider.PUNTI_URI, false, mObserver);
 	}
 
 	protected void initializeScreen(Bundle savedInstanceState) {
@@ -83,8 +81,11 @@ public class MainScreenActivity extends BaseActivity implements
 
 	@Override
 	public void onTabSelected(int puntoType) {
-		mMapFragment.onTabSelected(puntoType);
-		mTitleScreenFragment.onTabSelected(puntoType);
+		//Ogni tanto è null, come cazzo fa ad essere chiamato questo prima dell'oncreate dell'activity!?
+		if (mMapFragment != null && mTitleScreenFragment != null) {
+			mMapFragment.onTabSelected(puntoType);
+			mTitleScreenFragment.onTabSelected(puntoType);
+		}
 	}
 
 	@Override
