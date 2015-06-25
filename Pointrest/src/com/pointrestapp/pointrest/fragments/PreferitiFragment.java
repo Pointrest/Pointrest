@@ -66,24 +66,10 @@ public class PreferitiFragment extends Fragment implements LoaderCallbacks<Curso
 		});	
 		
 		getLoaderManager().initLoader(PREFERITI_LOADER_ID, null, this);
-
-		Cursor c = getActivity().getContentResolver()
-				.query(PuntiContentProvider.PUNTI_URI, null,
-						PuntiDbHelper.BLOCKED + "=?",
-						new String[]{ Constants.NotificationBlocked.TRUE + "" },
-						null);
-		isEmptyTheList(c);
+		
+		lista.setEmptyView(txtNoPref);
 		
 		return v;
-	}
-	
-	private void isEmptyTheList(Cursor c){
-		if (!c.moveToNext()){
-			 txtNoPref.setVisibility(View.VISIBLE);
-		 }
-		 else{
-			 txtNoPref.setVisibility(View.INVISIBLE);
-		 }
 	}
 	
 	public void dialogRimuoviPreferito(long id){
