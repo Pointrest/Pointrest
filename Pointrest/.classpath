@@ -6,5 +6,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="lib" path="libs/android-async-http-1.4.6.jar"/>
+	<classpathentry kind="lib" path="libs/stetho-1.1.1-fatjar.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

@@ -7,9 +7,7 @@ import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.app.Fragment;
 import android.database.Cursor;
-import android.location.Location;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,11 +17,6 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.LinearLayout;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
-import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -45,6 +38,7 @@ public class FragmentMap extends Fragment  implements
 		OnMapReadyCallback,
 		TabAdapter.TabSelectedListener {
 
+	private static final String CATEGORY_ID = "category_id";
 	private GoogleMap mMap;
 	private MyMapView mMapView;
 	private List<Marker> mMarkers = new ArrayList<Marker>();
@@ -75,7 +69,10 @@ public class FragmentMap extends Fragment  implements
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View vView = inflater.inflate(R.layout.fragment_map_frame, container, false);
-
+		
+		if (savedInstanceState != null)
+			mCategoryId = savedInstanceState.getInt(CATEGORY_ID);
+		
 		mMapView = (MyMapView)vView.findViewById(R.id.mapview);
 		mFrameBelow = (View)vView.findViewById(R.id.frame_map_below);
 		mLayoutWhole = (LinearLayout)vView.findViewById(R.id.linear_tab);
@@ -171,7 +168,8 @@ public class FragmentMap extends Fragment  implements
 				.position(vLatLng)
 			));
 		}
-
+		
+		cursor.close();
 		if (haveAtLeastOnePointToShow)
 			mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(vBoundsBuilder.build(), 10));
 	}
@@ -199,6 +197,11 @@ public class FragmentMap extends Fragment  implements
 				mMapView.onLowMemory();
 		}
 
+		@Override
+		public void onSaveInstanceState(Bundle outState) {
+			outState.putInt(CATEGORY_ID, mCategoryId);
+			super.onSaveInstanceState(outState);
+		}
 		public void prepareForShow(final MotionEvent event) {
 			/*
 			long downTime = SystemClock.uptimeMillis();

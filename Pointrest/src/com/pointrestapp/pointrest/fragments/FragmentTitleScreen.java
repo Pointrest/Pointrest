@@ -47,9 +47,9 @@ public class FragmentTitleScreen extends Fragment
 	
 	@Override
 	public void onResume() {
+		super.onResume();
         int tab = mTabsAdapter.getTabPositionFromCategoryId(mCategoryId);
         mViewPager.setCurrentItem(tab, true);
-		super.onResume();
 	}
 
 	public void OnBackPressed() {

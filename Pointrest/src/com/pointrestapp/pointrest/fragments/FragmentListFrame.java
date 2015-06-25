@@ -40,7 +40,7 @@ public class FragmentListFrame extends Fragment
 
 	private ElencoListCursorAdapter mElencoListCursorAdapter;
 	private Callback mListener;
-	private int mCurrentCategory;
+	private int mCategory;
 	private View mView;
 	ListView mListView;
 	
@@ -125,28 +125,20 @@ public class FragmentListFrame extends Fragment
 			}
 		});
 		
-		if (aBundle != null) {
-			int categoryId = aBundle.getInt(Constants.CATEGORY_TYPE);
-			mCurrentCategory = categoryId;
-		}
+		if (aBundle != null)
+			mCategory = aBundle.getInt(Constants.CATEGORY_TYPE);
 		
 	}
 	
 	@Override
 	public void onResume() {
-		getLoaderManager().initLoader(mCurrentCategory, null, this);
+		getLoaderManager().initLoader(mCategory, null, this);
 		super.onResume();
 	};
 	
 	@Override
-		public void onPause() {
-			// TODO Auto-generated method stub
-			super.onPause();
-		}
-	
-	@Override
 	public void onSaveInstanceState(Bundle outState) {
-		outState.putInt(Constants.CATEGORY_TYPE, mCurrentCategory);
+		outState.putInt(Constants.CATEGORY_TYPE, mCategory);
 		super.onSaveInstanceState(outState);
 	}
 
@@ -160,9 +152,9 @@ public class FragmentListFrame extends Fragment
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		String selection = null;
 		String[] selectionArgs = null;
-		if (mCurrentCategory != Constants.TabType.TUTTO) {
+		if (mCategory != Constants.TabType.TUTTO) {
 			selection = PuntiDbHelper.CATEGORY_ID + "=?";
-			selectionArgs = new String[] { mCurrentCategory + "" };
+			selectionArgs = new String[] { mCategory + "" };
 		}
 		return new CursorLoader(getActivity(),
 								PuntiContentProvider.PUNTI_URI,
