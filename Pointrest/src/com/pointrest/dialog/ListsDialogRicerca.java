@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -57,12 +58,26 @@ public class ListsDialogRicerca extends DialogFragment {
 				}
 			});
 		}else{
-			Cursor c = getActivity().getContentResolver()
+			Cursor cAll = getActivity().getContentResolver()
+					.query(PuntiContentProvider.SOTTOCATEGORIE_URI, 
+							new String[]{SottocategoriaDbHelper.NAME + "", SottocategoriaDbHelper._ID + ""},
+							null,
+							null,
+							null);
+			
+			Cursor cByType = getActivity().getContentResolver()
 					.query(PuntiContentProvider.SOTTOCATEGORIE_URI, 
 							new String[]{SottocategoriaDbHelper.NAME + "", SottocategoriaDbHelper._ID + ""},
 							SottocategoriaDbHelper.CATEGORIA_ID + "=?",
 							new String[]{ categoriaPrincipale + "" },
 							null);
+			
+			Cursor c = null;
+			if(categoriaPrincipale == -999){
+				c = cAll;
+			}else{
+				c = cByType;
+			}
 			
 			String[] columnNames = new String[c.getCount()];
 			final int[] columnIdNames = new int[c.getCount()];

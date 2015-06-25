@@ -198,7 +198,7 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 	    		}
 	    		else//(txtTipo.getText() == "Tutti i PI") //1
 	    		{
-    				dialogFrag = ListsDialogRicerca.getInstance(10, "Scegli la categoria", true, Constants.TabType.TUTTO);
+    				dialogFrag = ListsDialogRicerca.getInstance(10, "Scegli la categoria", true, -999);
 	    		}
 	            
 	            dialogFrag.setTargetFragment(this, DIALOG_FRAGMENT);
