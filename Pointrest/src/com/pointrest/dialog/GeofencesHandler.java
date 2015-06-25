@@ -48,7 +48,7 @@ public class GeofencesHandler {
 	    return radius * angle;
 	}
 	
-	private class MyLatLng implements Comparable<MyLatLng> {
+	public class MyLatLng implements Comparable<MyLatLng> {
 		
 		public int id;
 		public double lat, lang;
@@ -102,7 +102,6 @@ public class GeofencesHandler {
 		
 	}
 
-	
     public Location getCurrentUserLocation(){
     	return LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
@@ -111,8 +110,7 @@ public class GeofencesHandler {
 	public MyLatLng saveGodPointToSharedPreferencesAndReturnIt() {
 		
     	Location loc = getCurrentUserLocation();
-    	if (loc == null)
-    		return null;
+    	
     	double lat = loc.getLatitude();
     	double lang = loc.getLongitude();
     	
@@ -196,6 +194,10 @@ public class GeofencesHandler {
         		--maxFences;
     		}
 		}
+    	
+    	//TODO: Put all added geofences in shared preferences so you can remove them later
+    	//before adding others
+    	
     	if (mGoogleApiClient.isConnected())
 		    LocationServices.GeofencingApi.addGeofences(
 	                mGoogleApiClient,

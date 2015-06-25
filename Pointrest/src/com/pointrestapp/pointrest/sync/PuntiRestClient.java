@@ -1,15 +1,15 @@
 package com.pointrestapp.pointrest.sync;
 
+import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-import com.loopj.android.http.SyncHttpClient;
 import com.pointrestapp.pointrest.Constants;
 
 public class PuntiRestClient {
 	
 	  
 
-	  private static SyncHttpClient client = new SyncHttpClient();
+	  private static AsyncHttpClient client = new AsyncHttpClient();
 
 	  public static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
 	      client.get(getAbsoluteUrl(url), params, responseHandler);

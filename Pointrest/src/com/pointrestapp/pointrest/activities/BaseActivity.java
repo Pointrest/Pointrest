@@ -1,71 +1,39 @@
 package com.pointrestapp.pointrest.activities;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
-import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.Geofence;
-import com.google.android.gms.location.GeofencingRequest;
-import com.google.android.gms.location.LocationServices;
-import com.pointrest.dialog.GeofencesHandler;
 import com.pointrestapp.pointrest.Constants;
-import com.pointrestapp.pointrest.GeofenceTransitionsIntentService;
 import com.pointrestapp.pointrest.LocalNotification;
 import com.pointrestapp.pointrest.R;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
-import com.pointrestapp.pointrest.data.PuntiDbHelper;
 import com.pointrestapp.pointrest.fragments.NavigationDrawerFragment;
-import com.pointrestapp.pointrest.sync.PuntiSyncAdapter;
 
 public class BaseActivity extends Activity implements
-			NavigationDrawerFragment.NavigationDrawerCallbacks,
-			ConnectionCallbacks,
-			OnConnectionFailedListener,
-			ResultCallback<Status> {
+			NavigationDrawerFragment.NavigationDrawerCallbacks {
 
 	private static final long SYNC_INTERVAL_IN_SECONDS = 60;
 	private NavigationDrawerFragment mNavigationDrawerFragment;
 	private CharSequence mTitle;
-	private GoogleApiClient mGoogleApiClient;
-	private boolean mResolvingError = false;
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (!mResolvingError) {  // more about this later
-            mGoogleApiClient.connect();
-        }
-    }
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		buildGoogleApiClient();
+		createSyncAccountAndInitializeSyncAdapter(this);
+
 		
 		setContentView(R.layout.activity_main);
 
@@ -149,7 +117,7 @@ public class BaseActivity extends Activity implements
 		actionBar.setTitle(mTitle);
 	}
 
-	private static void createSyncAccountAndInitializeSyncAdapter(Context context) {
+	private void createSyncAccountAndInitializeSyncAdapter(Context context) {
 
         Account newAccount = new Account(
                 Constants.ACCOUNT, context.getResources().getString(R.string.pointrest_account_type));
@@ -186,52 +154,16 @@ public class BaseActivity extends Activity implements
 	                ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
 	        ContentResolver.requestSync(newAccount, PuntiContentProvider.AUTHORITY, settingsBundle);
 		}
-        
+        /*
         ContentResolver.addPeriodicSync(
                 newAccount,
                 PuntiContentProvider.AUTHORITY,
                 Bundle.EMPTY,
-                SYNC_INTERVAL_IN_SECONDS);
+                SYNC_INTERVAL_IN_SECONDS); */
     }
     
     public void launchLocalNotification(int id) {
     	new LocalNotification(this, id).execute();	    
 	}
-    
-	protected synchronized void buildGoogleApiClient() {
-	    mGoogleApiClient = new GoogleApiClient.Builder(this, this, this)
-	        .addApi(LocationServices.API)
-	        .build();
-	}
 
-	@Override
-	public void onConnectionFailed(ConnectionResult arg0) {
-		// TODO Auto-generated method stub
-		System.out.println();
-	}
-
-	@Override
-	public void onConnected(Bundle arg0) {
-		createSyncAccountAndInitializeSyncAdapter(this);
-	}
-
-	public void doTheGeoFenceThing(){
-		new GeofencesHandler(this, mGoogleApiClient).putUpGeofences();
-	}
-	
-	@Override
-	public void onConnectionSuspended(int arg0) {
-		System.out.println();
-	}
-	
-    @Override
-    protected void onStop() {
-        mGoogleApiClient.disconnect();
-        super.onStop();
-    }
-
-	@Override
-	public void onResult(Status arg0) {
-		
-	}
 }
