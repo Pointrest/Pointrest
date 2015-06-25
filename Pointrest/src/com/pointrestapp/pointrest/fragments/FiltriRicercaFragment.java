@@ -27,6 +27,8 @@ import android.widget.Toast;
 import com.pointrest.dialog.ListsDialogRicerca;
 import com.pointrestapp.pointrest.Constants;
 import com.pointrestapp.pointrest.R;
+import com.pointrestapp.pointrest.data.PuntiContentProvider;
+import com.pointrestapp.pointrest.data.SottocategoriaDbHelper;
 
 public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<Cursor>{
 	LinearLayout lTipo, lCategoria;
@@ -41,6 +43,7 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 	public static final String FILTRI_RICERCA_PREFS_NOTIFICATIONS = "filtri_ricerca_prefs_notifications";
 	private static final String TIPO_PI_SHARED = "tipo_pi_shared";
 	protected static final String SOLO_PREFERITI_SHARED_PREF = "solo_preferiti_shared_pref";
+	private static final String CATEGORY_ID = "category_id";
 	private SharedPreferences mSettings;
 	
 	@Override
@@ -88,7 +91,19 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 				txtTipo.setText("Attività commerciali");
 				break;	
 		}
-				
+		try{
+		Cursor c = getActivity().getContentResolver()
+				.query(PuntiContentProvider.SOTTOCATEGORIE_URI, 
+						new String[]{SottocategoriaDbHelper.NAME + ""},
+						SottocategoriaDbHelper._ID + "=?",
+						new String[]{ mSettings.getInt(CATEGORY_ID, 999) + "" },
+						null);
+    	c.moveToFirst();
+    	txtCategoria.setText("" + c.getString(0));
+    	c.close();
+		}catch(Exception exc){
+			txtCategoria.setText("Tutte");
+		}
 		lTipo.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -227,9 +242,20 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 	                    			break;
 	                    	}
 	                    }else{
-	                    	//to implement con shared pref!
+	                    	int category_id = data.getIntExtra("CATEGORY_ID", 999);
+	                    	Cursor c = getActivity().getContentResolver()
+	            					.query(PuntiContentProvider.SOTTOCATEGORIE_URI, 
+	            							new String[]{SottocategoriaDbHelper.NAME + ""},
+	            							SottocategoriaDbHelper._ID + "=?",
+	            							new String[]{ category_id + "" },
+	            							null);
+	                    	c.moveToFirst();
+	                    	txtCategoria.setText("" + c.getString(0));
+	                    	c.close();
+	                    	editor.putInt(CATEGORY_ID, category_id);
+            			    editor.commit();
 	                    }
-	                    Toast.makeText(getActivity().getApplicationContext(), "Positions " + position + " || isCategory " + is_category, Toast.LENGTH_SHORT).show();
+	                    //Toast.makeText(getActivity().getApplicationContext(), "Positions " + position + " || isCategory " + is_category, Toast.LENGTH_SHORT).show();
 	                } else if (resultCode == Activity.RESULT_CANCELED){
 	                	Toast.makeText(getActivity().getApplicationContext(), "Result cancelled", Toast.LENGTH_SHORT).show();
 	                }
