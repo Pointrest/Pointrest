@@ -1,6 +1,6 @@
 package com.pointrestapp.pointrest.activities;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
 
 import com.pointrestapp.pointrest.R;
@@ -26,34 +26,33 @@ public class SimpleActivity extends NewBaseActivity {
 	
 	protected void loadFragment(FragmentToLoad which) {
 		Fragment fragment = null;
-		int section;
+		CharSequence title = "";
 		switch (which) {
 			case NOTIFICATIONS:
 				mNotificheFragment = NotificheFragment.getInstance();
 				fragment = mNotificheFragment;
-				section = FragmentToLoad.NOTIFICATIONS.ordinal() + 1;
+				title = getResources().getString(R.string.notifiche_title);
 				break;
 			case INFOAPP:
 				fragment = InfoAppFragment.getInstance();
-				section = FragmentToLoad.INFOAPP.ordinal() + 1;
+				title = getResources().getString(R.string.info_app_title);
 				break;
 			case FILTERS:
 				fragment = FiltriRicercaFragment.getInstance();
-				section = FragmentToLoad.FILTERS.ordinal() + 1;
+				title = getResources().getString(R.string.filtri_title);
 				break;
 			case FAVOURITES:
 				fragment = PreferitiFragment.getInstance();
-				section = FragmentToLoad.FAVOURITES.ordinal() + 1;
+				title = getResources().getString(R.string.preferiti_title);
 				break;
 			default:
 				return;
 		}
 		
-		getFragmentManager().beginTransaction()
+		getSupportFragmentManager().beginTransaction()
 		.replace(R.id.container, fragment)
 		.commit();
-		//this.onSectionAttached(section);
-		this.restoreActionBar();
+		this.restoreActionBar(title);
 	}
 	
 	protected enum FragmentToLoad {
