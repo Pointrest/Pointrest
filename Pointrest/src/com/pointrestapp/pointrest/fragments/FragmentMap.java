@@ -5,9 +5,9 @@ import java.util.List;
 
 import android.animation.LayoutTransition;
 import android.app.Activity;
-import android.support.v4.app.Fragment;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,6 +20,8 @@ import android.widget.LinearLayout;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.LatLngBounds.Builder;
@@ -155,17 +157,26 @@ public class FragmentMap extends Fragment  implements
 								null);
 		
 		int pointNameIndex = cursor.getColumnIndex(PuntiDbHelper.NOME);
+		int pointFavIndex = cursor.getColumnIndex(PuntiDbHelper.FAVOURITE);
 		int pointLatIndex = cursor.getColumnIndex(PuntiDbHelper.LATUTUDE);
 		int pointLonIndex = cursor.getColumnIndex(PuntiDbHelper.LONGITUDE);
+		
+		BitmapDescriptor icon = null;
 		
 		while (cursor.moveToNext()) {
 			haveAtLeastOnePointToShow = true;
 			LatLng vLatLng = new LatLng(cursor.getDouble(pointLatIndex),
 					 					cursor.getDouble(pointLonIndex));
 			vBoundsBuilder.include(vLatLng);
+			
+			icon = cursor.getInt(pointFavIndex) == Constants.Favourite.TRUE 
+					? BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE) 
+							: BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+			
 			mMarkers.add(mMap.addMarker(new MarkerOptions()
 				.title(cursor.getString(pointNameIndex))
 				.position(vLatLng)
+				.icon(icon)
 			));
 		}
 		

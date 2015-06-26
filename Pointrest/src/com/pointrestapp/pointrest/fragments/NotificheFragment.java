@@ -34,7 +34,7 @@ import com.pointrestapp.pointrest.data.PuntiDbHelper;
 
 public class NotificheFragment extends Fragment implements LoaderCallbacks<Cursor>{
 	Switch promo, prossimita;
-	TextView titoloPrelista;
+	TextView titoloPrelista, noNotificheBloccate;
 	ListView lista;
 	int mStackLevel = 0;
 	
@@ -65,6 +65,7 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 		prossimita = (Switch)v.findViewById(R.id.notificheProssimitaSwitch);
 		lista = (ListView)v.findViewById(R.id.listaNotificheBloccate);
 		titoloPrelista = (TextView)v.findViewById(R.id.txtTitoloPrelistaNotificheBloccate);
+		noNotificheBloccate = (TextView)v.findViewById(R.id.txtCompariSeNonCiSonoNotifiche);
 		
 		mCursorAdapter = new NotificheBloccateCursorAdapter(getActivity(), null);
 		lista.setAdapter(mCursorAdapter);
@@ -118,23 +119,13 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 		});
 				
 		getLoaderManager().initLoader(NOTIFICHE_BLOCCATE_LOADER_ID, null, this);
-		Cursor c = getActivity().getContentResolver()
-				.query(PuntiContentProvider.PUNTI_URI, null,
-						PuntiDbHelper.BLOCKED + "=?",
-						new String[]{ Constants.NotificationBlocked.TRUE + "" },
-						null);
-		isEmptyTheList(c);
+		
+		
+		lista.setEmptyView(noNotificheBloccate);
+		
 		return v;
 	}
 	
-	private void isEmptyTheList(Cursor c){
-		if (!c.moveToNext()){
-			 titoloPrelista.setText("Nessuna notifica bloccata");
-		 }
-		 else{
-			 titoloPrelista.setText("Notifiche bloccate:");
-		 }
-	}
 	
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
