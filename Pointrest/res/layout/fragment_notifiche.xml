@@ -47,6 +47,18 @@
         android:layout_marginTop="30dp"
         android:text="Notifiche bloccate:"
         android:textAppearance="?android:attr/textAppearanceMedium" />
+    
+    <TextView
+        android:id="@+id/txtCompariSeNonCiSonoNotifiche"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/txtTitoloPrelistaNotificheBloccate"
+        android:layout_marginTop="40dp"
+        android:gravity="center"
+        android:visibility="invisible"
+        android:text="Nessuna notifica bloccata"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <ListView
         android:id="@+id/listaNotificheBloccate"
