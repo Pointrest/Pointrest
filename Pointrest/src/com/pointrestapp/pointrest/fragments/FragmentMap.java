@@ -5,7 +5,7 @@ import java.util.List;
 
 import android.animation.LayoutTransition;
 import android.app.Activity;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;

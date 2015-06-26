@@ -3,7 +3,7 @@ package com.pointrestapp.pointrest.fragments;
 import android.animation.LayoutTransition;
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -92,10 +92,10 @@ public class NavigationDrawerFragment extends Fragment {
 				.getThemedContext(),
 				android.R.layout.simple_list_item_activated_1,
 				android.R.id.text1, new String[] {
-						getString(R.string.title_section1),
-						getString(R.string.title_section2),
-						getString(R.string.title_section3),
-						getString(R.string.title_section4),}));
+						getString(R.string.filtri_title),
+						getString(R.string.preferiti_title),
+						getString(R.string.notifiche_title),
+						getString(R.string.info_app_title),}));
 		mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
 		return mDrawerListView;
 	}

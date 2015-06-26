@@ -9,19 +9,19 @@
         <item
             android:id="@+id/navItem1"
             android:icon="@drawable/snackbar_background"
-            android:title="@string/title_section1"/>
+            android:title="@string/filtri_title"/>
         <item
             android:id="@+id/navItem2"
             android:icon="@drawable/snackbar_background"
-            android:title="@string/title_section2"/>
+            android:title="@string/preferiti_title"/>
         <item
             android:id="@+id/navItem3"
             android:icon="@drawable/snackbar_background"
-            android:title="@string/title_section3"/>
+            android:title="@string/notifiche_title"/>
         <item
             android:id="@+id/navItem4"
             android:icon="@drawable/snackbar_background"
-            android:title="@string/title_section4"/>
+            android:title="@string/info_app_title"/>
     </group>
 
 </menu>
