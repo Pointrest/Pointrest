@@ -6,6 +6,7 @@
     <string name="preferiti_title">Attività preferite</string>
     <string name="notifiche_title">Impostazioni notifiche</string>
     <string name="info_app_title">Info app</string>
+    <string name="detail_title">Dettaglio</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>

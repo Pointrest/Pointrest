@@ -5,6 +5,7 @@ import java.util.Random;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -29,6 +30,7 @@ import com.pointrestapp.pointrest.data.PuntiDbHelper;
 public class FragmentListFrame extends Fragment implements
 		LoaderCallbacks<Cursor> {
 
+	public static final String DETTAGLIO_ID = "DETTAGLIO_ID";
 	// private static final int POI_LOADER_ID = Constants.TabType.POI;
 	// private static final int AC_LOADER_ID = Constants.TabType.AC;
 	// private static final int TUTTO_LOADER_ID = Constants.TabType.TUTTO;
@@ -87,6 +89,10 @@ public class FragmentListFrame extends Fragment implements
 				// to remove, only test
 				// ((MainActivity) mListener).goToNotifiche();
 				// mListener.goToMapScreen(0, 0);
+				Intent vIntent = new Intent();
+				Bundle vBundle = new Bundle();
+				vBundle.putInt(DETTAGLIO_ID, (int)id);
+				startActivity(vIntent);
 			}
 
 		});

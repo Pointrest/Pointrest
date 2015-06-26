@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import com.pointrestapp.pointrest.R;
 import com.pointrestapp.pointrest.fragments.FiltriRicercaFragment;
+import com.pointrestapp.pointrest.fragments.FragmentListFrame;
 import com.pointrestapp.pointrest.fragments.InfoAppFragment;
 import com.pointrestapp.pointrest.fragments.NotificheFragment;
 import com.pointrestapp.pointrest.fragments.PreferitiFragment;
@@ -45,6 +46,14 @@ public class SimpleActivity extends NewBaseActivity {
 				fragment = PreferitiFragment.getInstance();
 				title = getResources().getString(R.string.preferiti_title);
 				break;
+			case DETAIL:
+				Bundle vBundle = getIntent().getExtras();
+				int val = 0;
+				if (vBundle != null)
+					val = vBundle.getInt(FragmentListFrame.DETTAGLIO_ID);
+				//fragment = DeatilFragment.getInstance(val);
+				title = getResources().getString(R.string.detail_title);
+				break;
 			default:
 				return;
 		}
@@ -59,7 +68,8 @@ public class SimpleActivity extends NewBaseActivity {
 		FILTERS,
 		FAVOURITES,
 		NOTIFICATIONS,
-		INFOAPP
+		INFOAPP,
+		DETAIL
 	}
 
 	
