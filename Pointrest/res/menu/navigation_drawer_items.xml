@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <group android:checkableBehavior="all" >
+        <item
+            android:id="@+id/navItem0"
+            android:icon="@drawable/snackbar_background"
+            android:title="Home"/>
+        <item
+            android:id="@+id/navItem1"
+            android:icon="@drawable/snackbar_background"
+            android:title="@string/title_section1"/>
+        <item
+            android:id="@+id/navItem2"
+            android:icon="@drawable/snackbar_background"
+            android:title="@string/title_section2"/>
+        <item
+            android:id="@+id/navItem3"
+            android:icon="@drawable/snackbar_background"
+            android:title="@string/title_section3"/>
+        <item
+            android:id="@+id/navItem4"
+            android:icon="@drawable/snackbar_background"
+            android:title="@string/title_section4"/>
+    </group>
+
+</menu>

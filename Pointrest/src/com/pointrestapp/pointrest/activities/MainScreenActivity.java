@@ -17,7 +17,7 @@ import com.pointrestapp.pointrest.fragments.FragmentListFrame;
 import com.pointrestapp.pointrest.fragments.FragmentMap;
 import com.pointrestapp.pointrest.fragments.FragmentTitleScreen;
 
-public class MainScreenActivity extends BaseActivity implements
+public class MainScreenActivity extends NewBaseActivity implements
 		TabAdapter.TabSelectedListener,
 		FragmentListFrame.Callback {
 
