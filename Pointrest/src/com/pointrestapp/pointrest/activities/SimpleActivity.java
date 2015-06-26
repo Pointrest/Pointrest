@@ -9,7 +9,7 @@ import com.pointrestapp.pointrest.fragments.InfoAppFragment;
 import com.pointrestapp.pointrest.fragments.NotificheFragment;
 import com.pointrestapp.pointrest.fragments.PreferitiFragment;
 
-public class SimpleActivity extends BaseActivity {
+public class SimpleActivity extends NewBaseActivity {
 
 	public static final String FRAGMENT_TO_LOAD =  "fragmenttoload";
 	private NotificheFragment mNotificheFragment;
@@ -52,7 +52,7 @@ public class SimpleActivity extends BaseActivity {
 		getFragmentManager().beginTransaction()
 		.replace(R.id.container, fragment)
 		.commit();
-		this.onSectionAttached(section);
+		//this.onSectionAttached(section);
 		this.restoreActionBar();
 	}
 	

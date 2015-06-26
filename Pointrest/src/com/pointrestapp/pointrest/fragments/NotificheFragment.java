@@ -27,7 +27,7 @@ import android.widget.Toast;
 import com.pointrest.dialog.DialogNotificheBloccate;
 import com.pointrestapp.pointrest.Constants;
 import com.pointrestapp.pointrest.R;
-import com.pointrestapp.pointrest.activities.BaseActivity;
+import com.pointrestapp.pointrest.activities.NewBaseActivity;
 import com.pointrestapp.pointrest.adapters.NotificheBloccateCursorAdapter;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
 import com.pointrestapp.pointrest.data.PuntiDbHelper;
@@ -45,7 +45,7 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 	private SharedPreferences mSettings;	
 	
 	long pos;
-	private BaseActivity mBaseActivity;
+	private NewBaseActivity mBaseActivity;
 	
 	private static final String DIALOG_NOTIFICHE = "DIALOG_NOTIFICHE";
 	protected static final int DIALOG_NOTIFICHE_BLOCCATE = 0;
@@ -53,7 +53,7 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		mBaseActivity = (BaseActivity)activity;
+		mBaseActivity = (NewBaseActivity)activity;
 	}
 	
 	@Override

@@ -24,7 +24,7 @@ import com.pointrestapp.pointrest.fragments.NavigationDrawerFragment;
 public class BaseActivity extends Activity implements
 			NavigationDrawerFragment.NavigationDrawerCallbacks {
 
-	private static final long SYNC_INTERVAL_IN_SECONDS = 60;
+	private static final long SYNC_INTERVAL_IN_SECONDS = 60 * 60 * 24;
 	private NavigationDrawerFragment mNavigationDrawerFragment;
 	private CharSequence mTitle;
 	
@@ -154,12 +154,12 @@ public class BaseActivity extends Activity implements
 	                ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
 	        ContentResolver.requestSync(newAccount, PuntiContentProvider.AUTHORITY, settingsBundle);
 		}
-        /*
+        
         ContentResolver.addPeriodicSync(
                 newAccount,
                 PuntiContentProvider.AUTHORITY,
                 Bundle.EMPTY,
-                SYNC_INTERVAL_IN_SECONDS); */
+                SYNC_INTERVAL_IN_SECONDS);
     }
     
     public void launchLocalNotification(int id) {

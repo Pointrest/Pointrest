@@ -1,4 +1,4 @@
-package com.pointrest.dialog;
+package com.pointrestapp.pointrest.sync;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -178,6 +178,8 @@ public class GeofencesHandler {
     	
     	c.close();
     	
+    	emptyGeofences();
+    	
     	int maxFences = 99;
     	for (MyLatLng myLatLng : points) {
     		if (maxFences > 0) {
@@ -195,9 +197,6 @@ public class GeofencesHandler {
     		}
 		}
     	
-    	//TODO: Put all added geofences in shared preferences so you can remove them later
-    	//before adding others
-    	
     	if (mGoogleApiClient.isConnected())
 		    LocationServices.GeofencingApi.addGeofences(
 	                mGoogleApiClient,
@@ -206,6 +205,13 @@ public class GeofencesHandler {
 	        ).setResultCallback((ResultCallback<Status>) mContext);
     	
     }
+
+	private void emptyGeofences() {
+    	if (mGoogleApiClient.isConnected()) {
+		    LocationServices.GeofencingApi
+		    	.removeGeofences(mGoogleApiClient, getGeofencePendingIntent());
+    	}
+	}
 
 	private Geofence putUpUpdateTriggerFenceAndReturnIt() {
 		return new Geofence.Builder()

@@ -3,10 +3,13 @@ package com.pointrestapp.pointrest;
 import java.util.List;
 
 import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.IntentService;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SyncRequest;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.google.android.gms.location.Geofence;
@@ -29,17 +32,22 @@ public class GeofenceTransitionsIntentService extends IntentService {
             return;
         }
 
-        // Get the transition type.
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
-
+        
         List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
         for (Geofence fence : triggeringGeofences) {
         	String fenceId = fence.getRequestId();
         	if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT && 
         			fenceId.equals(Constants.TRIGGER_RADIUS_FENCE_ID)) {
-        		Account newAccount = new Account(
-                        Constants.ACCOUNT, getApplicationContext().getResources().getString(R.string.pointrest_account_type));
-        		ContentResolver.requestSync(newAccount, PuntiContentProvider.AUTHORITY, null);
+        		Bundle b = new Bundle();
+        		b.putString("here", "your extra");
+        		AccountManager accountManager = (AccountManager) getApplicationContext()
+        				.getSystemService(Context.ACCOUNT_SERVICE);
+        		ContentResolver.requestSync(accountManager.getAccountsByType(
+        				getApplicationContext()
+        				.getResources()
+        				.getString(R.string.pointrest_account_type))[0],
+        				PuntiContentProvider.AUTHORITY, b);
         	} else if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER && 
         			!fenceId.equals(Constants.TRIGGER_RADIUS_FENCE_ID))
             	new LocalNotification(getApplicationContext(),
