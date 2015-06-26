@@ -43,7 +43,7 @@ public class NewBaseActivity extends AppCompatActivity implements OnNavigationIt
 	private void initInstances() {
 		drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
 		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
-				R.string.title_section1, R.string.title_section2);
+				R.string.filtri_title, R.string.preferiti_title);
 		drawerLayout.setDrawerListener(drawerToggle);
 		NavigationView nv = (NavigationView) findViewById(R.id.navigation);
 		nv.setNavigationItemSelectedListener(this);
@@ -115,11 +115,10 @@ public class NewBaseActivity extends AppCompatActivity implements OnNavigationIt
 		startActivity(vIntent);
 	}
 
-	public void restoreActionBar() {
+	public void restoreActionBar(CharSequence title) {
 		ActionBar actionBar = getSupportActionBar();
-		// actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 		actionBar.setDisplayShowTitleEnabled(true);
-		actionBar.setTitle(mTitle);
+		actionBar.setTitle(title);
 	}
 
 	private void createSyncAccountAndInitializeSyncAdapter(Context context) {
@@ -189,7 +188,7 @@ public class NewBaseActivity extends AppCompatActivity implements OnNavigationIt
 				onNavigationDrawerItemSelected(3);
 				break;
 		}
-		restoreActionBar();
+		restoreActionBar(mTitle);
 		return true;
 	}
 

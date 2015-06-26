@@ -1,19 +1,16 @@
 package com.pointrest.dialog;
 
-import com.pointrestapp.pointrest.Constants;
-import com.pointrestapp.pointrest.data.PuntiContentProvider;
-import com.pointrestapp.pointrest.data.PuntiDbHelper;
-import com.pointrestapp.pointrest.data.SottocategoriaDbHelper;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
-import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+
+import com.pointrestapp.pointrest.data.PuntiContentProvider;
+import com.pointrestapp.pointrest.data.SottocategoriaDbHelper;
 
 public class ListsDialogRicerca extends DialogFragment {
 	private String titoloLista;

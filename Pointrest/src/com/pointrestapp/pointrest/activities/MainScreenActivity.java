@@ -67,14 +67,14 @@ public class MainScreenActivity extends NewBaseActivity implements
 		if (savedInstanceState == null) {
 			mTitleScreenFragment = FragmentTitleScreen.getInstance();
 			mMapFragment = FragmentMap.getInstance(0);
-			getFragmentManager().beginTransaction()
+			getSupportFragmentManager().beginTransaction()
 				.add(R.id.container, mMapFragment, TAG_MAP_SCREEN)
 				.add(R.id.container, mTitleScreenFragment, TAG_TITLE_SCREEN)
 				.commit();
 			
 		} else {
-			mTitleScreenFragment = (FragmentTitleScreen) getFragmentManager().findFragmentByTag(TAG_TITLE_SCREEN);
-			mMapFragment = (FragmentMap) getFragmentManager().findFragmentByTag(TAG_MAP_SCREEN);
+			mTitleScreenFragment = (FragmentTitleScreen) getSupportFragmentManager().findFragmentByTag(TAG_TITLE_SCREEN);
+			mMapFragment = (FragmentMap) getSupportFragmentManager().findFragmentByTag(TAG_MAP_SCREEN);
 		}
 		mInitialized = true;
 	}
@@ -96,7 +96,7 @@ public class MainScreenActivity extends NewBaseActivity implements
 	@Override
 	public void goToMapScreen(float x, float y) {
 		//mMapFragment.prepareForShow(x, y);
-		getFragmentManager().beginTransaction()
+		getSupportFragmentManager().beginTransaction()
 		.hide(mTitleScreenFragment)
 		.addToBackStack(null)
 		.commit();
@@ -118,7 +118,7 @@ public class MainScreenActivity extends NewBaseActivity implements
 	@Override
 	public void goToMapScreen(MotionEvent event) {
 		mMapFragment.prepareForShow(event);
-		getFragmentManager().beginTransaction()
+		getSupportFragmentManager().beginTransaction()
 		.hide(mTitleScreenFragment)
 		.addToBackStack(null)
 		.commit();

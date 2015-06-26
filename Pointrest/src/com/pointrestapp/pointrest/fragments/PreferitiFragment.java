@@ -1,16 +1,16 @@
 package com.pointrestapp.pointrest.fragments;
 
 import android.app.Activity;
-import android.app.DialogFragment;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
-import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ContentValues;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,8 +75,8 @@ public class PreferitiFragment extends Fragment implements LoaderCallbacks<Curso
 	public void dialogRimuoviPreferito(long id){
 		mStackLevel++;
 
-	    FragmentTransaction ft = getActivity().getFragmentManager().beginTransaction();
-	    Fragment prev = getActivity().getFragmentManager().findFragmentByTag("dialog");
+	    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+	    Fragment prev = getActivity().getSupportFragmentManager().findFragmentByTag("dialog");
 	    if (prev != null) {
 	        ft.remove(prev);
 	    }
