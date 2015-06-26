@@ -8,6 +8,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -24,13 +25,15 @@ import com.pointrestapp.pointrest.LocalNotification;
 import com.pointrestapp.pointrest.R;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
 
-public class NewBaseActivity extends AppCompatActivity implements OnNavigationItemSelectedListener {
+public class NewBaseActivity extends AppCompatActivity implements
+		OnNavigationItemSelectedListener {
 
 	DrawerLayout drawerLayout;
 	ActionBarDrawerToggle drawerToggle;
 
 	private static final long SYNC_INTERVAL_IN_SECONDS = 60 * 60 * 24;
 	private CharSequence mTitle;
+	private OnSharedPreferenceChangeListener mSharedPreferencesListener;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +50,7 @@ public class NewBaseActivity extends AppCompatActivity implements OnNavigationIt
 		drawerLayout.setDrawerListener(drawerToggle);
 		NavigationView nv = (NavigationView) findViewById(R.id.navigation);
 		nv.setNavigationItemSelectedListener(this);
-		
+
 		getSupportActionBar().setHomeButtonEnabled(true);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 	}
@@ -123,7 +126,7 @@ public class NewBaseActivity extends AppCompatActivity implements OnNavigationIt
 
 	private void createSyncAccountAndInitializeSyncAdapter(Context context) {
 
-		Account newAccount = new Account(Constants.ACCOUNT, context
+		final Account newAccount = new Account(Constants.ACCOUNT, context
 				.getResources().getString(R.string.pointrest_account_type));
 
 		AccountManager accountManager = (AccountManager) context
@@ -148,19 +151,32 @@ public class NewBaseActivity extends AppCompatActivity implements OnNavigationIt
 		SharedPreferences vPintrestPreferences = context.getSharedPreferences(
 				Constants.POINTREST_PREFERENCES, Context.MODE_PRIVATE);
 
+		mSharedPreferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+			public void onSharedPreferenceChanged(SharedPreferences prefs,
+					String key) {
+				runExpeditedUpdate(newAccount);
+			}
+		};
+
+		vPintrestPreferences.registerOnSharedPreferenceChangeListener(mSharedPreferencesListener);
+
 		if (!vPintrestPreferences.getBoolean(Constants.RAN_FOR_THE_FIRST_TIME,
 				false)) {
-			Bundle settingsBundle = new Bundle();
-			settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-			settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED,
-					true);
-			ContentResolver.requestSync(newAccount,
-					PuntiContentProvider.AUTHORITY, settingsBundle);
+			runExpeditedUpdate(newAccount);
 		}
 
 		ContentResolver.addPeriodicSync(newAccount,
 				PuntiContentProvider.AUTHORITY, Bundle.EMPTY,
-				SYNC_INTERVAL_IN_SECONDS); 
+				SYNC_INTERVAL_IN_SECONDS);
+	}
+
+	private void runExpeditedUpdate(Account newAccount) {
+		Bundle settingsBundle = new Bundle();
+		settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+		settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED,
+				true);
+		ContentResolver.requestSync(newAccount,
+				PuntiContentProvider.AUTHORITY, settingsBundle);
 	}
 
 	public void launchLocalNotification(int id) {
@@ -172,21 +188,21 @@ public class NewBaseActivity extends AppCompatActivity implements OnNavigationIt
 		mTitle = arg0.getTitle();
 
 		switch (arg0.getItemId()) {
-			case R.id.navItem0:
-				onNavigationDrawerItemSelected(-1);
-				break;
-			case R.id.navItem1:
-				onNavigationDrawerItemSelected(0);
-				break;
-			case R.id.navItem2:
-				onNavigationDrawerItemSelected(1);
-				break;
-			case R.id.navItem3:
-				onNavigationDrawerItemSelected(2);
-				break;
-			case R.id.navItem4:
-				onNavigationDrawerItemSelected(3);
-				break;
+		case R.id.navItem0:
+			onNavigationDrawerItemSelected(-1);
+			break;
+		case R.id.navItem1:
+			onNavigationDrawerItemSelected(0);
+			break;
+		case R.id.navItem2:
+			onNavigationDrawerItemSelected(1);
+			break;
+		case R.id.navItem3:
+			onNavigationDrawerItemSelected(2);
+			break;
+		case R.id.navItem4:
+			onNavigationDrawerItemSelected(3);
+			break;
 		}
 		restoreActionBar(mTitle);
 		return true;

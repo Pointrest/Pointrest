@@ -40,7 +40,6 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 	public static final int DIALOG_FRAGMENT = 1;
 	private int progressSeekBar = 0;
 	
-	public static final String FILTRI_RICERCA_PREFS_NOTIFICATIONS = "filtri_ricerca_prefs_notifications";
 	private static final String TIPO_PI_SHARED = "tipo_pi_shared";
 	protected static final String SOLO_PREFERITI_SHARED_PREF = "solo_preferiti_shared_pref";
 	private static final String CATEGORY_ID = "category_id";
@@ -75,7 +74,7 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 		txtMetri.setText("1 km");
 		
 		// Restore preferences
-		mSettings = this.getActivity().getSharedPreferences(FILTRI_RICERCA_PREFS_NOTIFICATIONS, Context.MODE_PRIVATE);
+		mSettings = this.getActivity().getSharedPreferences(Constants.POINTREST_PREFERENCES, Context.MODE_PRIVATE);
 		progressSeekBar = mSettings.getInt(Constants.SharedPreferences.RAGGIO, 1);
 		raggio.setProgress(progressSeekBar - 1);
 		txtMetri.setText( + progressSeekBar + " km");
