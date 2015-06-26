@@ -93,7 +93,7 @@ public class NewBaseActivity extends AppCompatActivity implements
 	}
 
 	public void onNavigationDrawerItemSelected(int position) {
-		Intent vIntent = new Intent(this, SimpleActivity.class);
+		Intent vIntent = new Intent(this, SimpleActivity.class); 
 		Serializable which = null;
 
 		switch (position) {
