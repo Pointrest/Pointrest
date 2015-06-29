@@ -109,6 +109,7 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter  implements
 	public void getPoints(double lang, double lat, int raggio) throws JSONException {
 
     	String url = "pi/filter/" + lat + "/" + lang + "/" + raggio;
+		
     	
         PuntiRestClient.get(url, null, new JsonHttpResponseHandler() {
             @Override

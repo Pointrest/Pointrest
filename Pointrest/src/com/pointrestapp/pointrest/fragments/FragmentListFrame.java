@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,6 +24,7 @@ import android.widget.ListView;
 
 import com.pointrestapp.pointrest.Constants;
 import com.pointrestapp.pointrest.R;
+import com.pointrestapp.pointrest.activities.SimpleActivity;
 import com.pointrestapp.pointrest.adapters.ElencoListCursorAdapter;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
 import com.pointrestapp.pointrest.data.PuntiDbHelper;
@@ -84,14 +86,10 @@ public class FragmentListFrame extends Fragment implements
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				// mListener.goToDetailScreen((int) id);
-
-				// to remove, only test
-				// ((MainActivity) mListener).goToNotifiche();
-				// mListener.goToMapScreen(0, 0);
-				Intent vIntent = new Intent();
-				Bundle vBundle = new Bundle();
-				vBundle.putInt(DETTAGLIO_ID, (int)id);
+				Intent vIntent = new Intent(getActivity(), SimpleActivity.class);
+				vIntent.putExtra(SimpleActivity.FRAGMENT_TO_LOAD, SimpleActivity.FragmentToLoad.DETAIL);
+				vIntent.putExtra(DETTAGLIO_ID, (int)id);
+				Log.d("simpleactivity", "start");
 				startActivity(vIntent);
 			}
 
