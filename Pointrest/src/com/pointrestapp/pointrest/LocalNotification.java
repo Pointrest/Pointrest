@@ -41,29 +41,42 @@ public class LocalNotification extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... params) {
 		
 		 Intent resultIntent = new Intent(mContext, MainScreenActivity.class);
-		 
-		 Cursor cursor = mContext.getContentResolver().query(PuntiContentProvider.PUNTI_URI, null, PuntiDbHelper._ID + "=?",
-						new String[]{mId + "" }, null);
+		 Cursor cursor = null;
+		 String name = "pointerest notification";
+		 String description = "pointerest description";
+		 int idImage = 1;
+		 try{			 
+		  cursor = mContext.getContentResolver().query(PuntiContentProvider.PUNTI_URI, null, PuntiDbHelper._ID + "=?",
+					new String[]{mId + "" }, null);
 		 
 		 int nameIndex = cursor.getColumnIndex(PuntiDbHelper.NOME);
 		 int descriptionIndex = cursor.getColumnIndex(PuntiDbHelper.DESCRIZIONE);	
 		 
-		 String name = "pointerest notification";
-		 String description = "pointerest description";
+		
 		 if(cursor.moveToNext()){
 			 name = cursor.getString(nameIndex); 
 			 description = cursor.getString(descriptionIndex);
 		 }
 		 
+		 }finally{
+			 cursor.close();
+		 }
+		 
+		 try{
 		 //GET IMAGE ID
 		 cursor = mContext.getContentResolver().query(PuntiContentProvider.PUNTI_IMAGES_URI, null, PuntiImagesDbHelper.PUNTO_ID + "=?",
 					new String[]{mId + "" }, null);
 		 
 		 int idImageIndex = cursor.getColumnIndex(PuntiImagesDbHelper._ID);
 		 
-		 int idImage = 1;
+		 
 		 if(cursor.moveToNext())
 			 idImage = cursor.getInt(idImageIndex);
+			 
+		 }finally{
+			 cursor.close();
+		 }
+		
 		 
 		 	TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
 	        // Adds the back stack for the Intent (but not the Intent itself).
