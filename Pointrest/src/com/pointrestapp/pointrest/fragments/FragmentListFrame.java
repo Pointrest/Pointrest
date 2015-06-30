@@ -164,9 +164,7 @@ public class FragmentListFrame extends Fragment implements
 
 	public interface Callback {
 		void goToDetailScreen(int pointId);
-
 		void goToMapScreen(float clixkedX, float clickedY);
-
 		void goToMapScreen(MotionEvent event);
 	}
 
@@ -192,19 +190,4 @@ public class FragmentListFrame extends Fragment implements
 		mElencoListCursorAdapter.swapCursor(null);
 	}
 
-	private void populateDbWithDummyPoint() {
-		ContentValues values = new ContentValues();
-		Random r = new Random();
-		int type = r.nextInt(3);
-		values.put(PuntiDbHelper.NOME, "punto" + type);
-		values.put(PuntiDbHelper.CATEGORY_ID, type);
-		values.put(PuntiDbHelper.BLOCKED, r.nextBoolean());
-		double lat = r.nextDouble() + r.nextInt(50);
-		double lang = r.nextDouble() + r.nextInt(50);
-		values.put(PuntiDbHelper.LATUTUDE, lat);
-		values.put(PuntiDbHelper.LONGITUDE, lang);
-		values.put(PuntiDbHelper.FAVOURITE, r.nextBoolean());
-		getActivity().getContentResolver().insert(
-				PuntiContentProvider.PUNTI_URI, values);
-	}
 }

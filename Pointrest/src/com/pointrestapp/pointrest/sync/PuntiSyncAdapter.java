@@ -21,7 +21,6 @@ import android.content.SyncResult;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -87,6 +86,7 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter implements
 			public void onSuccess(int statusCode, Header[] headers,
 					JSONArray categorie) {
 				parseCategorieJSONArray(categorie);
+				getPoints(lang, lat, raggio);
 			}
 
 			@Override
@@ -287,14 +287,13 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter implements
 											+ vals.getAsInteger(ID), null);
 				}
 			}
-
+			getAllSottoCategorie();
 		} catch (Exception e) {
 			handleException(e);
 		} finally {
 			if (categorieCursor != null)
 				categorieCursor.close();
 		}
-		getAllSottoCategorie();
 	}
 
 	private void parseSottoCategorieJSONArray(JSONArray sottocategorie) {
@@ -377,14 +376,12 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter implements
 									+ vals.getAsInteger(ID), null);
 				}
 			}
-
 		} catch (Exception e) {
 			handleException(e);
 		} finally {
 			if (sottoCategorieCursor != null)
 				sottoCategorieCursor.close();
 		}
-		getPoints(lang, lat, raggio);
 	}
 
 	private void parsePuntiJSONArray(JSONArray points) {
@@ -526,7 +523,7 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter implements
 						PuntiContentProvider.PUNTI_IMAGES_URI, cvImageValues);
 			}
 
-			finiliazeRequest();
+			finalizeRequest();
 
 		} catch (JSONException e) {
 			handleException(e);
@@ -581,7 +578,8 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter implements
 		Log.e(POINTREST_DEBUG, message);
 	}
 
-	private void finiliazeRequest() {
+	private void finalizeRequest() {
+		Log.e(POINTREST_DEBUG, "finilizing request");
 		pointrestPreferences.edit()
 				.putBoolean(Constants.RAN_FOR_THE_FIRST_TIME, true).commit();
 		mGeofencesHandler.putUpGeofences();

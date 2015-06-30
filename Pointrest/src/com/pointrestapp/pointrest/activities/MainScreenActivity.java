@@ -1,6 +1,8 @@
 package com.pointrestapp.pointrest.activities;
 
+import android.accounts.AccountManager;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -11,6 +13,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.pointrestapp.pointrest.Constants;
@@ -35,6 +39,8 @@ public class MainScreenActivity extends NewBaseActivity implements
     private boolean mInitialized = false;
     private boolean mRanForTheFirstTime = false;
     BroadcastReceiver errorReciever;
+	private LinearLayout errorLayout;
+	private LinearLayout loadingLayout;
 	
     @Override
     protected void onResume() {
@@ -54,18 +60,37 @@ public class MainScreenActivity extends NewBaseActivity implements
     
 	protected void handleDownloadingError() {
 		Toast.makeText(this, "errorescaricamento", Toast.LENGTH_SHORT).show();
+		errorLayout.setVisibility(View.VISIBLE);
+		loadingLayout.setVisibility(View.GONE);
 	}
 
 	@Override
-	protected void onStop() {
-		super.onStop();
+	protected void onPause() {
 		if (errorReciever != null)
 			unregisterReceiver(errorReciever);
+		super.onStop();
 	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		errorLayout = (LinearLayout)findViewById(R.id.error_layout);
+		loadingLayout = (LinearLayout)findViewById(R.id.loading_layout);
+		
+		findViewById(R.id.retry).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+        		Bundle b = new Bundle();
+        		b.putString("here", "your extra");
+        		AccountManager accountManager = (AccountManager) MainScreenActivity.this
+        				.getSystemService(Context.ACCOUNT_SERVICE);
+				MainScreenActivity.this.runExpeditedUpdate(
+						accountManager.getAccountsByType(
+						MainScreenActivity.this
+        				.getResources()
+        				.getString(R.string.pointrest_account_type))[0]);
+			}
+		});
 		
 		SharedPreferences vPintrestPreferences =
 				this.getSharedPreferences(Constants.POINTREST_PREFERENCES, Context.MODE_PRIVATE);
@@ -73,6 +98,8 @@ public class MainScreenActivity extends NewBaseActivity implements
 		mRanForTheFirstTime = vPintrestPreferences.getBoolean(Constants.RAN_FOR_THE_FIRST_TIME, false);
 		if (mRanForTheFirstTime)
 			initializeScreen(savedInstanceState);
+		else
+			loadingLayout.setVisibility(View.VISIBLE);
 		
 		Bundle b = null;
 		if (savedInstanceState != null)
@@ -99,6 +126,8 @@ public class MainScreenActivity extends NewBaseActivity implements
 	}
 
 	protected void initializeScreen(Bundle savedInstanceState) {
+		loadingLayout.setVisibility(View.GONE);
+		errorLayout.setVisibility(View.GONE);
 		if (savedInstanceState == null) {
 			mTitleScreenFragment = FragmentTitleScreen.getInstance();
 			mMapFragment = FragmentMap.getInstance(0);
