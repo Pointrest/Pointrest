@@ -35,5 +35,6 @@ public final class Constants {
 	
 	public static final String GEOFENCE_TRIGGERING_LOCATION_LAT = "triggerLat";
 	public static final String GEOFENCE_TRIGGERING_LOCATION_LONG = "triggerLong";
+	public static final String ERROR_STATUS = "com.pointrestapp.pointrest.ERRRRRRR";
 	
 }

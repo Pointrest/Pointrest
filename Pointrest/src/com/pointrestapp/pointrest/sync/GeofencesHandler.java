@@ -191,7 +191,7 @@ public class GeofencesHandler {
                         Constants.POINT_NOTIFICATION_RADIUS
                 )
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_DWELL)
                 .build());
         		--maxFences;
     		}
