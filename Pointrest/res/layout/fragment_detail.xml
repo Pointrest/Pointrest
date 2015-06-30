@@ -5,21 +5,21 @@
     android:orientation="vertical"
     android:padding="16dp" xmlns:tools="http://schemas.android.com/tools">
     
-        <ImageView
-            android:id="@+id/iconImage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:minHeight="100dp"
-            android:src="@drawable/ic_launcher" />
+    <ImageView
+        android:id="@+id/iconImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:minHeight="70dp"
+        android:src="@drawable/ic_launcher" />
 
-        <TextView
-            android:id="@+id/txt_nome"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-             android:gravity="center_horizontal"
-            android:text="Nome: "
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+    <TextView
+        android:id="@+id/txt_nome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+         android:gravity="center_horizontal"
+        android:text="Nome: "
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
         android:id="@+id/txt_descrizione"
@@ -29,45 +29,27 @@
         android:text="Descrizione: "
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <TextView
-        android:id="@+id/txt_categoria"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Categoria: "
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/txt_sottocategoria"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Sot.Categoria: "
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/txt_latitudine"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Latitudine: "
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/txt_longitudine"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Longitudine: "
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+	<include 
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    layout="@layout/detail_partial_layout"/>"
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content" >
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="bottom"
         android:orientation="vertical" >
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/my_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:scrollbars="vertical" >
+            android:layout_height="wrap_content"
+            android:scrollbars="horizontal" >
         </android.support.v7.widget.RecyclerView>
 
     </LinearLayout>

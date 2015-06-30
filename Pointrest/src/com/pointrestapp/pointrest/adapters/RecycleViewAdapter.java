@@ -52,6 +52,7 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
         Glide.with(holder.imageView.getContext())
 	    .load(Constants.BASE_URL + "immagini/" + imageIndexArray.get(position))
         .asBitmap()
+        .diskCacheStrategy(DiskCacheStrategy.ALL)
 	    .placeholder(R.drawable.loading)
 	    .error(R.drawable.ic_cancel_black_36dp)
 	    .into(holder.imageView);	
