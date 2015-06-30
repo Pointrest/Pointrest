@@ -149,38 +149,43 @@ public class FragmentMap extends Fragment  implements
 			selection = PuntiDbHelper.CATEGORY_ID + "=?";
 			selectionArgs = new String[] { categoryId + "" };
 		}
-		Cursor cursor = getActivity().getContentResolver().query(
-				PuntiContentProvider.PUNTI_URI,
-								null,
-								selection,
-								selectionArgs,
-								null);
-		
-		int pointNameIndex = cursor.getColumnIndex(PuntiDbHelper.NOME);
-		int pointFavIndex = cursor.getColumnIndex(PuntiDbHelper.FAVOURITE);
-		int pointLatIndex = cursor.getColumnIndex(PuntiDbHelper.LATUTUDE);
-		int pointLonIndex = cursor.getColumnIndex(PuntiDbHelper.LONGITUDE);
-		
-		BitmapDescriptor icon = null;
-		
-		while (cursor.moveToNext()) {
-			haveAtLeastOnePointToShow = true;
-			LatLng vLatLng = new LatLng(cursor.getDouble(pointLatIndex),
-					 					cursor.getDouble(pointLonIndex));
-			vBoundsBuilder.include(vLatLng);
+		Cursor cursor = null;
+		try {
+			cursor = getActivity().getContentResolver().query(
+					PuntiContentProvider.PUNTI_URI,
+									null,
+									selection,
+									selectionArgs,
+									null);
 			
-			icon = cursor.getInt(pointFavIndex) == Constants.Favourite.TRUE 
-					? BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE) 
-							: BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+			int pointNameIndex = cursor.getColumnIndex(PuntiDbHelper.NOME);
+			int pointFavIndex = cursor.getColumnIndex(PuntiDbHelper.FAVOURITE);
+			int pointLatIndex = cursor.getColumnIndex(PuntiDbHelper.LATUTUDE);
+			int pointLonIndex = cursor.getColumnIndex(PuntiDbHelper.LONGITUDE);
 			
-			mMarkers.add(mMap.addMarker(new MarkerOptions()
-				.title(cursor.getString(pointNameIndex))
-				.position(vLatLng)
-				.icon(icon)
-			));
+			BitmapDescriptor icon = null;
+			
+			while (cursor.moveToNext()) {
+				haveAtLeastOnePointToShow = true;
+				LatLng vLatLng = new LatLng(cursor.getDouble(pointLatIndex),
+						 					cursor.getDouble(pointLonIndex));
+				vBoundsBuilder.include(vLatLng);
+				
+				icon = cursor.getInt(pointFavIndex) == Constants.Favourite.TRUE 
+						? BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE) 
+								: BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+				
+				mMarkers.add(mMap.addMarker(new MarkerOptions()
+					.title(cursor.getString(pointNameIndex))
+					.position(vLatLng)
+					.icon(icon)
+				));
+			}
+		} finally {
+			if (cursor != null)
+				cursor.close();
 		}
 		
-		cursor.close();
 		if (haveAtLeastOnePointToShow)
 			mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(vBoundsBuilder.build(), getResources().getDimensionPixelSize(R.dimen.map_padding)));
 	}

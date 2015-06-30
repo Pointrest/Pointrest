@@ -170,7 +170,7 @@ public class NewBaseActivity extends AppCompatActivity implements
 				SYNC_INTERVAL_IN_SECONDS);
 	}
 
-	private void runExpeditedUpdate(Account newAccount) {
+	public void runExpeditedUpdate(Account newAccount) {
 		Bundle settingsBundle = new Bundle();
 		settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
 		settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED,
