@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -64,4 +66,17 @@ public class PreferitiCursorAdapter extends CursorAdapter {
 			c.close();
 		}
 	}
+	
+	private int lastPosition = -1;
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		View mV = super.getView(position, convertView, parent);
+		
+		Animation animation = AnimationUtils.loadAnimation(mV.getContext(), (position > lastPosition) ? R.animator.up_from_bottom : R.animator.down_from_top);
+		mV.startAnimation(animation);
+	    lastPosition = position;
+	    
+		return mV;
+	}
+	
 }
