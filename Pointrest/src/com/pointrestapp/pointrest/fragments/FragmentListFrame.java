@@ -3,6 +3,13 @@ package com.pointrestapp.pointrest.fragments;
 import java.util.Calendar;
 import java.util.Random;
 
+import com.pointrestapp.pointrest.Constants;
+import com.pointrestapp.pointrest.R;
+import com.pointrestapp.pointrest.activities.SimpleActivity;
+import com.pointrestapp.pointrest.adapters.ElencoListCursorAdapter;
+import com.pointrestapp.pointrest.data.PuntiContentProvider;
+import com.pointrestapp.pointrest.data.PuntiDbHelper;
+
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -18,16 +25,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
-
-import com.pointrestapp.pointrest.Constants;
-import com.pointrestapp.pointrest.R;
-import com.pointrestapp.pointrest.activities.SimpleActivity;
-import com.pointrestapp.pointrest.adapters.ElencoListCursorAdapter;
-import com.pointrestapp.pointrest.data.PuntiContentProvider;
-import com.pointrestapp.pointrest.data.PuntiDbHelper;
 
 public class FragmentListFrame extends Fragment implements
 		LoaderCallbacks<Cursor> {
@@ -42,6 +44,7 @@ public class FragmentListFrame extends Fragment implements
 	private int mCategory;
 	private View mView;
 	ListView mListView;
+	TranslateAnimation mAnimation;
 
 	public FragmentListFrame() {
 		System.out.print(true);
@@ -133,8 +136,20 @@ public class FragmentListFrame extends Fragment implements
 		if (aBundle != null)
 			mCategory = aBundle.getInt(Constants.CATEGORY_TYPE);
 
+		
+		//animate();
 	}
 
+	public void animate() {
+	    mAnimation = new TranslateAnimation(0, 0, 0, 599);
+	    mAnimation.setDuration(10000);
+	    mAnimation.setFillAfter(true);
+	    mAnimation.setRepeatCount(-1);
+	    mAnimation.setRepeatMode(Animation.REVERSE);
+	    mListView.setAnimation(mAnimation);
+	    mListView.startAnimation(mAnimation);
+	}
+	
 	@Override
 	public void onResume() {
 		getLoaderManager().initLoader(mCategory, null, this);

@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 import com.pointrest.dialog.DialogPreferitiFragment;
 import com.pointrestapp.pointrest.Constants;
 import com.pointrestapp.pointrest.R;
+import com.pointrestapp.pointrest.activities.SimpleActivity;
 import com.pointrestapp.pointrest.adapters.PreferitiCursorAdapter;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
 import com.pointrestapp.pointrest.data.PuntiDbHelper;
@@ -30,6 +32,7 @@ public class PreferitiFragment extends Fragment implements LoaderCallbacks<Curso
 
 	protected static final int DIALOG_PREFERITI_FRAGMENT = 0;
 	private static final int PREFERITI_LOADER_ID = 34;
+	public static final String DETTAGLIO_ID = "DETTAGLIO_ID";
 	ListView lista;
 	TextView txtNoPref;
 	private PreferitiCursorAdapter mCursorAdapter;
@@ -52,7 +55,11 @@ public class PreferitiFragment extends Fragment implements LoaderCallbacks<Curso
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				//apriPreferitoOnTheMap(id);
+				Intent vIntent = new Intent(getActivity(), SimpleActivity.class);
+				vIntent.putExtra(SimpleActivity.FRAGMENT_TO_LOAD, SimpleActivity.FragmentToLoad.DETAIL);
+				vIntent.putExtra(DETTAGLIO_ID, (int)id);
+				Log.d("simpleactivity", "from FavouriteFragment to DetailFragment");
+				startActivity(vIntent);
 			}
 		});
 		
@@ -61,7 +68,7 @@ public class PreferitiFragment extends Fragment implements LoaderCallbacks<Curso
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				dialogRimuoviPreferito(id);
-				return false;
+				return true;
 			}
 		});	
 		
