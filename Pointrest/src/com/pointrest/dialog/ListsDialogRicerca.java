@@ -1,5 +1,9 @@
 package com.pointrest.dialog;
 
+import com.pointrestapp.pointrest.data.CategorieDbHelper;
+import com.pointrestapp.pointrest.data.PuntiContentProvider;
+import com.pointrestapp.pointrest.data.SottocategoriaDbHelper;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -8,13 +12,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-
-import com.pointrestapp.pointrest.data.PuntiContentProvider;
-import com.pointrestapp.pointrest.data.SottocategoriaDbHelper;
+import android.util.Log;
 
 public class ListsDialogRicerca extends DialogFragment {
 	private String titoloLista;
-	private boolean isCategoryTypeList;
+	private boolean isSubCategoryTypeList;
 	public static final String TITOLO_LISTA = "titolo_lista";
 	public static final String IS_CATEGORY_TYPE_LIST = "is_category_type_list";
 	private static final String NUM = "num";
@@ -37,19 +39,56 @@ public class ListsDialogRicerca extends DialogFragment {
 		AlertDialog.Builder vBuilder = new AlertDialog.Builder(getActivity());
 		
 		titoloLista = getArguments().getString(TITOLO_LISTA);
-		isCategoryTypeList = getArguments().getBoolean(IS_CATEGORY_TYPE_LIST);
+		isSubCategoryTypeList = getArguments().getBoolean(IS_CATEGORY_TYPE_LIST);
 		categoriaPrincipale = getArguments().getInt(CATEGORIA_PRINCIPALE, 1);
 		
 		vBuilder.setTitle(titoloLista);
 		
-		if(!isCategoryTypeList){
-			vBuilder.setItems(new String[]{"Tutti",  "Attività Commerciali", "Punti di interesse" }, 
+		if(!isSubCategoryTypeList){
+			Cursor cCat = null;
+			String[] columnNames = null;
+			int[] columnIdNames = null;
+			final int[] finalColumnIdNames;
+			try{
+				cCat= getActivity().getContentResolver()
+					.query(PuntiContentProvider.CATEGORIE_URI, 
+							new String[]{CategorieDbHelper.NAME + "", CategorieDbHelper._ID + ""},
+							null,
+							null,
+							null);
+				columnNames = new String[cCat.getCount()];
+				columnIdNames = new int[cCat.getCount()];
+				int tmpCursorIndex = 0;
+				
+				if(cCat.moveToFirst()){
+					do{
+						columnNames[tmpCursorIndex] = cCat.getString(0);
+						columnIdNames[tmpCursorIndex] = cCat.getInt(1);
+						tmpCursorIndex++;
+					}while(cCat.moveToNext());
+				}
+			}
+			catch(Exception e){
+				Log.d("DialogCursorException", "listdialogricercaCATEGORIE");
+			}
+			finally {
+				if(cCat != null)
+					cCat.close();
+			}
+			
+			finalColumnIdNames = new int[columnNames.length];
+			for (int i = 0; i < columnIdNames.length; i++) {
+				finalColumnIdNames[i] = columnIdNames[i];
+			}
+			
+			vBuilder.setItems(columnNames!= null? columnNames : new String[]{"Tutti"}, 
 						new DialogInterface.OnClickListener() {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					Intent tipologia = new Intent();
 					tipologia.putExtra("LIST", which);
+					tipologia.putExtra("TYPE_ID", finalColumnIdNames[which]);
 					tipologia.putExtra("IS_CATEGORY", false);
 					getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, tipologia);
 				}
