@@ -192,6 +192,7 @@ public class GeofencesHandler {
                 )
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_DWELL)
+                .setLoiteringDelay(10)
                 .build());
         		--maxFences;
     		}
