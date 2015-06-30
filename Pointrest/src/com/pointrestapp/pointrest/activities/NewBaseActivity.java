@@ -31,7 +31,7 @@ public class NewBaseActivity extends AppCompatActivity implements
 	DrawerLayout drawerLayout;
 	ActionBarDrawerToggle drawerToggle;
 
-	private static final long SYNC_INTERVAL_IN_SECONDS = 60 * 60 * 24;
+	private static final long SYNC_INTERVAL_IN_SECONDS = 60 * 60 * 6;
 	private CharSequence mTitle;
 	private OnSharedPreferenceChangeListener mSharedPreferencesListener;
 

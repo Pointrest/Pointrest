@@ -12,9 +12,7 @@ public final class Constants {
 	public static final String CATEGORY_TYPE = "tabtype";
 	public static final String BASE_FENCE_ID = "base_fence_id";
 	public static class TabType {
-		public static final int POI = 1;
 		public static final int TUTTO = -1;
-		public static final int AC = 7;
 	}
 	public static class NotificationBlocked {
 		public static final int FALSE = 0; 
@@ -37,5 +35,6 @@ public final class Constants {
 	
 	public static final String GEOFENCE_TRIGGERING_LOCATION_LAT = "triggerLat";
 	public static final String GEOFENCE_TRIGGERING_LOCATION_LONG = "triggerLong";
+	public static final String ERROR_STATUS = "com.pointrestapp.pointrest.ERRRRRRR";
 	
 }
