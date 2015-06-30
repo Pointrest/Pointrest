@@ -182,7 +182,7 @@ public class FragmentMap extends Fragment  implements
 		
 		cursor.close();
 		if (haveAtLeastOnePointToShow)
-			mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(vBoundsBuilder.build(), 10));
+			mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(vBoundsBuilder.build(), getResources().getDimensionPixelSize(R.dimen.map_padding)));
 	}
 	
 	 

@@ -1,6 +1,9 @@
 package com.pointrestapp.pointrest.activities;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.ContentObserver;
 import android.net.Uri;
@@ -8,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.MotionEvent;
+import android.widget.Toast;
 
 import com.pointrestapp.pointrest.Constants;
 import com.pointrestapp.pointrest.R;
@@ -29,7 +33,36 @@ public class MainScreenActivity extends NewBaseActivity implements
 	
     private ContentObserver mObserver;
     private boolean mInitialized = false;
+    private boolean mRanForTheFirstTime = false;
+    BroadcastReceiver errorReciever;
+	
+    @Override
+    protected void onResume() {
+    	super.onResume();
+    	if (!mRanForTheFirstTime) {
+	        IntentFilter errorStatusFilter = new IntentFilter(Constants.ERROR_STATUS);
+	        errorReciever = new BroadcastReceiver() {
+	    		
+	    		@Override
+	    		public void onReceive(Context context, Intent intent) {
+	    			handleDownloadingError();
+	    		}
+	    	};
+	        registerReceiver(errorReciever, errorStatusFilter);
+    	}
+    };
     
+	protected void handleDownloadingError() {
+		Toast.makeText(this, "errorescaricamento", Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		if (errorReciever != null)
+			unregisterReceiver(errorReciever);
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -37,7 +70,8 @@ public class MainScreenActivity extends NewBaseActivity implements
 		SharedPreferences vPintrestPreferences =
 				this.getSharedPreferences(Constants.POINTREST_PREFERENCES, Context.MODE_PRIVATE);
 		
-		if (vPintrestPreferences.getBoolean(Constants.RAN_FOR_THE_FIRST_TIME, false))
+		mRanForTheFirstTime = vPintrestPreferences.getBoolean(Constants.RAN_FOR_THE_FIRST_TIME, false);
+		if (mRanForTheFirstTime)
 			initializeScreen(savedInstanceState);
 		
 		Bundle b = null;
@@ -55,12 +89,13 @@ public class MainScreenActivity extends NewBaseActivity implements
 				super.onChange(selfChange, uri);
 				if (!mInitialized)
 					initializeScreen(bFinal);
-				else
+				else if (mMapFragment != null)
 					mMapFragment.updateMarkers();
 			}
 		};
         getContentResolver().registerContentObserver(PuntiContentProvider.DUMMY_NOTIFIER_URI, false, mObserver);
         getContentResolver().registerContentObserver(PuntiContentProvider.PUNTI_URI, false, mObserver);
+        getContentResolver().registerContentObserver(PuntiContentProvider.SOTTOCATEGORIE_URI, false, mObserver);
 	}
 
 	protected void initializeScreen(Bundle savedInstanceState) {
@@ -123,5 +158,5 @@ public class MainScreenActivity extends NewBaseActivity implements
 		.addToBackStack(null)
 		.commit();
 	}
-
+	
 }
