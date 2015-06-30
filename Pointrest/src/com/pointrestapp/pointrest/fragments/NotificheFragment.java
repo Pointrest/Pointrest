@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ import com.pointrest.dialog.DialogNotificheBloccate;
 import com.pointrestapp.pointrest.Constants;
 import com.pointrestapp.pointrest.R;
 import com.pointrestapp.pointrest.activities.NewBaseActivity;
+import com.pointrestapp.pointrest.activities.SimpleActivity;
 import com.pointrestapp.pointrest.adapters.NotificheBloccateCursorAdapter;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
 import com.pointrestapp.pointrest.data.PuntiDbHelper;
@@ -37,6 +39,7 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 	TextView titoloPrelista, noNotificheBloccate;
 	ListView lista;
 	int mStackLevel = 0;
+	public static final String DETTAGLIO_ID = "DETTAGLIO_ID";
 	
 	//private static final String CHIAVE = "CHIAVE1";	
 	private static final int NOTIFICHE_BLOCCATE_LOADER_ID = 0;
@@ -81,7 +84,11 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				pos=id;
-				
+				Intent vIntent = new Intent(getActivity(), SimpleActivity.class);
+				vIntent.putExtra(SimpleActivity.FRAGMENT_TO_LOAD, SimpleActivity.FragmentToLoad.DETAIL);
+				vIntent.putExtra(DETTAGLIO_ID, (int)id);
+				Log.d("simpleactivity", "from NotificheFragment to DetailFragment");
+				startActivity(vIntent);
 			}
 		});
 		
@@ -93,7 +100,7 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 				
 				apriDialogRipristina(id);
 		        
-				return false;				
+				return true;				
 			}			
 		});	
 		
