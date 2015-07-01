@@ -34,7 +34,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.pointrestapp.pointrest.activities.MainScreenActivity"
+            android:name="com.pointrestapp.pointrest.activities.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -42,12 +42,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.pointrestapp.pointrest.activities.BaseActivity" >
-        </activity>
-        <activity android:name="com.pointrestapp.pointrest.activities.SimpleActivity" >
-        </activity>
-
-        <meta-data
+        <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyDW44oP3YZMbpFgu3K26p96eVA9QPCSoVI" />
         <meta-data

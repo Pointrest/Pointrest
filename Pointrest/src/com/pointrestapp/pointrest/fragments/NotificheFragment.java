@@ -28,8 +28,7 @@ import android.widget.Toast;
 import com.pointrest.dialog.DialogNotificheBloccate;
 import com.pointrestapp.pointrest.Constants;
 import com.pointrestapp.pointrest.R;
-import com.pointrestapp.pointrest.activities.NewBaseActivity;
-import com.pointrestapp.pointrest.activities.SimpleActivity;
+import com.pointrestapp.pointrest.activities.MainActivity;
 import com.pointrestapp.pointrest.adapters.NotificheBloccateCursorAdapter;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
 import com.pointrestapp.pointrest.data.PuntiDbHelper;
@@ -48,7 +47,7 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 	private SharedPreferences mSettings;	
 	
 	long pos;
-	private NewBaseActivity mBaseActivity;
+	private MainActivity mBaseActivity;
 	
 	private static final String DIALOG_NOTIFICHE = "DIALOG_NOTIFICHE";
 	protected static final int DIALOG_NOTIFICHE_BLOCCATE = 0;
@@ -56,7 +55,7 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		mBaseActivity = (NewBaseActivity)activity;
+		mBaseActivity = (MainActivity)activity;
 	}
 	
 	@Override
@@ -83,12 +82,7 @@ public class NotificheFragment extends Fragment implements LoaderCallbacks<Curso
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				pos=id;
-				Intent vIntent = new Intent(getActivity(), SimpleActivity.class);
-				vIntent.putExtra(SimpleActivity.FRAGMENT_TO_LOAD, SimpleActivity.FragmentToLoad.DETAIL);
-				vIntent.putExtra(DETTAGLIO_ID, (int)id);
-				Log.d("simpleactivity", "from NotificheFragment to DetailFragment");
-				startActivity(vIntent);
+				mBaseActivity.goToDetailScreen((int)id);
 			}
 		});
 		

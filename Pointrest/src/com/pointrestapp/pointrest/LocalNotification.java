@@ -21,7 +21,7 @@ import android.util.Log;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.pointrestapp.pointrest.activities.MainScreenActivity;
+import com.pointrestapp.pointrest.activities.MainActivity;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
 import com.pointrestapp.pointrest.data.PuntiDbHelper;
 import com.pointrestapp.pointrest.data.PuntiImagesDbHelper;
@@ -40,7 +40,7 @@ public class LocalNotification extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... params) {
 		
-		 Intent resultIntent = new Intent(mContext, MainScreenActivity.class);
+		 Intent resultIntent = new Intent(mContext, MainActivity.class);
 		 Cursor cursor = null;
 		 String name = "pointerest notification";
 		 String description = "pointerest description";
@@ -80,7 +80,7 @@ public class LocalNotification extends AsyncTask<Void, Void, Void> {
 		 
 		 	TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
 	        // Adds the back stack for the Intent (but not the Intent itself).
-	        stackBuilder.addParentStack(MainScreenActivity.class);
+	        stackBuilder.addParentStack(MainActivity.class);
 	        // Adds the Intent that starts the Activity to the top of the stack.
 	        stackBuilder.addNextIntent(resultIntent);
 		 

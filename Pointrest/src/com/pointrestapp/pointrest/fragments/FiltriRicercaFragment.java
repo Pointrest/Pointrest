@@ -1,14 +1,5 @@
 package com.pointrestapp.pointrest.fragments;
 
-import com.pointrest.dialog.ListsDialogRicerca;
-import com.pointrestapp.pointrest.Constants;
-import com.pointrestapp.pointrest.R;
-import com.pointrestapp.pointrest.activities.MainScreenActivity;
-import com.pointrestapp.pointrest.activities.SimpleActivity;
-import com.pointrestapp.pointrest.data.CategorieDbHelper;
-import com.pointrestapp.pointrest.data.PuntiContentProvider;
-import com.pointrestapp.pointrest.data.SottocategoriaDbHelper;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -33,6 +24,14 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.pointrest.dialog.ListsDialogRicerca;
+import com.pointrestapp.pointrest.Constants;
+import com.pointrestapp.pointrest.R;
+import com.pointrestapp.pointrest.activities.MainActivity;
+import com.pointrestapp.pointrest.data.CategorieDbHelper;
+import com.pointrestapp.pointrest.data.PuntiContentProvider;
+import com.pointrestapp.pointrest.data.SottocategoriaDbHelper;
 
 public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<Cursor>{
 	LinearLayout lTipo, lSottoCategoria;
@@ -193,7 +192,7 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 	}
 	
 	private void cercaByFilter(){
-		Intent intent = new Intent(getActivity(), MainScreenActivity.class);
+		Intent intent = new Intent(getActivity(), MainActivity.class);
 		intent.putExtra("raggio", mSettings.getInt(Constants.SharedPreferences.RAGGIO, 10));
 		intent.putExtra("only_pref", mSettings.getBoolean(SOLO_PREFERITI_SHARED_PREF, false));
 		intent.putExtra("cat", mSettings.getInt(TIPO_CATEGORY_PI_SHARED, -1));
