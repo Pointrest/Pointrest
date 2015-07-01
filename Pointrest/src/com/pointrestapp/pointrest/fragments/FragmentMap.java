@@ -5,6 +5,8 @@ import java.util.List;
 
 import android.animation.LayoutTransition;
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -50,7 +52,8 @@ public class FragmentMap extends Fragment  implements
 	private MainScreenActivity mHostActivity;
 	private int mCategoryId;
 	private boolean mLoadedMarkers;
-
+	private SharedPreferences mSettings;
+	
 	public static FragmentMap getInstance(int aPosition){
 		FragmentMap tf = new FragmentMap();
 		return tf;
@@ -71,6 +74,8 @@ public class FragmentMap extends Fragment  implements
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View vView = inflater.inflate(R.layout.fragment_map_frame, container, false);
+		
+		mSettings = this.getActivity().getSharedPreferences(Constants.POINTREST_PREFERENCES, Context.MODE_PRIVATE);
 		
 		if (savedInstanceState != null)
 			mCategoryId = savedInstanceState.getInt(CATEGORY_ID);
@@ -141,13 +146,35 @@ public class FragmentMap extends Fragment  implements
 		mLoadedMarkers = true;
 		mMap.clear();
 		Builder vBoundsBuilder = LatLngBounds.builder();
-		
-		
+
+		int sottocategoria_id = mSettings.getInt(Constants.SharedPreferences.SUB_CATEGORY_ID, -9898);
+		boolean only_fav = mSettings.getBoolean(Constants.SharedPreferences.ONLY_FAVOURITE, false);
+
 		String selection = null;
 		String[] selectionArgs = null;
+		List<String> selectionArgsTmp = new ArrayList<String>();
 		if (mCategoryId != Constants.TabType.TUTTO) {
 			selection = PuntiDbHelper.CATEGORY_ID + "=?";
-			selectionArgs = new String[] { categoryId + "" };
+			selectionArgs = new String[] { categoryId + ""};
+			
+			SharedPreferences.Editor editor = mSettings.edit();
+			editor.putBoolean(Constants.SharedPreferences.SEARCH_ENABLED, false);
+			editor.commit();
+		}
+		if (mSettings.getBoolean(Constants.SharedPreferences.SEARCH_ENABLED, false)) {
+			selection = 
+					(sottocategoria_id != -9898 
+						? PuntiDbHelper.SOTTOCATEGORIA_ID + "=?" + " and " + (only_fav ? PuntiDbHelper.FAVOURITE + "=?" : "") 
+								: (only_fav ? PuntiDbHelper.FAVOURITE + "=?" : ""));
+
+			if(sottocategoria_id != -9898)
+				selectionArgsTmp.add(sottocategoria_id + "");
+			if(only_fav)
+				selectionArgsTmp.add("1");
+			selectionArgs = new String [selectionArgsTmp.size()];
+			for (int i = 0; i < selectionArgsTmp.size(); i++) {
+				selectionArgs[i] = selectionArgsTmp.get(i);
+			}
 		}
 		Cursor cursor = null;
 		try {

@@ -66,6 +66,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/txtTitoloPrelistaNotificheBloccate"
+        android:divider="@null"
+        android:dividerHeight="0dp"
         tools:listitem="@layout/element_notifiche_bloccate" >
     </ListView>
 
