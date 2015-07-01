@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/relative_tab"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:id="@+id/map_layout_big"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <com.pointrestapp.pointrest.MyMapView
+            android:id="@+id/mapview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="@integer/frame_weight_above" >
+        </com.pointrestapp.pointrest.MyMapView>
+
+        <FrameLayout
+            android:id="@+id/frame_map_below"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="@integer/frame_weight_below" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/viewPager_layout_big"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <android.support.v4.view.ViewPager
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <android.support.v4.view.PagerTitleStrip
+                android:id="@+id/pager_title_strip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:background="#2196F3"
+                android:paddingBottom="4dp"
+                android:paddingTop="4dp"
+                android:textColor="#fff" />
+        </android.support.v4.view.ViewPager>
+    </LinearLayout>
+
+</RelativeLayout>

@@ -41,7 +41,7 @@ public class TabAdapter extends FragmentPagerAdapter implements
 			mTabs.add(new Pair<Integer, String>(c.getInt(catIdIndex), c.getString(catNameIndex)));
 		}
 		
-		mTabs.add(1, new Pair<Integer, String>(-1, "Tutti i punti"));
+		mTabs.add(mTabs.size()/2, new Pair<Integer, String>(-1, "Tutti i punti"));
 		
 		TOTAL_TABS = mTabs.size();
 		
