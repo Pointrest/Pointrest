@@ -39,7 +39,7 @@ public class FragmentTitleScreen extends Fragment
         	mCategoryId = savedInstanceState.getInt(CATEGORY_ID);
         }
         
-        mTabsAdapter = new TabAdapter(vActivity, getFragmentManager());
+        mTabsAdapter = new TabAdapter(vActivity, getChildFragmentManager());
         mViewPager.setAdapter(mTabsAdapter);
         mViewPager.setOnPageChangeListener(mTabsAdapter);
 		return vView;

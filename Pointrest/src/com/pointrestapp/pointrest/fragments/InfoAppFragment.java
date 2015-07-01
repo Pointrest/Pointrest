@@ -31,7 +31,7 @@ public class InfoAppFragment extends Fragment {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				// TODO Auto-generated method stub
-				 startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse("http://www.donothingfor2minutes.com/")));
+				 startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse("http://www.pointrest.com/")));
 				 return true;
 			}
 		});
@@ -41,7 +41,7 @@ public class InfoAppFragment extends Fragment {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-			            "mailto","abc@gmail.com", null));
+			            "mailto","info.pointrest@gmail.com", null));
 				emailIntent.putExtra(Intent.EXTRA_SUBJECT, "[info] pointrest");
 				startActivity(Intent.createChooser(emailIntent, "Send email..."));
 				return false;

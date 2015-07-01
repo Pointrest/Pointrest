@@ -44,9 +44,7 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 	public static final int DIALOG_FRAGMENT = 1;
 	private int progressSeekBar = 0;
 	
-	private static final String TIPO_CATEGORY_PI_SHARED = "tipo_category_pi_shared";
-	protected static final String SOLO_PREFERITI_SHARED_PREF = "solo_preferiti_shared_pref";
-	private static final String SUB_CATEGORY_ID = "sub_category_id";
+	
 	private SharedPreferences mSettings;
 	
 	@Override
@@ -82,14 +80,14 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 		progressSeekBar = mSettings.getInt(Constants.SharedPreferences.RAGGIO, 10);
 		raggio.setProgress(progressSeekBar - 1);
 		txtMetri.setText( + progressSeekBar + " km");
-		soloPreferiti.setChecked(mSettings.getBoolean(SOLO_PREFERITI_SHARED_PREF, false));
+		soloPreferiti.setChecked(mSettings.getBoolean(Constants.SharedPreferences.ONLY_FAVOURITE, false));
 		Cursor cT = null;	//categorie
 		try{
     		cT = getActivity().getContentResolver()
     				.query(PuntiContentProvider.CATEGORIE_URI, 
     						new String[]{CategorieDbHelper.NAME + "" },
     						CategorieDbHelper._ID + "=?",
-							new String[]{ mSettings.getInt(TIPO_CATEGORY_PI_SHARED, -1) + "" },
+							new String[]{ mSettings.getInt(Constants.SharedPreferences.CATEGORY_ID, -1) + "" },
 							null);
     		if(cT.moveToFirst()){
     			txtTipoCategoria.setText(cT.getString(0));  			
@@ -111,7 +109,7 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 					.query(PuntiContentProvider.SOTTOCATEGORIE_URI, 
 							new String[]{SottocategoriaDbHelper.NAME + ""},
 							SottocategoriaDbHelper._ID + "=?",
-							new String[]{ mSettings.getInt(SUB_CATEGORY_ID, 999) + "" },
+							new String[]{ mSettings.getInt(Constants.SharedPreferences.SUB_CATEGORY_ID, 999) + "" },
 							null);
 	    	if(cSC.moveToFirst())
 	    		txtSottoCategoria.setText("" + cSC.getString(0));
@@ -141,7 +139,7 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				SharedPreferences.Editor editor = mSettings.edit();
-			    editor.putBoolean(SOLO_PREFERITI_SHARED_PREF, soloPreferiti.isChecked());
+			    editor.putBoolean(Constants.SharedPreferences.ONLY_FAVOURITE, soloPreferiti.isChecked());
 			    editor.commit();
 			}
 		});
@@ -171,20 +169,23 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 		 resetFiltri.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				progressSeekBar=0;
-				raggio.setProgress(0);
-				txtMetri.setText("1 km");
+				progressSeekBar=10;
+				raggio.setProgress(progressSeekBar - 1);
+				txtMetri.setText("10 km");
 				soloPreferiti.setChecked(false);
 				SharedPreferences.Editor editor = mSettings.edit();
 				txtTipoCategoria.setText("Tutti i PI");
-				editor.putInt(TIPO_CATEGORY_PI_SHARED, Constants.TabType.TUTTO);
+				editor.putInt(Constants.SharedPreferences.CATEGORY_ID, Constants.TabType.TUTTO);
+			    editor.putInt(Constants.SharedPreferences.SUB_CATEGORY_ID, -9898);
 			    editor.commit();
-				//TO IMPLEMENT ---> categoria tutte
 			}
 		 });
 		 cerca.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
+					SharedPreferences.Editor editor = mSettings.edit();
+					editor.putBoolean(Constants.SharedPreferences.SEARCH_ENABLED, true);
+					editor.commit();
 					cercaByFilter();
 				}
 			});
@@ -195,9 +196,9 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 	private void cercaByFilter(){
 		Intent intent = new Intent(getActivity(), MainScreenActivity.class);
 		intent.putExtra("raggio", mSettings.getInt(Constants.SharedPreferences.RAGGIO, 10));
-		intent.putExtra("only_pref", mSettings.getBoolean(SOLO_PREFERITI_SHARED_PREF, false));
-		intent.putExtra("cat", mSettings.getInt(TIPO_CATEGORY_PI_SHARED, -1));
-		intent.putExtra("subCat", mSettings.getInt(SUB_CATEGORY_ID, 999));
+		intent.putExtra("only_pref", mSettings.getBoolean(Constants.SharedPreferences.ONLY_FAVOURITE, false));
+		intent.putExtra("cat", mSettings.getInt(Constants.SharedPreferences.CATEGORY_ID, -1));
+		intent.putExtra("subCat", mSettings.getInt(Constants.SharedPreferences.SUB_CATEGORY_ID, 999));
 		startActivity(intent);
 	}
 	
@@ -274,7 +275,7 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 	        									null);
 	        		    		if(c.moveToFirst()){
 	        		    			txtTipoCategoria.setText(c.getString(0));
-	        		    			editor.putInt(TIPO_CATEGORY_PI_SHARED, c.getInt(1));
+	        		    			editor.putInt(Constants.SharedPreferences.CATEGORY_ID, c.getInt(1));
 	        		    			editor.commit();			
 	        		    		}
 	        		    	}
@@ -287,7 +288,7 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 	        				}
 
 	                    	txtSottoCategoria.setText(" -");
-	                    	editor.putInt(SUB_CATEGORY_ID, -88);
+	                    	editor.putInt(Constants.SharedPreferences.SUB_CATEGORY_ID, -9898);
             			    editor.commit();
 	                    }else{
 	                    	int category_id = data.getIntExtra("CATEGORY_ID", 999);
@@ -300,7 +301,7 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 	                    	c.moveToFirst();
 	                    	txtSottoCategoria.setText("" + c.getString(0));
 	                    	c.close();
-	                    	editor.putInt(SUB_CATEGORY_ID, category_id);
+	                    	editor.putInt(Constants.SharedPreferences.SUB_CATEGORY_ID, category_id);
             			    editor.commit();
 	                    }
 	                    //Toast.makeText(getActivity().getApplicationContext(), "Positions " + position + " || isCategory " + is_category, Toast.LENGTH_SHORT).show();

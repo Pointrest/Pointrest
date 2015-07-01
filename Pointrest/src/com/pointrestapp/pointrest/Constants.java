@@ -7,6 +7,10 @@ public final class Constants {
 		public static final String RAGGIO = "raggio_shared_pref";
 		public static final String LANG = "lang";
 		public static final String LAT = "lat";
+		public static final String CATEGORY_ID = "category_id";
+		public static final String ONLY_FAVOURITE = "only_favourite";
+		public static final String SUB_CATEGORY_ID = "sub_category_id";
+		public static final String SEARCH_ENABLED = "search_enabled";
 	}
 	
 	public static final String CATEGORY_TYPE = "tabtype";

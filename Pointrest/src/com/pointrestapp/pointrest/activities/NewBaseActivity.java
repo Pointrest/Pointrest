@@ -24,6 +24,7 @@ import com.pointrestapp.pointrest.Constants;
 import com.pointrestapp.pointrest.LocalNotification;
 import com.pointrestapp.pointrest.R;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
+import com.pointrestapp.pointrest.fragments.PreferitiFragment;
 
 public class NewBaseActivity extends AppCompatActivity implements
 		OnNavigationItemSelectedListener {
@@ -95,7 +96,7 @@ public class NewBaseActivity extends AppCompatActivity implements
 	public void onNavigationDrawerItemSelected(int position) {
 		Intent vIntent = new Intent(this, SimpleActivity.class); 
 		Serializable which = null;
-
+//getSupportFragmentManager().beginTransaction().replace(R.id.container, PreferitiFragment.getInstance()).commit();
 		switch (position) {
 		case -1:
 			Intent i = new Intent(this, MainScreenActivity.class);
@@ -116,6 +117,7 @@ public class NewBaseActivity extends AppCompatActivity implements
 		}
 		vIntent.putExtra(SimpleActivity.FRAGMENT_TO_LOAD, which);
 		startActivity(vIntent);
+		
 	}
 
 	public void restoreActionBar(CharSequence title) {
