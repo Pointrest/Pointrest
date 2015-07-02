@@ -73,7 +73,7 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter implements
 	}
 
 	private void getAllCategorie() {
-
+		
 		String url = "categorie";
 
 		PuntiRestClient.get(url, null, new JsonHttpResponseHandler() {
@@ -561,6 +561,7 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter implements
 
 		Log.d(POINTREST_DEBUG, "Starting download, lat is " + lat + " lang is "
 				+ lang + " raggio is " + raggio);
+		new PuntiDownloader(mContext, mGoogleApiClient, mGeofencesHandler, lat, lang, raggio).download();
 
 		getAllCategorie();
 	}
