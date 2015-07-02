@@ -4,16 +4,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import com.pointrestapp.pointrest.Constants;
-import com.pointrestapp.pointrest.R;
-import com.pointrestapp.pointrest.activities.SimpleActivity;
-import com.pointrestapp.pointrest.adapters.ElencoListCursorAdapter;
-import com.pointrestapp.pointrest.data.PuntiContentProvider;
-import com.pointrestapp.pointrest.data.PuntiDbHelper;
-
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -21,7 +13,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -32,6 +23,12 @@ import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+
+import com.pointrestapp.pointrest.Constants;
+import com.pointrestapp.pointrest.R;
+import com.pointrestapp.pointrest.adapters.ElencoListCursorAdapter;
+import com.pointrestapp.pointrest.data.PuntiContentProvider;
+import com.pointrestapp.pointrest.data.PuntiDbHelper;
 
 public class FragmentListFrame extends Fragment implements
 		LoaderCallbacks<Cursor> {
@@ -94,11 +91,7 @@ public class FragmentListFrame extends Fragment implements
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				Intent vIntent = new Intent(getActivity(), SimpleActivity.class);
-				vIntent.putExtra(SimpleActivity.FRAGMENT_TO_LOAD, SimpleActivity.FragmentToLoad.DETAIL);
-				vIntent.putExtra(DETTAGLIO_ID, (int)id);
-				Log.d("simpleactivity", "start");
-				startActivity(vIntent);
+				mListener.goToDetailScreen((int)id);
 			}
 
 		});
@@ -185,8 +178,7 @@ public class FragmentListFrame extends Fragment implements
 		int sottocategoria_id = mSettings.getInt(Constants.SharedPreferences.SUB_CATEGORY_ID, -9898);
 		boolean only_fav = mSettings.getBoolean(Constants.SharedPreferences.ONLY_FAVOURITE, false);
 		List<String> selectionArgsTmp = new ArrayList<String>();
-		if (mSettings.getBoolean(Constants.SharedPreferences.SEARCH_ENABLED, false)) {
-			
+		if (mSettings.getBoolean(Constants.SharedPreferences.SEARCH_ENABLED, false)) {			
 				if(sottocategoria_id != -9898){
 					selection = PuntiDbHelper.SOTTOCATEGORIA_ID + "=?";
 					if(only_fav){
