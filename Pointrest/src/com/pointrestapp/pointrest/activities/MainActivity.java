@@ -46,6 +46,7 @@ import com.pointrestapp.pointrest.fragments.InfoAppFragment;
 import com.pointrestapp.pointrest.fragments.NewMainFragment;
 import com.pointrestapp.pointrest.fragments.NotificheFragment;
 import com.pointrestapp.pointrest.fragments.PreferitiFragment;
+import com.pointrestapp.pointrest.sync.PuntiDownloader;
 
 public class MainActivity extends AppCompatActivity implements
 		TabAdapter.TabSelectedListener, FragmentListFrame.Callback,
@@ -131,8 +132,6 @@ public class MainActivity extends AppCompatActivity implements
 			}
 		};
 		getContentResolver().registerContentObserver(
-				PuntiContentProvider.DUMMY_NOTIFIER_URI, false, mObserver);
-		getContentResolver().registerContentObserver(
 				PuntiContentProvider.PUNTI_URI, false, mObserver);
 		getContentResolver().registerContentObserver(
 				PuntiContentProvider.SOTTOCATEGORIE_URI, false, mObserver);
@@ -157,13 +156,9 @@ public class MainActivity extends AppCompatActivity implements
 		findViewById(R.id.retry).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Bundle b = new Bundle();
-				b.putString("here", "your extra");
-				AccountManager accountManager = (AccountManager) MainActivity.this
-						.getSystemService(Context.ACCOUNT_SERVICE);
-				MainActivity.this.runExpeditedUpdate(accountManager
-						.getAccountsByType(MainActivity.this.getResources()
-								.getString(R.string.pointrest_account_type))[0]);
+				errorLayout.setVisibility(View.GONE);
+				loadingLayout.setVisibility(View.VISIBLE);
+				MainActivity.this.runExpeditedUpdate(getApplicationContext());
 			}
 		});
 
@@ -305,7 +300,8 @@ public class MainActivity extends AppCompatActivity implements
 		mSharedPreferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
 			public void onSharedPreferenceChanged(SharedPreferences prefs,
 					String key) {
-				runExpeditedUpdate(newAccount);
+				if (key.equals(Constants.SharedPreferences.RAGGIO))
+					runExpeditedUpdate(getApplicationContext());
 			}
 		};
 
@@ -314,7 +310,7 @@ public class MainActivity extends AppCompatActivity implements
 
 		if (!vPintrestPreferences.getBoolean(Constants.RAN_FOR_THE_FIRST_TIME,
 				false)) {
-			runExpeditedUpdate(newAccount);
+			runExpeditedUpdate(getApplicationContext());
 		}
 
 		ContentResolver.addPeriodicSync(newAccount,
@@ -322,12 +318,8 @@ public class MainActivity extends AppCompatActivity implements
 				SYNC_INTERVAL_IN_SECONDS);
 	}
 
-	public void runExpeditedUpdate(Account newAccount) {
-		Bundle settingsBundle = new Bundle();
-		settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-		settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-		ContentResolver.requestSync(newAccount, PuntiContentProvider.AUTHORITY,
-				settingsBundle);
+	public void runExpeditedUpdate(Context context) {
+		new PuntiDownloader(context).download();
 	}
 
 	public void launchLocalNotification(int id) {
