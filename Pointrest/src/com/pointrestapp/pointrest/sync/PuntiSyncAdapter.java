@@ -341,6 +341,8 @@ public class PuntiSyncAdapter extends AbstractThreadedSyncAdapter implements
 				cv.put(SottocategoriaDbHelper.NAME, name);
 				cv.put(SottocategoriaDbHelper.CATEGORIA_ID, catId);
 
+				sottocategoriesRecieved.add(id);
+				
 				if (sottocategorieCurrentlyInDb.contains(id))
 					sottocategorieToUpdateVector.add(cv);
 				else
