@@ -2,6 +2,7 @@ package com.pointrestapp.pointrest;
 
 public final class Constants {
 	
+	
 	public static final String POINTREST_PREFERENCES = "pointrest_prefs";
 	public static class SharedPreferences {
 		public static final String RAGGIO = "raggio_shared_pref";
