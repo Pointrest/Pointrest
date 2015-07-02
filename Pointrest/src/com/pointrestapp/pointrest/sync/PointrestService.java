@@ -20,6 +20,6 @@ public interface PointrestService {
 
 	@GET("/pi/filter/{lat}/{lang}/{raggio}")
 	void listPunti(@Path("lat") double lat, @Path("lang") double lang,
-			@Path("raggio") double raggio, Callback<List<Punto>> cb);
+			@Path("raggio") int raggio, Callback<List<Punto>> cb);
 
 }

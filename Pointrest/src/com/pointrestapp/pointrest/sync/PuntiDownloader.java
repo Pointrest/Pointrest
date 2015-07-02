@@ -15,9 +15,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.util.Log;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.location.LocationServices;
 import com.pointrestapp.pointrest.Constants;
 import com.pointrestapp.pointrest.data.CategorieDbHelper;
 import com.pointrestapp.pointrest.data.PuntiContentProvider;
@@ -28,31 +33,37 @@ import com.pointrestapp.pointrest.models.Categoria;
 import com.pointrestapp.pointrest.models.Punto;
 import com.pointrestapp.pointrest.models.Sottocategoria;
 
-public class PuntiDownloader {
+public class PuntiDownloader implements ConnectionCallbacks,
+		OnConnectionFailedListener {
 
 	private double _lat;
 	private double _lang;
-	private double _raggio;
+	private int _raggio;
 	private Context mContext;
 	private GoogleApiClient mGoogleApiClient;
 	private GeofencesHandler mGeofencesHandler;
 	private static final String POINTREST_DEBUG = "POINTREST";
 	private SharedPreferences pointrestPreferences;
 	private ContentResolver mContentResolver;
+	private boolean mResolvingError = false;
 
-	public PuntiDownloader(Context cntext, GoogleApiClient gac,
-			GeofencesHandler gh, double lat, double lang, double raggio) {
-		_lat = lat;
-		_lang = lang;
-		_raggio = raggio;
+	public PuntiDownloader(Context cntext) {
 		mContext = cntext;
-		mGeofencesHandler = gh;
-		mGoogleApiClient = gac;
 		mContentResolver = cntext.getContentResolver();
+		buildGoogleApiClient();
 	}
 
-	void download() {
-		downloadCategories();
+	private synchronized void buildGoogleApiClient() {
+		mGoogleApiClient = new GoogleApiClient.Builder(mContext, this, this)
+				.addApi(LocationServices.API).build();
+	}
+
+	public void download() {
+
+		// We're going to sync in the onConnected callback
+		if (!mResolvingError) { // more about this later
+			mGoogleApiClient.connect();
+		}
 	}
 
 	void downloadCategories() {
@@ -71,7 +82,6 @@ public class PuntiDownloader {
 			@Override
 			public void success(List<Categoria> arg0, Response arg1) {
 				handleCategories(arg0);
-				downloadSottocategories();
 			}
 
 		};
@@ -94,7 +104,6 @@ public class PuntiDownloader {
 			@Override
 			public void success(List<Sottocategoria> arg0, Response arg1) {
 				handleSottocategories(arg0);
-				downloadPunti();
 			}
 
 		};
@@ -340,7 +349,7 @@ public class PuntiDownloader {
 				double lat;
 				double lang;
 				int[] imagesArray;
-				
+
 				id = point.ID;
 				name = point.Nome;
 				categoriaId = point.CategoriaID;
@@ -407,11 +416,11 @@ public class PuntiDownloader {
 					// cv,
 					// PuntiDbHelper.SERVER_ID + "=?", new String[] {
 					// cv.getAsInteger(ID) + "" });
-					mContentResolver
-							.update(PuntiContentProvider.PUNTI_URI,
-									cv,
-									PuntiDbHelper._ID + "="
-											+ cv.getAsInteger(PuntiDbHelper._ID), null);
+					mContentResolver.update(
+							PuntiContentProvider.PUNTI_URI,
+							cv,
+							PuntiDbHelper._ID + "="
+									+ cv.getAsInteger(PuntiDbHelper._ID), null);
 				}
 			}
 
@@ -431,9 +440,7 @@ public class PuntiDownloader {
 			if (puntiCursor != null)
 				puntiCursor.close();
 		}
-		
-		
-		
+
 	}
 
 	private void handleFailure(String message) {
@@ -450,5 +457,41 @@ public class PuntiDownloader {
 				.putBoolean(Constants.RAN_FOR_THE_FIRST_TIME, true).commit();
 		mGeofencesHandler.putUpGeofences();
 		mGoogleApiClient.disconnect();
+	}
+
+	@Override
+	public void onConnectionFailed(ConnectionResult arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onConnected(Bundle arg0) {
+
+		mGeofencesHandler = new GeofencesHandler(mContext, mGoogleApiClient);
+
+		// Previously saved user prefs
+		pointrestPreferences = mContext.getSharedPreferences(
+				Constants.POINTREST_PREFERENCES, Context.MODE_PRIVATE);
+
+		_raggio = pointrestPreferences.getInt(
+				Constants.SharedPreferences.RAGGIO, 10);
+		_lang = pointrestPreferences.getFloat(Constants.SharedPreferences.LANG,
+				0);
+		_lat = pointrestPreferences
+				.getFloat(Constants.SharedPreferences.LAT, 0);
+
+		Log.d(POINTREST_DEBUG, "Starting download, lat is " + _lat
+				+ " lang is " + _lang + " raggio is " + _raggio);
+		downloadCategories();
+		downloadSottocategories();
+		downloadPunti();
+
+	}
+
+	@Override
+	public void onConnectionSuspended(int arg0) {
+		// TODO Auto-generated method stub
+
 	}
 }
