@@ -4,23 +4,23 @@
     <group android:checkableBehavior="all" >
         <item
             android:id="@+id/navItem0"
-            android:icon="@drawable/snackbar_background"
+            android:icon="@drawable/ic_home_black_24dp"
             android:title="Home"/>
         <item
             android:id="@+id/navItem1"
-            android:icon="@drawable/snackbar_background"
+            android:icon="@drawable/ic_filter_list_black_24dp"
             android:title="@string/filtri_title"/>
         <item
             android:id="@+id/navItem2"
-            android:icon="@drawable/snackbar_background"
+            android:icon="@drawable/ic_star_border_black_24dp"
             android:title="@string/preferiti_title"/>
         <item
             android:id="@+id/navItem3"
-            android:icon="@drawable/snackbar_background"
+            android:icon="@drawable/ic_notifications_none_black_24dp"
             android:title="@string/notifiche_title"/>
         <item
             android:id="@+id/navItem4"
-            android:icon="@drawable/snackbar_background"
+            android:icon="@drawable/ic_info_outline_black_24dp"
             android:title="@string/info_app_title"/>
     </group>
 

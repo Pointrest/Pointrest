@@ -101,7 +101,7 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 					.query(PuntiContentProvider.SOTTOCATEGORIE_URI, 
 							new String[]{SottocategoriaDbHelper.NAME + ""},
 							SottocategoriaDbHelper._ID + "=?",
-							new String[]{ mSettings.getInt(Constants.SharedPreferences.SUB_CATEGORY_ID, 999) + "" },
+							new String[]{ mSettings.getInt(Constants.SharedPreferences.SUB_CATEGORY_ID, -9898) + "" },
 							null);
 	    	if(cSC.moveToFirst())
 	    		txtSottoCategoria.setText("" + cSC.getString(0));
@@ -163,6 +163,7 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 				SharedPreferences.Editor editor = mSettings.edit();
 				editor.putInt(Constants.SharedPreferences.CATEGORY_ID, Constants.TabType.TUTTO);
 			    editor.putInt(Constants.SharedPreferences.SUB_CATEGORY_ID, -9898);
+			    txtSottoCategoria.setText("Tutte");
 			    editor.putBoolean(Constants.SharedPreferences.SEARCH_ENABLED, false);
 			    editor.commit();
 			}
