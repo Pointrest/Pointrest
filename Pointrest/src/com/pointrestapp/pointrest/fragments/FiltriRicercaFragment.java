@@ -61,9 +61,7 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 	        mStackLevel = savedInstanceState.getInt("level");
 	    }
 		
-		lTipo = (LinearLayout)v.findViewById(R.id.layoutTipo);
 		lSottoCategoria = (LinearLayout)v.findViewById(R.id.layoutCategoria);
-		txtTipoCategoria = (TextView)v.findViewById(R.id.tipo_pi);
 		txtSottoCategoria = (TextView)v.findViewById(R.id.categoria_pi);
 		txtMetri = (TextView)v.findViewById(R.id.metriBySeekBar);
 		raggio = (SeekBar)v.findViewById(R.id.raggioInteresse);
@@ -88,12 +86,7 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
     						CategorieDbHelper._ID + "=?",
 							new String[]{ mSettings.getInt(Constants.SharedPreferences.CATEGORY_ID, -1) + "" },
 							null);
-    		if(cT.moveToFirst()){
-    			txtTipoCategoria.setText(cT.getString(0));  			
-    		}
-    		else{
-    			txtTipoCategoria.setText("Tutti i PI");
-    		}
+    		
     	}
     	catch(Exception e){
     		Log.d("cursorException", "filtriricercafragment");
@@ -113,21 +106,16 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 	    	if(cSC.moveToFirst())
 	    		txtSottoCategoria.setText("" + cSC.getString(0));
 	    	else
-				txtSottoCategoria.setText(" -");
+				txtSottoCategoria.setText("Tutte");
 		}catch(Exception exc){
-			txtSottoCategoria.setText(" -");
+			txtSottoCategoria.setText("Tutte");
 		}
 		finally {
     		if(cSC != null)
     			cSC.close();
 		}
 		
-		lTipo.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				showDialog(false);
-			}
-		});
+		
 		lSottoCategoria.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -173,9 +161,9 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 				txtMetri.setText("10 km");
 				soloPreferiti.setChecked(false);
 				SharedPreferences.Editor editor = mSettings.edit();
-				txtTipoCategoria.setText("Tutti i PI");
 				editor.putInt(Constants.SharedPreferences.CATEGORY_ID, Constants.TabType.TUTTO);
 			    editor.putInt(Constants.SharedPreferences.SUB_CATEGORY_ID, -9898);
+			    editor.putBoolean(Constants.SharedPreferences.SEARCH_ENABLED, false);
 			    editor.commit();
 			}
 		 });
@@ -197,7 +185,7 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 		intent.putExtra("raggio", mSettings.getInt(Constants.SharedPreferences.RAGGIO, 10));
 		intent.putExtra("only_pref", mSettings.getBoolean(Constants.SharedPreferences.ONLY_FAVOURITE, false));
 		intent.putExtra("cat", mSettings.getInt(Constants.SharedPreferences.CATEGORY_ID, -1));
-		intent.putExtra("subCat", mSettings.getInt(Constants.SharedPreferences.SUB_CATEGORY_ID, 999));
+		intent.putExtra("subCat", mSettings.getInt(Constants.SharedPreferences.SUB_CATEGORY_ID, -9898));
 		startActivity(intent);
 	}
 	
@@ -212,45 +200,12 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 	    }
 	    ft.addToBackStack(null);
 
-	    if(isCategoryTipe){
-	    	DialogFragment dialogFrag;
-	    	/*if(txtSottoCategoria.getText().toString().equals(" -")){
-	    		dialogFrag = ListsDialogRicerca.getInstance(10, "Scegli la sottocategoria", true, -999);
-				dialogFrag.setTargetFragment(this, DIALOG_FRAGMENT);
-	            dialogFrag.show(getFragmentManager().beginTransaction(), "dialog");
-	    	}*/ // why?
-	    	//else{
-	    	Cursor c = null;
-	    	try{
-	    		c = getActivity().getContentResolver()
-	    				.query(PuntiContentProvider.CATEGORIE_URI, 
-	    						new String[]{CategorieDbHelper.NAME + "", CategorieDbHelper._ID + ""},
-	    						null,
-	    						null,
-	    						null);
-	    		if(c.moveToFirst()){
-	    			do{
-	    				if(txtTipoCategoria.getText().toString().equals(c.getString(0))){
-	    					dialogFrag = ListsDialogRicerca.getInstance(10, "Scegli la sottocategoria", true, c.getInt(1));
-	    					dialogFrag.setTargetFragment(this, DIALOG_FRAGMENT);
-	    		            dialogFrag.show(getFragmentManager().beginTransaction(), "dialog");
-	    				}
-	    			}while(c.moveToNext());	    			
-	    		}
-	    	}
-	    	catch(Exception e){
-	    		Log.d("cursorException", "filtriricercafragment");
-	    	}
-	    	finally {
-	    		if(c != null)
-	    			c.close();
-			}
-            
-	    }else{
-	    	DialogFragment dialogFrag = ListsDialogRicerca.getInstance(11, "Scegli la Categoria", false, -10);
-            dialogFrag.setTargetFragment(this, DIALOG_FRAGMENT);
-            dialogFrag.show(getFragmentManager().beginTransaction(), "dialog");
-	    }
+    	DialogFragment dialogFrag;
+	    
+		dialogFrag = ListsDialogRicerca.getInstance(10, "Scegli la sottocategoria", true, 1);//c.getInt(1));
+		dialogFrag.setTargetFragment(this, DIALOG_FRAGMENT);
+        dialogFrag.show(getFragmentManager().beginTransaction(), "dialog");
+	    
 	}
 
 	@Override
@@ -261,35 +216,8 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 	            	SharedPreferences.Editor editor = mSettings.edit();
 	                
 	            	if (resultCode == Activity.RESULT_OK) {
-	                    boolean is_category = data.getBooleanExtra("IS_CATEGORY", false);
-	                    if(!is_category){
-	                    	int category_id = data.getIntExtra("CATEGORY_ID", -999);
-	                    	Cursor c = null;
-	        		    	try{
-	        		    		c = getActivity().getContentResolver()
-	        		    				.query(PuntiContentProvider.CATEGORIE_URI, 
-	        		    						new String[]{CategorieDbHelper.NAME + "", CategorieDbHelper._ID + ""},
-	        		    						CategorieDbHelper._ID + "=?",
-	        									new String[]{ data.getIntExtra("TYPE_ID", 999) + "" },
-	        									null);
-	        		    		if(c.moveToFirst()){
-	        		    			txtTipoCategoria.setText(c.getString(0));
-	        		    			editor.putInt(Constants.SharedPreferences.CATEGORY_ID, c.getInt(1));
-	        		    			editor.commit();			
-	        		    		}
-	        		    	}
-	        		    	catch(Exception e){
-	        		    		Log.d("cursorException", "filtriricercafragment onActivityResult");
-	        		    	}
-	        		    	finally {
-	        		    		if(c != null)
-	        		    			c.close();
-	        				}
-
-	                    	txtSottoCategoria.setText(" -");
-	                    	editor.putInt(Constants.SharedPreferences.SUB_CATEGORY_ID, -9898);
-            			    editor.commit();
-	                    }else{
+	                    //boolean is_category = data.getBooleanExtra("IS_CATEGORY", false);
+	                    
 	                    	int category_id = data.getIntExtra("CATEGORY_ID", 999);
 	                    	Cursor c = getActivity().getContentResolver()
 	            					.query(PuntiContentProvider.SOTTOCATEGORIE_URI, 
@@ -302,20 +230,14 @@ public class FiltriRicercaFragment extends Fragment implements LoaderCallbacks<C
 	                    	c.close();
 	                    	editor.putInt(Constants.SharedPreferences.SUB_CATEGORY_ID, category_id);
             			    editor.commit();
-	                    }
-	                    //Toast.makeText(getActivity().getApplicationContext(), "Positions " + position + " || isCategory " + is_category, Toast.LENGTH_SHORT).show();
-	                } else if (resultCode == Activity.RESULT_CANCELED){
+	            	} else if (resultCode == Activity.RESULT_CANCELED){
 	                	Toast.makeText(getActivity().getApplicationContext(), "Result cancelled", Toast.LENGTH_SHORT).show();
 	                }
 
 	                break;
 	        }
 	}
-	
-	
-	
-	//LoaderCallbacks
-	
+		
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		// TODO Auto-generated method stub

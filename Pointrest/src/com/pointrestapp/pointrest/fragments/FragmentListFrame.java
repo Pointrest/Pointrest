@@ -178,28 +178,30 @@ public class FragmentListFrame extends Fragment implements
 		int sottocategoria_id = mSettings.getInt(Constants.SharedPreferences.SUB_CATEGORY_ID, -9898);
 		boolean only_fav = mSettings.getBoolean(Constants.SharedPreferences.ONLY_FAVOURITE, false);
 		List<String> selectionArgsTmp = new ArrayList<String>();
-		if (mSettings.getBoolean(Constants.SharedPreferences.SEARCH_ENABLED, false)) {
-			selection = 
-					(sottocategoria_id != -9898 
-						? PuntiDbHelper.SOTTOCATEGORIA_ID + "=?" + 
-							(only_fav 
-									?  " and " + PuntiDbHelper.FAVOURITE + "=?" + (mCategory != Constants.TabType.TUTTO 
-											? " and " + PuntiDbHelper.CATEGORY_ID + "=?" 
-													: "")
-											:  (mCategory != Constants.TabType.TUTTO 
-													?  PuntiDbHelper.CATEGORY_ID + "=?" 
-															: "")) 
-						: (only_fav 
-									? PuntiDbHelper.FAVOURITE + "=?" + (mCategory != Constants.TabType.TUTTO 
-											? " and " + PuntiDbHelper.CATEGORY_ID + "=?" 
-													: "")
-											:  (mCategory != Constants.TabType.TUTTO 
-													?  PuntiDbHelper.CATEGORY_ID + "=?" 
-															: "") ) 
-					)
-					+ (mCategory != Constants.TabType.TUTTO 
-					? " and " + PuntiDbHelper.CATEGORY_ID + "=?" : "");
-
+		if (mSettings.getBoolean(Constants.SharedPreferences.SEARCH_ENABLED, false)) {			
+				if(sottocategoria_id != -9898){
+					selection = PuntiDbHelper.SOTTOCATEGORIA_ID + "=?";
+					if(only_fav){
+						selection += " and " + PuntiDbHelper.FAVOURITE + "=?";
+						if(mCategory != Constants.TabType.TUTTO)
+							selection  += " and " + PuntiDbHelper.CATEGORY_ID + "=?";
+					}
+					else{
+						if(mCategory != Constants.TabType.TUTTO)
+							selection  += " and " + PuntiDbHelper.CATEGORY_ID + "=?";
+					}
+				}
+				else{
+					if(only_fav){
+						selection = PuntiDbHelper.FAVOURITE + "=?";
+						if(mCategory != Constants.TabType.TUTTO)
+							selection  += " and " + PuntiDbHelper.CATEGORY_ID + "=?";
+					}
+					else{
+						if(mCategory != Constants.TabType.TUTTO)
+							selection  = PuntiDbHelper.CATEGORY_ID + "=?";
+					}
+				}
 			if(sottocategoria_id != -9898)
 				selectionArgsTmp.add(sottocategoria_id + "");
 			if(only_fav)

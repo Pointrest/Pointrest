@@ -144,56 +144,56 @@ public class NewMainFragment extends Fragment implements
 	private void showMarkersForType(int categoryId) {
 		mCategoryId = categoryId;
 		boolean haveAtLeastOnePointToShow = false;
-		// Che c posso fare qua?
+		//Che c posso fare qua?
 		if (mMap == null || getActivity() == null)
 			return;
 		mLoadedMarkers = true;
 		mMap.clear();
 		Builder vBoundsBuilder = LatLngBounds.builder();
 
-		int sottocategoria_id = mSettings.getInt(
-				Constants.SharedPreferences.SUB_CATEGORY_ID, -9898);
-		boolean only_fav = mSettings.getBoolean(
-				Constants.SharedPreferences.ONLY_FAVOURITE, false);
+		int sottocategoria_id = mSettings.getInt(Constants.SharedPreferences.SUB_CATEGORY_ID, -9898);
+		boolean only_fav = mSettings.getBoolean(Constants.SharedPreferences.ONLY_FAVOURITE, false);
 
 		String selection = null;
 		String[] selectionArgs = null;
 		List<String> selectionArgsTmp = new ArrayList<String>();
-		if (mCategoryId != Constants.TabType.TUTTO
-				&& !mSettings.getBoolean(
-						Constants.SharedPreferences.SEARCH_ENABLED, false)) {
+		if (mCategoryId != Constants.TabType.TUTTO && !mSettings.getBoolean(Constants.SharedPreferences.SEARCH_ENABLED, false)) {
 			selection = PuntiDbHelper.CATEGORY_ID + "=?";
-			selectionArgs = new String[] { categoryId + "" };
+			selectionArgs = new String[] { categoryId + ""};
 		}
-		if (mSettings.getBoolean(Constants.SharedPreferences.SEARCH_ENABLED,
-				false)) {
-			selection = (sottocategoria_id != -9898 ? PuntiDbHelper.SOTTOCATEGORIA_ID
-					+ "=? "
-					+ (only_fav ? " and "
-							+ PuntiDbHelper.FAVOURITE
-							+ "=?"
-							+ (mCategoryId != Constants.TabType.TUTTO ? " and "
-									+ PuntiDbHelper.CATEGORY_ID + "=?" : "")
-							: (mCategoryId != Constants.TabType.TUTTO ? PuntiDbHelper.CATEGORY_ID
-									+ "=?"
-									: ""))
-					: (only_fav ? PuntiDbHelper.FAVOURITE
-							+ "=?"
-							+ (mCategoryId != Constants.TabType.TUTTO ? " and "
-									+ PuntiDbHelper.CATEGORY_ID + "=?" : "")
-							: (mCategoryId != Constants.TabType.TUTTO ? PuntiDbHelper.CATEGORY_ID
-									+ "=?"
-									: "")))
-					+ (mCategoryId != Constants.TabType.TUTTO ? " and "
-							+ PuntiDbHelper.CATEGORY_ID + "=?" : "");
+		if (mSettings.getBoolean(Constants.SharedPreferences.SEARCH_ENABLED, false)) {
+			
+			if(sottocategoria_id != -9898){
+				selection = PuntiDbHelper.SOTTOCATEGORIA_ID + "=?";
+				if(only_fav){
+					selection += " and " + PuntiDbHelper.FAVOURITE + "=?";
+					if(mCategoryId != Constants.TabType.TUTTO)
+						selection  += " and " + PuntiDbHelper.CATEGORY_ID + "=?";
+				}
+				else{
+					if(mCategoryId != Constants.TabType.TUTTO)
+						selection  += " and " + PuntiDbHelper.CATEGORY_ID + "=?";
+				}
+			}
+			else{
+				if(only_fav){
+					selection = PuntiDbHelper.FAVOURITE + "=?";
+					if(mCategoryId != Constants.TabType.TUTTO)
+						selection  += " and " + PuntiDbHelper.CATEGORY_ID + "=?";
+				}
+				else{
+					if(mCategoryId != Constants.TabType.TUTTO)
+						selection  = PuntiDbHelper.CATEGORY_ID + "=?";
+				}
+			}
 
-			if (sottocategoria_id != -9898)
+			if(sottocategoria_id != -9898)
 				selectionArgsTmp.add(sottocategoria_id + "");
-			if (only_fav)
+			if(only_fav)
 				selectionArgsTmp.add("1");
 			if (mCategoryId != Constants.TabType.TUTTO)
 				selectionArgsTmp.add(categoryId + "");
-			selectionArgs = new String[selectionArgsTmp.size()];
+			selectionArgs = new String [selectionArgsTmp.size()];
 			for (int i = 0; i < selectionArgsTmp.size(); i++) {
 				selectionArgs[i] = selectionArgsTmp.get(i);
 			}
@@ -201,40 +201,42 @@ public class NewMainFragment extends Fragment implements
 		Cursor cursor = null;
 		try {
 			cursor = getActivity().getContentResolver().query(
-					PuntiContentProvider.PUNTI_URI, null, selection,
-					selectionArgs, null);
-
+					PuntiContentProvider.PUNTI_URI,
+									null,
+									selection,
+									selectionArgs,
+									null);
+			
 			int pointNameIndex = cursor.getColumnIndex(PuntiDbHelper.NOME);
 			int pointFavIndex = cursor.getColumnIndex(PuntiDbHelper.FAVOURITE);
 			int pointLatIndex = cursor.getColumnIndex(PuntiDbHelper.LATUTUDE);
 			int pointLonIndex = cursor.getColumnIndex(PuntiDbHelper.LONGITUDE);
-
+			
 			BitmapDescriptor icon = null;
-
+			
 			while (cursor.moveToNext()) {
 				haveAtLeastOnePointToShow = true;
 				LatLng vLatLng = new LatLng(cursor.getDouble(pointLatIndex),
-						cursor.getDouble(pointLonIndex));
+						 					cursor.getDouble(pointLonIndex));
 				vBoundsBuilder.include(vLatLng);
-
-				icon = cursor.getInt(pointFavIndex) == Constants.Favourite.TRUE ? BitmapDescriptorFactory
-						.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)
-						: BitmapDescriptorFactory
-								.defaultMarker(BitmapDescriptorFactory.HUE_RED);
-
+				
+				icon = cursor.getInt(pointFavIndex) == Constants.Favourite.TRUE 
+						? BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE) 
+								: BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+				
 				mMarkers.add(mMap.addMarker(new MarkerOptions()
-						.title(cursor.getString(pointNameIndex))
-						.position(vLatLng).icon(icon)));
+					.title(cursor.getString(pointNameIndex))
+					.position(vLatLng)
+					.icon(icon)
+				));
 			}
 		} finally {
 			if (cursor != null)
 				cursor.close();
 		}
-
+		
 		if (haveAtLeastOnePointToShow)
-			mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(
-					vBoundsBuilder.build(), getResources()
-							.getDimensionPixelSize(R.dimen.map_padding)));
+			mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(vBoundsBuilder.build(), getResources().getDimensionPixelSize(R.dimen.map_padding)));
 	}
 
 	@Override

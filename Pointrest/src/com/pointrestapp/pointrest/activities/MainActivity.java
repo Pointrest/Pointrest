@@ -341,6 +341,10 @@ public class MainActivity extends AppCompatActivity implements
 		Fragment which = null;
 		switch (arg0.getItemId()) {
 		case R.id.navItem0:
+			SharedPreferences mSettings = getSharedPreferences(Constants.POINTREST_PREFERENCES, Context.MODE_PRIVATE);
+			SharedPreferences.Editor editor = mSettings.edit();
+			editor.putBoolean(Constants.SharedPreferences.SEARCH_ENABLED, false);
+			editor.commit();
 			which = (NewMainFragment) getSupportFragmentManager()
 					.findFragmentByTag(R.id.navItem0 + "");
 			if (which == null)
