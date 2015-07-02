@@ -35,10 +35,12 @@ public class NewBaseActivity extends AppCompatActivity implements
 	private static final long SYNC_INTERVAL_IN_SECONDS = 60 * 60 * 6;
 	private CharSequence mTitle;
 	private OnSharedPreferenceChangeListener mSharedPreferencesListener;
-
+	private SharedPreferences mSettings;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mSettings = getSharedPreferences(Constants.POINTREST_PREFERENCES, Context.MODE_PRIVATE);
 		createSyncAccountAndInitializeSyncAdapter(this);
 		setContentView(R.layout.activity_base);
 		initInstances();
@@ -99,6 +101,9 @@ public class NewBaseActivity extends AppCompatActivity implements
 //getSupportFragmentManager().beginTransaction().replace(R.id.container, PreferitiFragment.getInstance()).commit();
 		switch (position) {
 		case -1:
+			SharedPreferences.Editor editor = mSettings.edit();
+			editor.putBoolean(Constants.SharedPreferences.SEARCH_ENABLED, false);
+			editor.commit();
 			Intent i = new Intent(this, MainScreenActivity.class);
 			startActivity(i);
 			return;

@@ -177,28 +177,45 @@ public class FragmentListFrame extends Fragment implements
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		String selection = null;
 		String[] selectionArgs = null;
-		if (mCategory != Constants.TabType.TUTTO) {
+		if (mCategory != Constants.TabType.TUTTO && !mSettings.getBoolean(Constants.SharedPreferences.SEARCH_ENABLED, false)) {
 			selection = PuntiDbHelper.CATEGORY_ID + "=?";
 			selectionArgs = new String[] { mCategory + "" };
-			
-			SharedPreferences.Editor editor = mSettings.edit();
-			editor.putBoolean(Constants.SharedPreferences.SEARCH_ENABLED, false);
-			editor.commit();
 		}
 		
 		int sottocategoria_id = mSettings.getInt(Constants.SharedPreferences.SUB_CATEGORY_ID, -9898);
 		boolean only_fav = mSettings.getBoolean(Constants.SharedPreferences.ONLY_FAVOURITE, false);
 		List<String> selectionArgsTmp = new ArrayList<String>();
 		if (mSettings.getBoolean(Constants.SharedPreferences.SEARCH_ENABLED, false)) {
-			selection = 
-					(sottocategoria_id != -9898 
-						? PuntiDbHelper.SOTTOCATEGORIA_ID + "=?" + " and " + (only_fav ? PuntiDbHelper.FAVOURITE + "=?" : "") 
-								: (only_fav ? PuntiDbHelper.FAVOURITE + "=?" : ""));
-
+			
+				if(sottocategoria_id != -9898){
+					selection = PuntiDbHelper.SOTTOCATEGORIA_ID + "=?";
+					if(only_fav){
+						selection += " and " + PuntiDbHelper.FAVOURITE + "=?";
+						if(mCategory != Constants.TabType.TUTTO)
+							selection  += " and " + PuntiDbHelper.CATEGORY_ID + "=?";
+					}
+					else{
+						if(mCategory != Constants.TabType.TUTTO)
+							selection  += " and " + PuntiDbHelper.CATEGORY_ID + "=?";
+					}
+				}
+				else{
+					if(only_fav){
+						selection = PuntiDbHelper.FAVOURITE + "=?";
+						if(mCategory != Constants.TabType.TUTTO)
+							selection  += " and " + PuntiDbHelper.CATEGORY_ID + "=?";
+					}
+					else{
+						if(mCategory != Constants.TabType.TUTTO)
+							selection  = PuntiDbHelper.CATEGORY_ID + "=?";
+					}
+				}
 			if(sottocategoria_id != -9898)
 				selectionArgsTmp.add(sottocategoria_id + "");
 			if(only_fav)
 				selectionArgsTmp.add("1");
+			if (mCategory != Constants.TabType.TUTTO)
+				selectionArgsTmp.add(mCategory + "");
 			selectionArgs = new String [selectionArgsTmp.size()];
 			for (int i = 0; i < selectionArgsTmp.size(); i++) {
 				selectionArgs[i] = selectionArgsTmp.get(i);

@@ -153,24 +153,42 @@ public class FragmentMap extends Fragment  implements
 		String selection = null;
 		String[] selectionArgs = null;
 		List<String> selectionArgsTmp = new ArrayList<String>();
-		if (mCategoryId != Constants.TabType.TUTTO) {
+		if (mCategoryId != Constants.TabType.TUTTO && !mSettings.getBoolean(Constants.SharedPreferences.SEARCH_ENABLED, false)) {
 			selection = PuntiDbHelper.CATEGORY_ID + "=?";
 			selectionArgs = new String[] { categoryId + ""};
-			
-			SharedPreferences.Editor editor = mSettings.edit();
-			editor.putBoolean(Constants.SharedPreferences.SEARCH_ENABLED, false);
-			editor.commit();
 		}
 		if (mSettings.getBoolean(Constants.SharedPreferences.SEARCH_ENABLED, false)) {
-			selection = 
-					(sottocategoria_id != -9898 
-						? PuntiDbHelper.SOTTOCATEGORIA_ID + "=?" + " and " + (only_fav ? PuntiDbHelper.FAVOURITE + "=?" : "") 
-								: (only_fav ? PuntiDbHelper.FAVOURITE + "=?" : ""));
+			
+			if(sottocategoria_id != -9898){
+				selection = PuntiDbHelper.SOTTOCATEGORIA_ID + "=?";
+				if(only_fav){
+					selection += " and " + PuntiDbHelper.FAVOURITE + "=?";
+					if(mCategoryId != Constants.TabType.TUTTO)
+						selection  += " and " + PuntiDbHelper.CATEGORY_ID + "=?";
+				}
+				else{
+					if(mCategoryId != Constants.TabType.TUTTO)
+						selection  += " and " + PuntiDbHelper.CATEGORY_ID + "=?";
+				}
+			}
+			else{
+				if(only_fav){
+					selection = PuntiDbHelper.FAVOURITE + "=?";
+					if(mCategoryId != Constants.TabType.TUTTO)
+						selection  += " and " + PuntiDbHelper.CATEGORY_ID + "=?";
+				}
+				else{
+					if(mCategoryId != Constants.TabType.TUTTO)
+						selection  = PuntiDbHelper.CATEGORY_ID + "=?";
+				}
+			}
 
 			if(sottocategoria_id != -9898)
 				selectionArgsTmp.add(sottocategoria_id + "");
 			if(only_fav)
 				selectionArgsTmp.add("1");
+			if (mCategoryId != Constants.TabType.TUTTO)
+				selectionArgsTmp.add(categoryId + "");
 			selectionArgs = new String [selectionArgsTmp.size()];
 			for (int i = 0; i < selectionArgsTmp.size(); i++) {
 				selectionArgs[i] = selectionArgsTmp.get(i);

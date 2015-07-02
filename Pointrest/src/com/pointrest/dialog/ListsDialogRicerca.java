@@ -43,77 +43,15 @@ public class ListsDialogRicerca extends DialogFragment {
 		categoriaPrincipale = getArguments().getInt(CATEGORIA_PRINCIPALE, 1);
 		
 		vBuilder.setTitle(titoloLista);
-		
-		if(!isSubCategoryTypeList){
-			Cursor cCat = null;
-			String[] columnNames = null;
-			int[] columnIdNames = null;
-			final int[] finalColumnIdNames;
-			try{
-				cCat= getActivity().getContentResolver()
-					.query(PuntiContentProvider.CATEGORIE_URI, 
-							new String[]{CategorieDbHelper.NAME + "", CategorieDbHelper._ID + ""},
-							null,
-							null,
-							null);
-				columnNames = new String[cCat.getCount()];
-				columnIdNames = new int[cCat.getCount()];
-				int tmpCursorIndex = 0;
-				
-				if(cCat.moveToFirst()){
-					do{
-						columnNames[tmpCursorIndex] = cCat.getString(0);
-						columnIdNames[tmpCursorIndex] = cCat.getInt(1);
-						tmpCursorIndex++;
-					}while(cCat.moveToNext());
-				}
-			}
-			catch(Exception e){
-				Log.d("DialogCursorException", "listdialogricercaCATEGORIE");
-			}
-			finally {
-				if(cCat != null)
-					cCat.close();
-			}
-			
-			finalColumnIdNames = new int[columnNames.length];
-			for (int i = 0; i < columnIdNames.length; i++) {
-				finalColumnIdNames[i] = columnIdNames[i];
-			}
-			
-			vBuilder.setItems(columnNames!= null? columnNames : new String[]{"Tutti"}, 
-						new DialogInterface.OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					Intent tipologia = new Intent();
-					tipologia.putExtra("LIST", which);
-					tipologia.putExtra("TYPE_ID", finalColumnIdNames[which]);
-					tipologia.putExtra("IS_CATEGORY", false);
-					getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, tipologia);
-				}
-			});
-		}else{
-			Cursor cAll = getActivity().getContentResolver()
+		Cursor c = null, cAll = null;
+		try{
+			cAll = getActivity().getContentResolver()
 					.query(PuntiContentProvider.SOTTOCATEGORIE_URI, 
 							new String[]{SottocategoriaDbHelper.NAME + "", SottocategoriaDbHelper._ID + ""},
 							null,
 							null,
 							null);
-			
-			Cursor cByType = getActivity().getContentResolver()
-					.query(PuntiContentProvider.SOTTOCATEGORIE_URI, 
-							new String[]{SottocategoriaDbHelper.NAME + "", SottocategoriaDbHelper._ID + ""},
-							SottocategoriaDbHelper.CATEGORIA_ID + "=?",
-							new String[]{ categoriaPrincipale + "" },
-							null);
-			
-			Cursor c = null;
-			if(categoriaPrincipale == -999){
-				c = cAll;
-			}else{
-				c = cByType;
-			}
+			c = cAll; //added
 			
 			String[] columnNames = new String[c.getCount()];
 			final int[] columnIdNames = new int[c.getCount()];
@@ -127,7 +65,7 @@ public class ListsDialogRicerca extends DialogFragment {
 				}while(c.moveToNext());
 			}
 			c.close();
-			vBuilder.setItems(columnNames,//new String[]{"AAA",  "BBB", "CCC", "DDD" }, 
+			vBuilder.setItems(columnNames,
 					new DialogInterface.OnClickListener() {
 			
 			@Override
@@ -138,7 +76,16 @@ public class ListsDialogRicerca extends DialogFragment {
 				tipologia.putExtra("CATEGORY_ID", columnIdNames[which]);
 				getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, tipologia);
 			}
+			
+			
 		});
+		}
+		catch(Exception e){
+			Log.d("listdialogricerca", "sottocategorie");
+		}
+		finally {
+			c.close();
+			cAll.close();
 		}
 		return vBuilder.create();
 	}
