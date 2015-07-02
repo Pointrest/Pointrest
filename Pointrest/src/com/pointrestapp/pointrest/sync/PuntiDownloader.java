@@ -448,6 +448,8 @@ public class PuntiDownloader implements ConnectionCallbacks,
 		mContext.sendBroadcast(intent);
 		if (mGoogleApiClient != null)
 			mGoogleApiClient.disconnect();
+		if (message == null)
+			message = "Failure";
 		Log.e(POINTREST_DEBUG, message);
 	}
 
