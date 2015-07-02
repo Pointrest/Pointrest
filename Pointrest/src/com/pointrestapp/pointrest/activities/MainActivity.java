@@ -385,7 +385,7 @@ public class MainActivity extends AppCompatActivity implements
 			break;
 		}
 
-		if (which == lastAddedFragment.get()) {
+		if (lastAddedFragment != null && which == lastAddedFragment.get()) {
 			drawerLayout.closeDrawer(GravityCompat.START);
 			return true;
 		} else {

@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.animation.LayoutTransition;
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -77,6 +78,8 @@ public class NewMainFragment extends Fragment implements
 			Bundle savedInstanceState) {
 		View vView = inflater.inflate(R.layout.new_big_layout_test, container,
 				false);
+		mSettings = this.getActivity().getSharedPreferences(
+				Constants.POINTREST_PREFERENCES, Context.MODE_PRIVATE);
 		setupGui(savedInstanceState, vView);
 		return vView;
 	}
@@ -94,7 +97,6 @@ public class NewMainFragment extends Fragment implements
 		mTabsAdapter = new TabAdapter(vActivity, getChildFragmentManager());
 		mViewPager.setAdapter(mTabsAdapter);
 		mViewPager.addOnPageChangeListener(mTabsAdapter);
-		// mTabsAdapter.onPageSelected(mCategoryId);
 
 		mMapView = (MyMapView) vView.findViewById(R.id.mapview);
 		mFrameBelow = (View) vView.findViewById(R.id.frame_map_below);
@@ -166,7 +168,7 @@ public class NewMainFragment extends Fragment implements
 		if (mSettings.getBoolean(Constants.SharedPreferences.SEARCH_ENABLED,
 				false)) {
 			selection = (sottocategoria_id != -9898 ? PuntiDbHelper.SOTTOCATEGORIA_ID
-					+ "=?"
+					+ "=? "
 					+ (only_fav ? " and "
 							+ PuntiDbHelper.FAVOURITE
 							+ "=?"
