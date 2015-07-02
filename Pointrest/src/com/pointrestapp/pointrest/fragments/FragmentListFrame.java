@@ -4,16 +4,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import com.pointrestapp.pointrest.Constants;
-import com.pointrestapp.pointrest.R;
-import com.pointrestapp.pointrest.activities.SimpleActivity;
-import com.pointrestapp.pointrest.adapters.ElencoListCursorAdapter;
-import com.pointrestapp.pointrest.data.PuntiContentProvider;
-import com.pointrestapp.pointrest.data.PuntiDbHelper;
-
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -21,7 +13,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -32,6 +23,12 @@ import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+
+import com.pointrestapp.pointrest.Constants;
+import com.pointrestapp.pointrest.R;
+import com.pointrestapp.pointrest.adapters.ElencoListCursorAdapter;
+import com.pointrestapp.pointrest.data.PuntiContentProvider;
+import com.pointrestapp.pointrest.data.PuntiDbHelper;
 
 public class FragmentListFrame extends Fragment implements
 		LoaderCallbacks<Cursor> {
@@ -94,11 +91,7 @@ public class FragmentListFrame extends Fragment implements
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				Intent vIntent = new Intent(getActivity(), SimpleActivity.class);
-				vIntent.putExtra(SimpleActivity.FRAGMENT_TO_LOAD, SimpleActivity.FragmentToLoad.DETAIL);
-				vIntent.putExtra(DETTAGLIO_ID, (int)id);
-				Log.d("simpleactivity", "start");
-				startActivity(vIntent);
+				mListener.goToDetailScreen((int)id);
 			}
 
 		});
@@ -177,13 +170,9 @@ public class FragmentListFrame extends Fragment implements
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		String selection = null;
 		String[] selectionArgs = null;
-		if (mCategory != Constants.TabType.TUTTO) {
+		if (mCategory != Constants.TabType.TUTTO && !mSettings.getBoolean(Constants.SharedPreferences.SEARCH_ENABLED, false)) {
 			selection = PuntiDbHelper.CATEGORY_ID + "=?";
 			selectionArgs = new String[] { mCategory + "" };
-			
-			SharedPreferences.Editor editor = mSettings.edit();
-			editor.putBoolean(Constants.SharedPreferences.SEARCH_ENABLED, false);
-			editor.commit();
 		}
 		
 		int sottocategoria_id = mSettings.getInt(Constants.SharedPreferences.SUB_CATEGORY_ID, -9898);
@@ -192,13 +181,31 @@ public class FragmentListFrame extends Fragment implements
 		if (mSettings.getBoolean(Constants.SharedPreferences.SEARCH_ENABLED, false)) {
 			selection = 
 					(sottocategoria_id != -9898 
-						? PuntiDbHelper.SOTTOCATEGORIA_ID + "=?" + " and " + (only_fav ? PuntiDbHelper.FAVOURITE + "=?" : "") 
-								: (only_fav ? PuntiDbHelper.FAVOURITE + "=?" : ""));
+						? PuntiDbHelper.SOTTOCATEGORIA_ID + "=?" + 
+							(only_fav 
+									?  " and " + PuntiDbHelper.FAVOURITE + "=?" + (mCategory != Constants.TabType.TUTTO 
+											? " and " + PuntiDbHelper.CATEGORY_ID + "=?" 
+													: "")
+											:  (mCategory != Constants.TabType.TUTTO 
+													?  PuntiDbHelper.CATEGORY_ID + "=?" 
+															: "")) 
+						: (only_fav 
+									? PuntiDbHelper.FAVOURITE + "=?" + (mCategory != Constants.TabType.TUTTO 
+											? " and " + PuntiDbHelper.CATEGORY_ID + "=?" 
+													: "")
+											:  (mCategory != Constants.TabType.TUTTO 
+													?  PuntiDbHelper.CATEGORY_ID + "=?" 
+															: "") ) 
+					)
+					+ (mCategory != Constants.TabType.TUTTO 
+					? " and " + PuntiDbHelper.CATEGORY_ID + "=?" : "");
 
 			if(sottocategoria_id != -9898)
 				selectionArgsTmp.add(sottocategoria_id + "");
 			if(only_fav)
 				selectionArgsTmp.add("1");
+			if (mCategory != Constants.TabType.TUTTO)
+				selectionArgsTmp.add(mCategory + "");
 			selectionArgs = new String [selectionArgsTmp.size()];
 			for (int i = 0; i < selectionArgsTmp.size(); i++) {
 				selectionArgs[i] = selectionArgsTmp.get(i);
