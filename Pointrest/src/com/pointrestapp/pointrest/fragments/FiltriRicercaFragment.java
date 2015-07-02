@@ -108,7 +108,7 @@ public class FiltriRicercaFragment extends Fragment implements
 					new String[] { SottocategoriaDbHelper.NAME + "" },
 					SottocategoriaDbHelper._ID + "=?",
 					new String[] { mSettings.getInt(
-							Constants.SharedPreferences.SUB_CATEGORY_ID, 999)
+							Constants.SharedPreferences.SUB_CATEGORY_ID, -9898)
 							+ "" }, null);
 			if (cSC.moveToFirst())
 				txtSottoCategoria.setText("" + cSC.getString(0));
@@ -189,6 +189,7 @@ public class FiltriRicercaFragment extends Fragment implements
 						Constants.TabType.TUTTO);
 				editor.putInt(Constants.SharedPreferences.SUB_CATEGORY_ID,
 						-9898);
+				txtSottoCategoria.setText("Tutte");
 				editor.putBoolean(Constants.SharedPreferences.SEARCH_ENABLED,
 						false);
 				editor.commit();
