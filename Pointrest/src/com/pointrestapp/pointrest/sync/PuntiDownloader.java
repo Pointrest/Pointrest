@@ -432,8 +432,6 @@ public class PuntiDownloader implements ConnectionCallbacks,
 						PuntiContentProvider.PUNTI_IMAGES_URI, cvImageValues);
 			}
 
-			finalizeRequest();
-
 		} finally {
 			if (imagesCursor != null)
 				imagesCursor.close();
@@ -453,8 +451,14 @@ public class PuntiDownloader implements ConnectionCallbacks,
 		Log.e(POINTREST_DEBUG, message);
 	}
 
+	private void broadcastFinishedDownload() {
+		Intent intent = new Intent(Constants.NEW_DATA_STATUS);
+		mContext.sendBroadcast(intent);
+	}
+
 	private void finalizeRequest() {
 		Log.e(POINTREST_DEBUG, "finilizing request");
+		broadcastFinishedDownload();
 		pointrestPreferences.edit()
 				.putBoolean(Constants.RAN_FOR_THE_FIRST_TIME, true).commit();
 		mGeofencesHandler.putUpGeofences();

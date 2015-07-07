@@ -67,7 +67,7 @@
         android:layout_below="@+id/textView6"
         android:gravity="center"
         android:layout_marginTop="5dp"
-        android:text="www.pointrest.com" />
+        android:text="pointerest.azurewebsites.net" />
 
     <TextView
         android:id="@+id/textView8"

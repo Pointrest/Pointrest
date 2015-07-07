@@ -20,8 +20,6 @@ import android.os.Looper;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -67,8 +65,10 @@ public class MainActivity extends AppCompatActivity implements
 	private boolean mInitialized = false;
 	private boolean mRanForTheFirstTime = false;
 	private BroadcastReceiver errorReciever;
+	private BroadcastReceiver newDataReciever;
 	private LinearLayout errorLayout;
 	private LinearLayout loadingLayout;
+	private Bundle lastBundle;
 
 	@Override
 	protected void onResume() {
@@ -85,10 +85,26 @@ public class MainActivity extends AppCompatActivity implements
 			};
 			registerReceiver(errorReciever, errorStatusFilter);
 		}
+		
+		IntentFilter newDataFilter = new IntentFilter(Constants.NEW_DATA_STATUS);
+		newDataReciever = new BroadcastReceiver() {
+
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				handleNewData();
+			}
+		};
+		registerReceiver(newDataReciever, newDataFilter);
 	};
 
+	protected void handleNewData() {
+		if (!mInitialized)
+			initializeScreen(lastBundle);
+		else if (mNewFragment != null)
+			mNewFragment.get().updateMarkers();
+	}
+
 	protected void handleDownloadingError() {
-		Toast.makeText(this, "errorescaricamento", Toast.LENGTH_SHORT).show();
 		errorLayout.setVisibility(View.VISIBLE);
 		loadingLayout.setVisibility(View.GONE);
 	}
@@ -97,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements
 	protected void onPause() {
 		if (errorReciever != null)
 			unregisterReceiver(errorReciever);
+		unregisterReceiver(newDataReciever);
 		super.onStop();
 	}
 
@@ -110,31 +127,8 @@ public class MainActivity extends AppCompatActivity implements
 
 		setUpGui(savedInstanceState);
 
-		Bundle b = null;
 		if (savedInstanceState != null)
-			b = (Bundle) savedInstanceState.clone();
-		final Bundle bFinal = b;
-
-		// The first time the app is launched, we must wait until the Categories
-		// are populated
-		// before we initialize the viewPager. We know PUNTI get populated for
-		// last
-		// so we listen to those changes
-		// Maybe we should add a dummy uri to avvise us?
-		mObserver = new ContentObserver(new Handler(Looper.getMainLooper())) {
-			@Override
-			public void onChange(boolean selfChange, Uri uri) {
-				super.onChange(selfChange, uri);
-				if (!mInitialized)
-					initializeScreen(bFinal);
-				else if (mNewFragment != null)
-					mNewFragment.get().updateMarkers();
-			}
-		};
-		getContentResolver().registerContentObserver(
-				PuntiContentProvider.PUNTI_URI, false, mObserver);
-		getContentResolver().registerContentObserver(
-				PuntiContentProvider.SOTTOCATEGORIE_URI, false, mObserver);
+			lastBundle = savedInstanceState;
 	}
 
 	private void initDrawer() {
@@ -333,7 +327,8 @@ public class MainActivity extends AppCompatActivity implements
 		Fragment which = null;
 		switch (arg0.getItemId()) {
 		case R.id.navItem0:
-			SharedPreferences mSettings = getSharedPreferences(Constants.POINTREST_PREFERENCES, Context.MODE_PRIVATE);
+			SharedPreferences mSettings = getSharedPreferences(
+					Constants.POINTREST_PREFERENCES, Context.MODE_PRIVATE);
 			SharedPreferences.Editor editor = mSettings.edit();
 			editor.putBoolean(Constants.SharedPreferences.SEARCH_ENABLED, false);
 			editor.commit();

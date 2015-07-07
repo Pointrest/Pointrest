@@ -33,7 +33,7 @@ public final class Constants {
 	public static int NOTIFICATION_ID = 0;
 	
 	public static final String BASE_URL = "http://www.pointerest.somee.com/api/";
-	public static final String BASE_URL2 = "http://www.pointerest.somee.com/api";
+	public static final String BASE_URL2 = "http://pointerest.azurewebsites.net/api";
 	public static final String RAN_FOR_THE_FIRST_TIME = "ran_already";
 	public static final String TRIGGER_RADIUS_FENCE_ID = "triggerfenceblah";
 	public static final String ACCOUNT = "pointrestaccount";
@@ -41,5 +41,6 @@ public final class Constants {
 	public static final String GEOFENCE_TRIGGERING_LOCATION_LAT = "triggerLat";
 	public static final String GEOFENCE_TRIGGERING_LOCATION_LONG = "triggerLong";
 	public static final String ERROR_STATUS = "com.pointrestapp.pointrest.ERRRRRRR";
+	public static final String NEW_DATA_STATUS = "com.pointrestapp.pointrest.Aggggiornn";
 	
 }
