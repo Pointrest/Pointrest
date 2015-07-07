@@ -31,7 +31,7 @@ public class InfoAppFragment extends Fragment {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				// TODO Auto-generated method stub
-				 startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse("http://www.pointrest.com/")));
+				 startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse("http://pointerest.azurewebsites.net")));
 				 return true;
 			}
 		});
